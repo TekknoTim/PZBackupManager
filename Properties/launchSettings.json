@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZomboidBackupManager": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

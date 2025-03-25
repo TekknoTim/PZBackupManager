@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ApplicationIcon>Resources\PZBackupManagerIcon.ico</ApplicationIcon>
+    <StartupObject>ZomboidBackupManager.Program</StartupObject>
+    <Title></Title>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\DataSources\**" />
+    <Compile Remove="Properties\src\**" />
+    <EmbeddedResource Remove="Properties\DataSources\**" />
+    <EmbeddedResource Remove="Properties\src\**" />
+    <None Remove="Properties\DataSources\**" />
+    <None Remove="Properties\src\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\PZBackupManagerIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonVisualizer" Version="0.0.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>
