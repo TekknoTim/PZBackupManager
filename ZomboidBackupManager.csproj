@@ -13,7 +13,8 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <UseWPF>False</UseWPF>
-    <PackAsTool>True</PackAsTool>
+    <PackAsTool>False</PackAsTool>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
