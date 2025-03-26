@@ -225,6 +225,15 @@ namespace ZomboidBackupManager
         private void PrintStatusLog(string txt = "")
         {
             int i = txtLog.Items.Count;
+            if (i > 999)
+            {
+                txtLog.Items.Add("[1000] - [LogItemCount >= 1000] - [RESETTING LOG]");
+                i = 1;
+                txtLog.Items.Clear();
+                txtLog.Items.Add($"[{i.ToString()}] - [LOG RESET] - [DONE!]");
+                i++;
+            }
+            
             txtLog.Items.Add($"[{i.ToString()}] - " + txt);
             txtLog.SelectionMode = SelectionMode.One;
             txtLog.SetSelected(i, true);

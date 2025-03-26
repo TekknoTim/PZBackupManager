@@ -1,6 +1,14 @@
-﻿using System.IO;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
 using static ZomboidBackupManager.Configuration;
 
 namespace ZomboidBackupManager
@@ -22,11 +30,10 @@ namespace ZomboidBackupManager
             BaseBackupFolderPATH = baseBkpPATH;
             showMessageWhenBackupProcessDone = showMsg;
             SelectLastLoadedOnStart = selectLastLoadedOnStart;
-            LastLoadedSavegameIndex = currentLoadedSavegameIndex;
-            LastLoadedGamemodeIndex = currentLoadedGamemodeIndex;
-            LastLoadedSavegame = currentLoadedSavegame;
-            LastLoadedGamemode = currentLoadedGamemode;
-
+            if (currentLoadedSavegameIndex >= 0) { LastLoadedSavegameIndex = currentLoadedSavegameIndex; }
+            if (currentLoadedGamemodeIndex >= 0) { LastLoadedSavegameIndex = currentLoadedGamemodeIndex; }
+            if (!string.IsNullOrWhiteSpace(currentLoadedSavegame)) { LastLoadedSavegame = currentLoadedSavegame; }
+            if (!string.IsNullOrWhiteSpace(currentLoadedGamemode)) { LastLoadedGamemode = currentLoadedGamemode; }
         }
     }
 
@@ -140,7 +147,6 @@ namespace ZomboidBackupManager
         //Private Path Properties:
         private static readonly string relativeHookFilePATH = @"\Zomboid\lua\PZBaManagerHook.ini";
         private static readonly string relativeSavegamePATH = @"\Zomboid\Saves\";
-        private static readonly string baseBackupDataFile = @"\GeneralBackupData.json";
         private static readonly string baseBackupFolderPATH = Application.StartupPath + @"Backups";
 
         public static readonly string hookCommand_Backup = @"b";    // Sent by the game, to create a new backup
@@ -157,7 +163,7 @@ namespace ZomboidBackupManager
 
         public static string currentLoadedSavegame = string.Empty;
         public static string currentLoadedGamemode = string.Empty;
-        public static string currentLoadedBackupFolderPATH = string.Empty;      // eg. G:\Visual Studio Projects\ZomboidBackupManager\bin\Debug\net9.0-windows\Backups\<SavegameName>
+        public static string currentLoadedBackupFolderPATH = currentBaseBackupFolderPATH + @"\None";      // eg. G:\Visual Studio Projects\ZomboidBackupManager\bin\Debug\net9.0-windows\Backups\<SavegameName>
         public static int currentLoadedSavegameIndex = -1;
         public static int currentLoadedGamemodeIndex = -1;
         public static bool showMsgWhenBackupProcessDone = true;
@@ -243,12 +249,12 @@ namespace ZomboidBackupManager
         {
             if (gamemode == currentLoadedGamemode || string.IsNullOrEmpty(gamemode))
             {
-                PrintDebug("[LoadSavegame] - Savegame already loaded!");
+                PrintDebug("[LoadJustGamemode] - Gamemode already loaded!");
                 return false;
             }
             currentLoadedSavegame = string.Empty;
             currentLoadedGamemode = gamemode;
-            currentLoadedBackupFolderPATH = string.Empty;
+            currentLoadedBackupFolderPATH = currentBaseBackupFolderPATH + @"\None";
             currentLoadedGamemodeIndex = gamemodeIndex;
             currentLoadedSavegameIndex = -1;
             SaveConfig();
@@ -274,15 +280,6 @@ namespace ZomboidBackupManager
             currentLoadedSavegameIndex = savegameIndex;
             SaveConfig();
             return true;
-        }
-
-        public static void CreateBaseBackupFolderJson(string path)
-        {
-            string p = path + baseBackupDataFile;
-            if (!File.Exists(p))
-            {
-                File.Create(p);
-            }
         }
 
         public static async void ChangeBackupFolderPath(string newPATH)

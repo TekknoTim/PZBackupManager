@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 
 namespace ZomboidBackupManager
@@ -17,7 +18,7 @@ namespace ZomboidBackupManager
 
         public static JsonData NewJsonData(string name)
         {
-            List<BackupData> backups = new List<BackupData>();
+            List<BackupData> backups = new List<BackupData>(1);
             return new JsonData(name, backups);
         }
 
@@ -61,25 +62,24 @@ namespace ZomboidBackupManager
 
         public static JsonData? ReadJsonDataFromJson()
         {
-            string backupJson = GetJsonDataFilePath();
-            string? backupPath = Path.GetDirectoryName(backupJson);
-            if (string.IsNullOrEmpty(backupPath))
+            string jsonDataFilePath = GetJsonDataFilePath();
+            if (string.IsNullOrWhiteSpace(jsonDataFilePath))
             {
                 return null;
             }
-            if (!System.IO.Directory.Exists(backupPath))
-            {
-                Directory.CreateDirectory(backupPath);
-            }
-            if (!System.IO.File.Exists(backupJson))
-            {
-                FileStream stream = System.IO.File.Create(backupJson);
-                stream.Close();
-            }
-            string? json = System.IO.File.ReadAllText(backupJson);
+            string? json = System.IO.File.ReadAllText(jsonDataFilePath);
             if (string.IsNullOrEmpty(json))
             {
-                return null;
+                if (!string.IsNullOrWhiteSpace(currentLoadedSavegame))
+                {
+                    JsonData jsonData = NewJsonData(currentLoadedSavegame);
+                    WriteJsonDataToJson(jsonData);
+                    return jsonData;
+                }
+                else
+                {
+                    return null;
+                }
             }
             JsonData? data = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonData>(json);
             if (data == null)
@@ -89,18 +89,21 @@ namespace ZomboidBackupManager
             return data;
         }
 
-
-
-
-
         public static void WriteJsonDataToJson(JsonData? jsonData)
         {
+            string jsonDataFilePath = GetJsonDataFilePath();
             if (jsonData == null)
             {
                 MessageBox.Show("[ERROR] - (WriteJsonDataToJson) --> jsonData == 0!");
+                return;
+            }
+            else if (string.IsNullOrWhiteSpace(jsonDataFilePath))
+            {
+                MessageBox.Show($"[ERROR] - (WriteJsonDataToJson) - [ERROR] \n--> [jsonDataFilePath (data.json directory)] == null or empty! \n--> [jsonDataFilePath] == {jsonDataFilePath}");
+                return;
             }
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(jsonData, Newtonsoft.Json.Formatting.Indented);
-            System.IO.File.WriteAllText(GetJsonDataFilePath(), json);
+            System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
 
         public static void WriteBackupDataToJson(string SavegameName, string fullBackupFolderPath)
@@ -115,9 +118,13 @@ namespace ZomboidBackupManager
 
             outputData = AddNewBackup(data, fullBackupFolderPath);
 
-
+            string jsonDataFilePath = GetJsonDataFilePath();
+            if (string.IsNullOrWhiteSpace(jsonDataFilePath))
+            {
+                return;
+            }
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(outputData, Newtonsoft.Json.Formatting.Indented);
-            System.IO.File.WriteAllText(GetJsonDataFilePath(), json);
+            System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
     }
 

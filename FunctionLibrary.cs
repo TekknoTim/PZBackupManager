@@ -14,6 +14,22 @@ namespace ZomboidBackupManager
 {
     public static class FunctionLibrary
     {
+        public static List<string> GetAllSavegamesInAllGamemodes()
+        {
+            List<string> gamemodes = GetGamemodes();
+            List<string> allSavegamesInAllGamemodes = new List<string>();
+            foreach (string mode in gamemodes)
+            {
+                List<string> savegames = new List<string>();
+                savegames = GetSavegamesInGamemode(mode);
+                foreach (string savegame in savegames)
+                {
+                    allSavegamesInAllGamemodes.Add(savegame);
+                }
+            }
+            return allSavegamesInAllGamemodes;
+        }
+
         public static bool GamemodeContainsSavegame(string gamemode, string savegame)
         {
             List<string> savegameList = GetSavegamesInGamemode(gamemode);
@@ -313,8 +329,31 @@ namespace ZomboidBackupManager
 
         public static string GetJsonDataFilePath()
         {
-            //MessageBox.Show($"Get Json Data File Path = [{currentLoadedBackupFolderPATH}]");
-            return currentLoadedBackupFolderPATH + @"\data.json";
+            string filePath = currentLoadedBackupFolderPATH + @"\data.json";
+
+            if (string.IsNullOrEmpty(currentLoadedBackupFolderPATH))
+            {
+                //MessageBox.Show(@"[GetJsonDataFilePath] - [currentLoadedBackupFolderPATH was null or empty!]");
+                return currentBaseBackupFolderPATH + @"\None" + @"\data.json";
+            }
+            if (!System.IO.File.Exists(filePath))
+            {
+                string? dirPath = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrWhiteSpace(dirPath))
+                {
+                    dirPath = currentBaseBackupFolderPATH + @"\None";
+                    filePath = dirPath + @"\data.json";
+                }
+
+                if (!System.IO.Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+
+                }
+                FileStream stream = System.IO.File.Create(filePath);
+                stream.Close();
+            }
+            return filePath;
         }
 
         public static int GetLastBackupFolderNumber()

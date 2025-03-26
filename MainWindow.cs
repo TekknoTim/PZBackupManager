@@ -36,18 +36,19 @@ namespace ZomboidBackupManager
 
         private void GamemodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            SetBackupButtonsEn(false);
+            DeleteAllBackupsButton.Enabled = false;
+            BackupButton.Enabled = false;
             var item = GamemodeComboBox.SelectedItem;
-            if (item == null)
+            if (item != null)
             {
-                return;
+                LoadJustGamemode(item.ToString(), GamemodeComboBox.SelectedIndex);
             }
-            LoadJustGamemode(item.ToString(), GamemodeComboBox.SelectedIndex);
             LoadSavegamesInSelectedGamemode();
             SetSavegameLabelValues();
             ResetSavegameThumbnailAndData();
             ResetBackupThumbnailAndData();
             BackupListBox.Items.Clear();
-
         }
 
         private void LoadSavegamesInSelectedGamemode()
@@ -94,14 +95,7 @@ namespace ZomboidBackupManager
             BackupListBox.Items.AddRange(backupList);
         }
 
-        private void LoadAndDisplayBackups()
-        {
-            string[] backupList = GetAllBackupDataNamesFromJson();
-            BackupListBox.Items.Clear();
-            BackupListBox.Items.AddRange(backupList);
-        }
-
-        public string[] GetBackupsOfSelectedSavegame()
+        private string[] GetBackupsOfSelectedSavegame()
         {
             string[] backupFolderList = GetBackups();
 
@@ -122,6 +116,13 @@ namespace ZomboidBackupManager
 
         }
 
+        private void LoadAndDisplayBackups()
+        {
+            string[] backupList = GetAllBackupDataNamesFromJson();
+            BackupListBox.Items.Clear();
+            BackupListBox.Items.AddRange(backupList);
+        }
+
         private void SavegameListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (IsValidSavegameSelected())
@@ -131,24 +132,23 @@ namespace ZomboidBackupManager
                 DeleteAllBackupsButton.Enabled = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
-
+                LoadAndDisplayBackups();
             }
             else
             {
                 var item = GamemodeComboBox.SelectedItem;
-                if (item == null)
+                if (item != null)
                 {
-                    return;
+                    string? itemName = item.ToString();
+                    LoadJustGamemode(itemName, GamemodeComboBox.SelectedIndex);
                 }
-                string? itemName = item.ToString();
-                LoadJustGamemode(itemName, GamemodeComboBox.SelectedIndex);
                 DeleteAllBackupsButton.Enabled = false;
                 BackupButton.Enabled = false;
                 //MiniWindowButton.Visible = false;
             }
             SetSavegameLabelValues();
             ResetBackupThumbnailAndData();
-            LoadAndDisplayBackups();
+            SetBackupButtonsEn(false);
         }
 
         private bool LoadSavegameThumbnail()
@@ -372,7 +372,7 @@ namespace ZomboidBackupManager
         private bool IsValidBackupSelected()
         {
             int listBoxIdx = BackupListBox.SelectedIndex;
-            if (listBoxIdx < 0)
+            if (listBoxIdx < 0 || string.IsNullOrWhiteSpace(currentLoadedSavegame) || string.IsNullOrWhiteSpace(currentLoadedGamemode))
             {
                 return false;
 
@@ -412,18 +412,21 @@ namespace ZomboidBackupManager
         {
             if (IsValidBackupSelected())
             {
-                RestoreButton.Enabled = true;
-                DeleteBackupButton.Enabled = true;
-                RenameBackupButton.Enabled = true;
+                SetBackupButtonsEn(true);
                 LoadBackupThumbnail();
                 SetBackupLabelValues();
             }
             else
             {
-                RestoreButton.Enabled = false;
-                DeleteBackupButton.Enabled = false;
-                RenameBackupButton.Enabled = false;
+                SetBackupButtonsEn(false);
             }
+        }
+
+        private void SetBackupButtonsEn(bool val)
+        {
+            RestoreButton.Enabled = val;
+            DeleteBackupButton.Enabled = val;
+            RenameBackupButton.Enabled = val;
         }
 
         private async void BackupListBox_MouseDoubleClick(object sender, MouseEventArgs e)
