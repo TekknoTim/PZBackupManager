@@ -1,4 +1,5 @@
-﻿using static ZomboidBackupManager.Configuration;
+﻿using System.IO;
+using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 
 namespace ZomboidBackupManager
