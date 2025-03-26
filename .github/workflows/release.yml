@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
-		  
+
       - name: Restore Dependencies
         run: dotnet restore
 
@@ -26,17 +26,17 @@ jobs:
 
       - name: Create Zip Archive
         run: |
-          Compress-Archive -Path publish -DestinationPath Builds/PZBackupManager.zip
+          Compress-Archive -Path publish\* -DestinationPath Builds/PZBackupManager.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PZBackupManager.zip
+          name: PZBackupManager
           path: Builds/PZBackupManager.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: PZBackupManager.zip
+          files: Builds/PZBackupManager.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
