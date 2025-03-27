@@ -33,7 +33,8 @@ your system, when using this software.
 
 [How to use the mod] - [Optional]
 1. Make sure you have this app downloaded, installed and working.
-2. Download and enable the PZBackupManagerMod from the Steam Workshop, WorkshopID = 3453009151
+2. Download and enable the PZBackupManagerMod from the Steam Workshop,
+(WorkshopID = 3453009151, https://steamcommunity.com/sharedfiles/filedetails/?id=3453009151)
 3. Select the savegame you are playing reight now &
    Click 'listen to PZ' in the top right corner of the manager. 
 4. Click the big 'Listen to Project Zomboid' button.
