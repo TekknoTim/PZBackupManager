@@ -30,10 +30,10 @@ namespace ZomboidBackupManager
             BaseBackupFolderPATH = baseBkpPATH;
             showMessageWhenBackupProcessDone = showMsg;
             SelectLastLoadedOnStart = selectLastLoadedOnStart;
-            if (currentLoadedSavegameIndex >= 0) { LastLoadedSavegameIndex = currentLoadedSavegameIndex; }
-            if (currentLoadedGamemodeIndex >= 0) { LastLoadedSavegameIndex = currentLoadedGamemodeIndex; }
-            if (!string.IsNullOrWhiteSpace(currentLoadedSavegame)) { LastLoadedSavegame = currentLoadedSavegame; }
-            if (!string.IsNullOrWhiteSpace(currentLoadedGamemode)) { LastLoadedGamemode = currentLoadedGamemode; }
+            if (currentLoadedSavegameIndex >= 0) { LastLoadedSavegameIndex = currentLoadedSavegameIndex; } else { LastLoadedSavegameIndex = -1; }
+            if (currentLoadedGamemodeIndex >= 0) { LastLoadedGamemodeIndex = currentLoadedGamemodeIndex; } else {  LastLoadedGamemodeIndex = -1; }
+            if (!string.IsNullOrWhiteSpace(currentLoadedSavegame)) { LastLoadedSavegame = currentLoadedSavegame; } else { LastLoadedSavegame = string.Empty; }
+            if (!string.IsNullOrWhiteSpace(currentLoadedGamemode)) { LastLoadedGamemode = currentLoadedGamemode; } else { LastLoadedGamemode = string.Empty; }
         }
     }
 
@@ -169,6 +169,8 @@ namespace ZomboidBackupManager
         public static bool showMsgWhenBackupProcessDone = true;
         public static bool autoSelectSavegameOnStart = false;
 
+        public static bool indexChangeEventsSuspended = false;
+
         //Debug Functions:
 
         public static void PrintDebug(string msg, int lvl = 0)
@@ -245,11 +247,33 @@ namespace ZomboidBackupManager
             await WriteCfgToJson();
         }
 
+        public static bool IsAnySavegameLoadedCurrently()
+        {
+            if (string.IsNullOrWhiteSpace(currentLoadedSavegame) || currentLoadedSavegameIndex < 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static void SetIndexChangeEventsSuspended(Object sender, bool isSuspended)
+        {
+            indexChangeEventsSuspended = isSuspended;
+            PrintDebug($"[Configuration] - [SetIndexChangeEventsSuspended] - [indexEventsSuspended = {indexChangeEventsSuspended}] - [sender = [{sender.ToString()}]");
+        }
+
+        public static void UnloadCurrentLoadedSavegame()
+        {
+            PrintDebug($"[Configuration] - [UnloadSavegame] - Unloading savegame --> [Savegame = {currentLoadedSavegame}] - [SavegameIndex = {currentLoadedSavegameIndex}]");
+            currentLoadedSavegame = string.Empty;
+            currentLoadedSavegameIndex = -1;
+        }
+
         public static bool LoadJustGamemode(string? gamemode, int gamemodeIndex)
         {
-            if (gamemode == currentLoadedGamemode || string.IsNullOrEmpty(gamemode))
+            if (string.IsNullOrWhiteSpace(gamemode))
             {
-                PrintDebug("[LoadJustGamemode] - Gamemode already loaded!");
+                PrintDebug($"[Configuration] - [LoadJustGamemode] - Failed to load gamemode because it was null, empty or whitspaced - [gamemode = {gamemode}]");
                 return false;
             }
             currentLoadedSavegame = string.Empty;
@@ -268,7 +292,7 @@ namespace ZomboidBackupManager
             {
                 Directory.CreateDirectory(path);
             }
-            if (name == currentLoadedSavegame && gamemode == currentLoadedGamemode)
+            if ((name == currentLoadedSavegame) && (savegameIndex == currentLoadedSavegameIndex) && (gamemode == currentLoadedGamemode) && (gamemodeIndex == currentLoadedGamemodeIndex))
             {
                 PrintDebug("[LoadSavegame] - Savegame already loaded!");
                 return false;
