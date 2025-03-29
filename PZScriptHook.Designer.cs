@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PZScriptHook));
             StartStopButton = new Button();
             txtLog = new ListBox();
             LoadedSavegameInfoPanel = new Panel();
+            AddToTaskBarCheckbox = new CheckBox();
             ChangeSelectionLabelText = new Label();
             SavegameComboBox = new ComboBox();
             GamemodesComboBox = new ComboBox();
@@ -39,15 +41,32 @@
             LoadedSavegameInfoLabel = new Label();
             SavegameNameTextLabel = new Label();
             SavegameNameValueLabel = new Label();
+            MinimizedNotifyIcon = new NotifyIcon(components);
+            TaskbarIconMenuStrip = new ContextMenuStrip(components);
+            statusInfosToolStripMenuItem = new ToolStripMenuItem();
+            TaskbarStatusMenu = new ContextMenuStrip(components);
+            ContextMenuStatusLabel = new ToolStripTextBox();
+            toolStripSeparator1 = new ToolStripSeparator();
+            ToolStripGamemodeTextBox = new ToolStripTextBox();
+            ToolStripSavegameTextBox = new ToolStripTextBox();
+            toggleTrackingToolStripMenuItem = new ToolStripMenuItem();
+            ToggleTrackingContextMenu = new ContextMenuStrip(components);
+            ToggleTrackingMenuItem = new ToolStripMenuItem();
+            maximizeToolStripMenuItem = new ToolStripMenuItem();
+            closeToolStripMenuItem = new ToolStripMenuItem();
+            PZScriptHookTooltip = new ToolTip(components);
             LoadedSavegameInfoPanel.SuspendLayout();
+            TaskbarIconMenuStrip.SuspendLayout();
+            TaskbarStatusMenu.SuspendLayout();
+            ToggleTrackingContextMenu.SuspendLayout();
             SuspendLayout();
             // 
             // StartStopButton
             // 
             StartStopButton.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            StartStopButton.Location = new Point(12, 367);
+            StartStopButton.Location = new Point(12, 343);
             StartStopButton.Name = "StartStopButton";
-            StartStopButton.Size = new Size(360, 50);
+            StartStopButton.Size = new Size(360, 47);
             StartStopButton.TabIndex = 0;
             StartStopButton.Text = "Listen to Project Zomboid";
             StartStopButton.UseVisualStyleBackColor = true;
@@ -58,15 +77,16 @@
             txtLog.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtLog.FormattingEnabled = true;
             txtLog.Items.AddRange(new object[] { " " });
-            txtLog.Location = new Point(12, 213);
+            txtLog.Location = new Point(12, 199);
             txtLog.Name = "txtLog";
             txtLog.SelectionMode = SelectionMode.None;
-            txtLog.Size = new Size(360, 148);
+            txtLog.Size = new Size(360, 132);
             txtLog.TabIndex = 1;
             // 
             // LoadedSavegameInfoPanel
             // 
             LoadedSavegameInfoPanel.BackColor = SystemColors.ControlDarkDark;
+            LoadedSavegameInfoPanel.Controls.Add(AddToTaskBarCheckbox);
             LoadedSavegameInfoPanel.Controls.Add(ChangeSelectionLabelText);
             LoadedSavegameInfoPanel.Controls.Add(SavegameComboBox);
             LoadedSavegameInfoPanel.Controls.Add(GamemodesComboBox);
@@ -74,10 +94,26 @@
             LoadedSavegameInfoPanel.Controls.Add(LoadedSavegameInfoLabel);
             LoadedSavegameInfoPanel.Controls.Add(SavegameNameTextLabel);
             LoadedSavegameInfoPanel.Controls.Add(SavegameNameValueLabel);
-            LoadedSavegameInfoPanel.Location = new Point(12, 12);
+            LoadedSavegameInfoPanel.Location = new Point(12, 11);
             LoadedSavegameInfoPanel.Name = "LoadedSavegameInfoPanel";
-            LoadedSavegameInfoPanel.Size = new Size(360, 184);
+            LoadedSavegameInfoPanel.Size = new Size(360, 182);
             LoadedSavegameInfoPanel.TabIndex = 13;
+            // 
+            // AddToTaskBarCheckbox
+            // 
+            AddToTaskBarCheckbox.Checked = true;
+            AddToTaskBarCheckbox.CheckState = CheckState.Checked;
+            AddToTaskBarCheckbox.Font = new Font("Bahnschrift", 12F);
+            AddToTaskBarCheckbox.ForeColor = SystemColors.Control;
+            AddToTaskBarCheckbox.Location = new Point(5, 134);
+            AddToTaskBarCheckbox.Margin = new Padding(5, 5, 5, 2);
+            AddToTaskBarCheckbox.Name = "AddToTaskBarCheckbox";
+            AddToTaskBarCheckbox.Size = new Size(150, 23);
+            AddToTaskBarCheckbox.TabIndex = 17;
+            AddToTaskBarCheckbox.Text = "Add to taskbar";
+            PZScriptHookTooltip.SetToolTip(AddToTaskBarCheckbox, "If checked, hide this window from taskbar when minimizing\r\nand add an icon to the taskbar notification area (the area e.g. \r\nwhere your volume/sound icon & steam icon is present)");
+            AddToTaskBarCheckbox.UseVisualStyleBackColor = true;
+            AddToTaskBarCheckbox.CheckedChanged += AddToTaskBarCheckbox_CheckedChanged;
             // 
             // ChangeSelectionLabelText
             // 
@@ -95,7 +131,7 @@
             // 
             SavegameComboBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SavegameComboBox.FormattingEnabled = true;
-            SavegameComboBox.Location = new Point(5, 62);
+            SavegameComboBox.Location = new Point(5, 58);
             SavegameComboBox.Name = "SavegameComboBox";
             SavegameComboBox.Size = new Size(352, 27);
             SavegameComboBox.TabIndex = 15;
@@ -105,7 +141,7 @@
             // 
             GamemodesComboBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             GamemodesComboBox.FormattingEnabled = true;
-            GamemodesComboBox.Location = new Point(5, 29);
+            GamemodesComboBox.Location = new Point(5, 27);
             GamemodesComboBox.Name = "GamemodesComboBox";
             GamemodesComboBox.Size = new Size(352, 27);
             GamemodesComboBox.TabIndex = 14;
@@ -113,13 +149,12 @@
             // 
             // AlwaysOnTopCheckbox
             // 
-            AlwaysOnTopCheckbox.AutoSize = true;
-            AlwaysOnTopCheckbox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            AlwaysOnTopCheckbox.Font = new Font("Bahnschrift", 12F);
             AlwaysOnTopCheckbox.ForeColor = SystemColors.Control;
-            AlwaysOnTopCheckbox.Location = new Point(5, 156);
-            AlwaysOnTopCheckbox.Margin = new Padding(5);
+            AlwaysOnTopCheckbox.Location = new Point(5, 157);
+            AlwaysOnTopCheckbox.Margin = new Padding(5, 5, 5, 2);
             AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox";
-            AlwaysOnTopCheckbox.Size = new Size(129, 23);
+            AlwaysOnTopCheckbox.Size = new Size(130, 23);
             AlwaysOnTopCheckbox.TabIndex = 13;
             AlwaysOnTopCheckbox.Text = "Always on top";
             AlwaysOnTopCheckbox.UseVisualStyleBackColor = true;
@@ -130,7 +165,7 @@
             LoadedSavegameInfoLabel.AutoSize = true;
             LoadedSavegameInfoLabel.Font = new Font("Bahnschrift", 12F);
             LoadedSavegameInfoLabel.ForeColor = SystemColors.Control;
-            LoadedSavegameInfoLabel.Location = new Point(5, 102);
+            LoadedSavegameInfoLabel.Location = new Point(5, 83);
             LoadedSavegameInfoLabel.Name = "LoadedSavegameInfoLabel";
             LoadedSavegameInfoLabel.Size = new Size(140, 19);
             LoadedSavegameInfoLabel.TabIndex = 12;
@@ -142,9 +177,9 @@
             SavegameNameTextLabel.BackColor = SystemColors.Control;
             SavegameNameTextLabel.BorderStyle = BorderStyle.FixedSingle;
             SavegameNameTextLabel.Font = new Font("Bahnschrift", 10F);
-            SavegameNameTextLabel.Location = new Point(5, 121);
+            SavegameNameTextLabel.Location = new Point(5, 101);
             SavegameNameTextLabel.Name = "SavegameNameTextLabel";
-            SavegameNameTextLabel.Size = new Size(86, 30);
+            SavegameNameTextLabel.Size = new Size(86, 28);
             SavegameNameTextLabel.TabIndex = 10;
             SavegameNameTextLabel.Text = "Savegame:";
             SavegameNameTextLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -154,30 +189,169 @@
             SavegameNameValueLabel.BackColor = SystemColors.Control;
             SavegameNameValueLabel.BorderStyle = BorderStyle.FixedSingle;
             SavegameNameValueLabel.Font = new Font("Bahnschrift", 10F);
-            SavegameNameValueLabel.Location = new Point(90, 121);
+            SavegameNameValueLabel.Location = new Point(90, 101);
             SavegameNameValueLabel.Name = "SavegameNameValueLabel";
-            SavegameNameValueLabel.Size = new Size(267, 30);
+            SavegameNameValueLabel.Size = new Size(267, 28);
             SavegameNameValueLabel.TabIndex = 11;
             SavegameNameValueLabel.Text = "-";
             SavegameNameValueLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // MinimizedNotifyIcon
+            // 
+            MinimizedNotifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+            MinimizedNotifyIcon.BalloonTipText = "You minimized the Backup Manager without starting\r\nto listen to PZ. This way, the ingame hotkey mod\r\nwon't work.";
+            MinimizedNotifyIcon.BalloonTipTitle = "Warning!";
+            MinimizedNotifyIcon.ContextMenuStrip = TaskbarIconMenuStrip;
+            MinimizedNotifyIcon.Icon = (Icon)resources.GetObject("MinimizedNotifyIcon.Icon");
+            MinimizedNotifyIcon.Text = "PZBackupManager";
+            MinimizedNotifyIcon.MouseClick += MinimizedNotifyIcon_MouseClick;
+            // 
+            // TaskbarIconMenuStrip
+            // 
+            TaskbarIconMenuStrip.BackColor = SystemColors.ControlDarkDark;
+            TaskbarIconMenuStrip.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TaskbarIconMenuStrip.Items.AddRange(new ToolStripItem[] { statusInfosToolStripMenuItem, toggleTrackingToolStripMenuItem, maximizeToolStripMenuItem, closeToolStripMenuItem });
+            TaskbarIconMenuStrip.Name = "contextMenuStrip1";
+            TaskbarIconMenuStrip.ShowImageMargin = false;
+            TaskbarIconMenuStrip.Size = new Size(148, 92);
+            // 
+            // statusInfosToolStripMenuItem
+            // 
+            statusInfosToolStripMenuItem.BackColor = SystemColors.ControlDark;
+            statusInfosToolStripMenuItem.DropDown = TaskbarStatusMenu;
+            statusInfosToolStripMenuItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            statusInfosToolStripMenuItem.ForeColor = Color.Cornsilk;
+            statusInfosToolStripMenuItem.ImageScaling = ToolStripItemImageScaling.None;
+            statusInfosToolStripMenuItem.Name = "statusInfosToolStripMenuItem";
+            statusInfosToolStripMenuItem.Size = new Size(147, 22);
+            statusInfosToolStripMenuItem.Text = "Status Infos";
+            // 
+            // TaskbarStatusMenu
+            // 
+            TaskbarStatusMenu.AutoSize = false;
+            TaskbarStatusMenu.BackColor = SystemColors.ControlDark;
+            TaskbarStatusMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            TaskbarStatusMenu.Items.AddRange(new ToolStripItem[] { ContextMenuStatusLabel, toolStripSeparator1, ToolStripGamemodeTextBox, ToolStripSavegameTextBox });
+            TaskbarStatusMenu.LayoutStyle = ToolStripLayoutStyle.Table;
+            TaskbarStatusMenu.Name = "TaskbarStatusMenu";
+            TaskbarStatusMenu.ShowImageMargin = false;
+            TaskbarStatusMenu.Size = new Size(270, 150);
+            // 
+            // ContextMenuStatusLabel
+            // 
+            ContextMenuStatusLabel.AutoSize = false;
+            ContextMenuStatusLabel.BackColor = SystemColors.ControlLight;
+            ContextMenuStatusLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ContextMenuStatusLabel.ForeColor = Color.DarkCyan;
+            ContextMenuStatusLabel.Name = "ContextMenuStatusLabel";
+            ContextMenuStatusLabel.Size = new Size(250, 35);
+            ContextMenuStatusLabel.Text = "Status";
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(266, 6);
+            // 
+            // ToolStripGamemodeTextBox
+            // 
+            ToolStripGamemodeTextBox.AutoSize = false;
+            ToolStripGamemodeTextBox.BackColor = SystemColors.ControlDarkDark;
+            ToolStripGamemodeTextBox.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ToolStripGamemodeTextBox.ForeColor = SystemColors.Info;
+            ToolStripGamemodeTextBox.Name = "ToolStripGamemodeTextBox";
+            ToolStripGamemodeTextBox.Size = new Size(250, 25);
+            ToolStripGamemodeTextBox.Text = "Gamemode:";
+            // 
+            // ToolStripSavegameTextBox
+            // 
+            ToolStripSavegameTextBox.AutoSize = false;
+            ToolStripSavegameTextBox.BackColor = SystemColors.ControlDarkDark;
+            ToolStripSavegameTextBox.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ToolStripSavegameTextBox.ForeColor = SystemColors.Info;
+            ToolStripSavegameTextBox.Name = "ToolStripSavegameTextBox";
+            ToolStripSavegameTextBox.Size = new Size(250, 25);
+            ToolStripSavegameTextBox.Text = "Savegame:";
+            // 
+            // toggleTrackingToolStripMenuItem
+            // 
+            toggleTrackingToolStripMenuItem.BackColor = SystemColors.ControlDark;
+            toggleTrackingToolStripMenuItem.DropDown = ToggleTrackingContextMenu;
+            toggleTrackingToolStripMenuItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            toggleTrackingToolStripMenuItem.ForeColor = Color.Cornsilk;
+            toggleTrackingToolStripMenuItem.ImageScaling = ToolStripItemImageScaling.None;
+            toggleTrackingToolStripMenuItem.Name = "toggleTrackingToolStripMenuItem";
+            toggleTrackingToolStripMenuItem.Size = new Size(147, 22);
+            toggleTrackingToolStripMenuItem.Text = "ToggleTracking";
+            // 
+            // ToggleTrackingContextMenu
+            // 
+            ToggleTrackingContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            ToggleTrackingContextMenu.Items.AddRange(new ToolStripItem[] { ToggleTrackingMenuItem });
+            ToggleTrackingContextMenu.Name = "contextMenuStrip1";
+            ToggleTrackingContextMenu.OwnerItem = toggleTrackingToolStripMenuItem;
+            ToggleTrackingContextMenu.Size = new Size(140, 34);
+            ToggleTrackingContextMenu.Text = "ToggleTrackingContextMenu";
+            // 
+            // ToggleTrackingMenuItem
+            // 
+            ToggleTrackingMenuItem.BackColor = SystemColors.ControlDarkDark;
+            ToggleTrackingMenuItem.CheckOnClick = true;
+            ToggleTrackingMenuItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            ToggleTrackingMenuItem.ForeColor = Color.Cornsilk;
+            ToggleTrackingMenuItem.Image = (Image)resources.GetObject("ToggleTrackingMenuItem.Image");
+            ToggleTrackingMenuItem.ImageScaling = ToolStripItemImageScaling.None;
+            ToggleTrackingMenuItem.ImageTransparentColor = Color.Transparent;
+            ToggleTrackingMenuItem.Name = "ToggleTrackingMenuItem";
+            ToggleTrackingMenuItem.Size = new Size(139, 30);
+            ToggleTrackingMenuItem.Text = "Tracking";
+            ToggleTrackingMenuItem.CheckedChanged += ToggleTrackingMenuItem_CheckedChanged;
+            // 
+            // maximizeToolStripMenuItem
+            // 
+            maximizeToolStripMenuItem.BackColor = SystemColors.ControlDark;
+            maximizeToolStripMenuItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            maximizeToolStripMenuItem.ForeColor = Color.Cornsilk;
+            maximizeToolStripMenuItem.ImageScaling = ToolStripItemImageScaling.None;
+            maximizeToolStripMenuItem.Name = "maximizeToolStripMenuItem";
+            maximizeToolStripMenuItem.Size = new Size(147, 22);
+            maximizeToolStripMenuItem.Text = "Maximize";
+            maximizeToolStripMenuItem.Click += maximizeToolStripMenuItem_Click;
+            // 
+            // closeToolStripMenuItem
+            // 
+            closeToolStripMenuItem.BackColor = SystemColors.ControlDark;
+            closeToolStripMenuItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            closeToolStripMenuItem.ForeColor = Color.Cornsilk;
+            closeToolStripMenuItem.ImageScaling = ToolStripItemImageScaling.None;
+            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            closeToolStripMenuItem.Size = new Size(147, 22);
+            closeToolStripMenuItem.Text = "Close";
+            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
+            // 
             // PZScriptHook
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(7F, 14F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 429);
+            ClientSize = new Size(384, 400);
             Controls.Add(txtLog);
             Controls.Add(StartStopButton);
             Controls.Add(LoadedSavegameInfoPanel);
-            HelpButton = true;
+            Font = new Font("Bahnschrift", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "PZScriptHook";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Project Zomboid Manager Script Hook";
             FormClosing += PZScriptHook_FormClosing;
             Shown += PZScriptHook_Shown;
+            Resize += OnMinimizingWindow;
             LoadedSavegameInfoPanel.ResumeLayout(false);
             LoadedSavegameInfoPanel.PerformLayout();
+            TaskbarIconMenuStrip.ResumeLayout(false);
+            TaskbarStatusMenu.ResumeLayout(false);
+            TaskbarStatusMenu.PerformLayout();
+            ToggleTrackingContextMenu.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -193,5 +367,20 @@
         private ComboBox GamemodesComboBox;
         private ComboBox SavegameComboBox;
         private Label ChangeSelectionLabelText;
+        private NotifyIcon MinimizedNotifyIcon;
+        private CheckBox AddToTaskBarCheckbox;
+        private ToolTip PZScriptHookTooltip;
+        private ContextMenuStrip TaskbarIconMenuStrip;
+        private ToolStripMenuItem statusInfosToolStripMenuItem;
+        private ToolStripMenuItem toggleTrackingToolStripMenuItem;
+        private ToolStripMenuItem maximizeToolStripMenuItem;
+        private ToolStripMenuItem closeToolStripMenuItem;
+        private ContextMenuStrip ToggleTrackingContextMenu;
+        private ToolStripMenuItem ToggleTrackingMenuItem;
+        private ContextMenuStrip TaskbarStatusMenu;
+        private ToolStripTextBox ContextMenuStatusLabel;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripTextBox ToolStripGamemodeTextBox;
+        private ToolStripTextBox ToolStripSavegameTextBox;
     }
 }

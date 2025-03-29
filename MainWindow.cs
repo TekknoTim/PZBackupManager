@@ -8,6 +8,8 @@ namespace ZomboidBackupManager
 {
     public partial class MainWindow : Form
     {
+        private Form? PZScriptHookWindow = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +38,12 @@ namespace ZomboidBackupManager
 
         private void GamemodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //MessageBox.Show($"GamemodeComboBox_SelectedIndexChanged fired! [sender = {sender.ToString()}] - [EventArgs = {e.ToString()}]");
+            if (indexChangeEventsSuspended)
+            {
+                PrintDebug("[MainWindow] - [GamemodeComboBox] - Selected Index Changed aborted - Index change events are suspended!");
+                return;
+            }
             SetBackupButtonsEn(false);
             DeleteAllBackupsButton.Enabled = false;
             BackupButton.Enabled = false;
@@ -125,6 +133,11 @@ namespace ZomboidBackupManager
 
         private void SavegameListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (indexChangeEventsSuspended)
+            {
+                PrintDebug("[MainWindow] - [GamemodeComboBox] - Selected Index Changed aborted - Index change events are suspended!");
+                return;
+            }
             if (IsValidSavegameSelected())
             {
                 BackupButton.Enabled = true;
@@ -235,7 +248,7 @@ namespace ZomboidBackupManager
         }
 
         private void SetSavegameRemote()
-        {
+        { 
             if (!Configuration.autoSelectSavegameOnStart)
             {
                 PrintDebug($"[SetSavegameRemote] - [Aborted] - autoSelectSavegameOnStart = [{Configuration.autoSelectSavegameOnStart}]");
@@ -254,15 +267,29 @@ namespace ZomboidBackupManager
                 PrintDebug($"[SetSavegameRemote] - [Aborted] - indexGamemode < 0 \n indexGamemode = [{indexGamemode}]");
                 return;
             }
+            SetIndexChangeEventsSuspended(this, true);
             GamemodeComboBox.SelectedIndex = indexGamemode;
+            GamemodeComboBox.Focus();
             LoadSavegamesInSelectedGamemode();
             int indexSavegame = FindSavegameListIndexByName(savegame);
             if (indexSavegame < 0)
             {
                 PrintDebug($"[SetSavegameRemote] - [Aborted] - A value is < 0 \n indexSavegame = [{indexSavegame}] \n indexGamemode = [{indexGamemode}]");
+                SetIndexChangeEventsSuspended(this, false);
                 return;
             }
             SavegameListBox.SelectedIndex = indexSavegame;
+            if (IsValidSavegameSelected())
+            {
+                BackupButton.Enabled = true;
+                //MiniWindowButton.Visible = true;
+                DeleteAllBackupsButton.Enabled = true;
+                SelectSavegame();
+                LoadSavegameThumbnail();
+                LoadAndDisplayBackups();
+                SetSavegameLabelValues();
+            }
+            SetIndexChangeEventsSuspended(this, false);
             PrintDebug($"[SetSavegameRemote] - Savegame [{savegame}] in Gamemode [{gamemode}] successfully loaded!");
         }
 
@@ -357,16 +384,13 @@ namespace ZomboidBackupManager
 
         private bool IsValidSavegameSelected()
         {
-            int ComboBoxIdx = GamemodeComboBox.SelectedIndex;
-            if (ComboBoxIdx < 0)
-            {
-                return false;
-
-            }
-            else
+            var item = SavegameListBox.SelectedItem;
+            if (item != null)
             {
                 return true;
+
             }
+            return false;
         }
 
         private bool IsValidBackupSelected()
@@ -618,8 +642,29 @@ namespace ZomboidBackupManager
         private void LoadHookWindow()
         {
             var form = new PZScriptHook();
+            form.FormClosing += new FormClosingEventHandler(OnHookWindowClosing);
+            PZScriptHookWindow = form;
+            form.myParentForm = this;
+            form.Show();
             this.Hide();
-            form.ShowDialog();
+
+
+        }
+
+        public void OnHookWindowClosing(object? sender, EventArgs e)
+        {
+            if (PZScriptHookWindow != null)
+            {
+                PZScriptHookWindow.FormClosing -= OnHookWindowClosing;
+
+                PZScriptHookWindow = null;
+            }
+            UnhideForm();
+        }
+
+
+        private void UnhideForm()
+        {
             this.Show();
             GamemodeComboBox.SelectedIndex = currentLoadedGamemodeIndex;
             LoadSavegamesInSelectedGamemode();

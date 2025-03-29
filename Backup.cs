@@ -121,10 +121,6 @@ namespace ZomboidBackupManager
             Thread.Sleep(500);
 
             PrintStatusLog(statusLog, "Backup Process Finished!");
-
-            Thread.Sleep(500);
-
-            //scriptHook.ExecuteDoneCommand();
         }
 
 

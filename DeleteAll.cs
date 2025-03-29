@@ -38,7 +38,6 @@ namespace ZomboidBackupManager
                     progress.Report(0);
                 }
             }
-            //Directory.Delete(directoryPath, true);
         }
     }
 

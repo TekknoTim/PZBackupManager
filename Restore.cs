@@ -29,7 +29,7 @@ namespace ZomboidBackupManager
                 var combPath = Path.GetDirectoryName(destFile);
                 if (combPath != null)
                 {
-                    Directory.CreateDirectory(combPath); // Sicherstellen, dass das Verzeichnis existiert
+                    Directory.CreateDirectory(combPath);
 
                     await Task.Run(() => File.Copy(file, destFile, true));
 

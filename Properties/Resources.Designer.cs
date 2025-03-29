@@ -34,6 +34,8 @@ namespace ZomboidBackupManager.Properties
         {
         }
 
+        public static Image SwitchIconOn { get; internal set; }
+
         /// <summary>
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
