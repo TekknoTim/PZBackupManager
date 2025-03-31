@@ -204,7 +204,7 @@
             MinimizedNotifyIcon.ContextMenuStrip = TaskbarIconMenuStrip;
             MinimizedNotifyIcon.Icon = (Icon)resources.GetObject("MinimizedNotifyIcon.Icon");
             MinimizedNotifyIcon.Text = "PZBackupManager";
-            MinimizedNotifyIcon.MouseClick += MinimizedNotifyIcon_MouseClick;
+            MinimizedNotifyIcon.MouseDoubleClick += MinimizedNotifyIcon_MouseDoubleClick;
             // 
             // TaskbarIconMenuStrip
             // 
@@ -234,6 +234,7 @@
             TaskbarStatusMenu.Items.AddRange(new ToolStripItem[] { ContextMenuStatusLabel, toolStripSeparator1, ToolStripGamemodeTextBox, ToolStripSavegameTextBox });
             TaskbarStatusMenu.LayoutStyle = ToolStripLayoutStyle.Table;
             TaskbarStatusMenu.Name = "TaskbarStatusMenu";
+            TaskbarStatusMenu.OwnerItem = statusInfosToolStripMenuItem;
             TaskbarStatusMenu.ShowImageMargin = false;
             TaskbarStatusMenu.Size = new Size(270, 150);
             // 
@@ -289,7 +290,7 @@
             ToggleTrackingContextMenu.Items.AddRange(new ToolStripItem[] { ToggleTrackingMenuItem });
             ToggleTrackingContextMenu.Name = "contextMenuStrip1";
             ToggleTrackingContextMenu.OwnerItem = toggleTrackingToolStripMenuItem;
-            ToggleTrackingContextMenu.Size = new Size(140, 34);
+            ToggleTrackingContextMenu.Size = new Size(189, 56);
             ToggleTrackingContextMenu.Text = "ToggleTrackingContextMenu";
             // 
             // ToggleTrackingMenuItem
@@ -302,7 +303,8 @@
             ToggleTrackingMenuItem.ImageScaling = ToolStripItemImageScaling.None;
             ToggleTrackingMenuItem.ImageTransparentColor = Color.Transparent;
             ToggleTrackingMenuItem.Name = "ToggleTrackingMenuItem";
-            ToggleTrackingMenuItem.Size = new Size(139, 30);
+            ToggleTrackingMenuItem.RightToLeft = RightToLeft.No;
+            ToggleTrackingMenuItem.Size = new Size(188, 30);
             ToggleTrackingMenuItem.Text = "Tracking";
             ToggleTrackingMenuItem.CheckedChanged += ToggleTrackingMenuItem_CheckedChanged;
             // 
@@ -315,7 +317,7 @@
             maximizeToolStripMenuItem.Name = "maximizeToolStripMenuItem";
             maximizeToolStripMenuItem.Size = new Size(147, 22);
             maximizeToolStripMenuItem.Text = "Maximize";
-            maximizeToolStripMenuItem.Click += maximizeToolStripMenuItem_Click;
+            maximizeToolStripMenuItem.MouseDown += maximizeToolStripMenuItem_OnMouseDown;
             // 
             // closeToolStripMenuItem
             // 

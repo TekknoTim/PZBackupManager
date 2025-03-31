@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows.Forms;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.JsonData;
+using System.Reflection;
 
 
 namespace ZomboidBackupManager
@@ -89,19 +90,59 @@ namespace ZomboidBackupManager
             WriteJsonDataToJson(jsonData);
         }
 
-        public static void DeleteBackupFromJson(int index)
+        public static bool DeleteBackupFromJson(int index, bool reOrder = true)
         {
             JsonData? jsonData = ReadJsonDataFromJson();
             if (jsonData == null)
             {
-                return;
+                return false;
             }
-            List<BackupData> dataList = jsonData.Backups;
-            if (dataList.Count <= index)
+            List<BackupData>? dataList = jsonData.Backups;
+            if (dataList == null || dataList.Count <= index)
             {
-                return;
+                return false;
             }
+            PrintDebug($"[DeleteBackupFromJson] - [index = {index}] - [BackupData = {dataList[index].Name}] - [dataList[index].Index = {dataList[index].Index}]");
             dataList.RemoveAt(index);
+			if (reOrder)
+			{
+                dataList = SortBackupDataList(dataList);
+            }
+            jsonData.Backups = dataList;
+            WriteJsonDataToJson(jsonData);
+            return true;
+        }
+
+        public static bool SortCurrentLoadedJsonData()
+        {
+            JsonData? jData = ReadJsonDataFromJson();
+            if (jData == null)
+            {
+                return false;
+            }
+            List<BackupData> d = SortBackupDataList(jData.Backups);
+            jData.Backups = d;
+            WriteJsonDataToJson(jData);
+            return true;
+        }
+
+        public static List<BackupData> SortBackupDataList(List<BackupData>? backupData = null)
+        {
+            List<BackupData>? dataList;
+            if (backupData == null || backupData.Count < 0)
+            {
+                JsonData? jsonData = ReadJsonDataFromJson();
+                if (jsonData == null)
+                {
+                    PrintDebug($" - [SortBackupDataList Aborted] - jsonData was null!",2);
+                    return new List<BackupData>();
+                }
+                dataList = jsonData.Backups;
+            }
+            else
+            {
+                dataList = backupData;
+            }
             int i = 0;
             foreach (var item in dataList)
             {
@@ -109,8 +150,7 @@ namespace ZomboidBackupManager
                 item.Index = i;
                 i++;
             }
-            jsonData.Backups = dataList;
-            WriteJsonDataToJson(jsonData);
+            return dataList;
         }
 
         public static void RenameBackup(int index, string? newName)
@@ -163,6 +203,22 @@ namespace ZomboidBackupManager
             return outputList;
         }
 
+        public static int GetBackupDataPosInList(int index)
+        {
+            List<BackupData>? dataList = GetBackupDataListFromJson();
+            if (dataList == null || dataList.Count < 0)
+            {
+                return -1;
+            }
+            int pos = dataList.FindIndex(0, x => x.Index == index);
+            if (pos < 0)
+            {
+                PrintDebug($"[GetBackupDataPosInList] - [index = {index}] - [pos = {pos}] - [name = {dataList[pos].Name}]");
+                return -1;
+            }
+            return pos;
+        }
+
         public static string GetBackupFolderPathFromJson(int index)
         {
             BackupData? data = GetBackupDataFromJson(index);
@@ -200,14 +256,14 @@ namespace ZomboidBackupManager
 
         public static BackupData? GetBackupDataFromJson(int index)
         {
-            List<BackupData>? backupDataList = GetBackupDataListFromJson();
-            int lastIndex = GetLastBackupIndexFromJson(backupDataList);
-            if (backupDataList == null || backupDataList.Count <= 0 || index < 0 || index > lastIndex || lastIndex < 0)
+            List<BackupData>? dataList = GetBackupDataListFromJson();
+            int lastIndex = GetLastBackupIndexFromJson(dataList);
+            if (dataList == null || dataList.Count <= 0 || index < 0 || index > lastIndex || lastIndex < 0)
             {
                 return null;
             }
-            BackupData data = backupDataList[index];
-            return data;
+            BackupData? bData = dataList.Find(x => x.Index == index);
+            return bData;
         }
 
         public static string[] GetAllBackupDataNamesFromJson()
@@ -232,12 +288,17 @@ namespace ZomboidBackupManager
 
         public static string? GetBackupDataNameFromJson(int index)
         {
-            List<BackupData>? backupDataList = GetBackupDataListFromJson();
-            if (backupDataList == null)
+            List<BackupData>? dataList = GetBackupDataListFromJson();
+            if (dataList == null)
             {
                 return string.Empty;
             }
-            return backupDataList[index].Name;
+            BackupData? bData = dataList.Find(x => x.Index == index);
+            if (bData == null)
+            {
+                return string.Empty;
+            }
+            return bData.Name;
         }
 
         public static int GetLastBackupIndexFromJson(List<BackupData>? backupDataList = null)
@@ -250,8 +311,8 @@ namespace ZomboidBackupManager
             {
                 return -1;
             }
-            BackupData data = backupDataList[backupDataList.Count - 1];
-            return data.Index;
+            int i = backupDataList.Count - 1;
+            if (i > 0) { return backupDataList[i].Index; } else { return 0; }
         }
 
         public static int GetBackupCount()

@@ -3,12 +3,15 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
+using System.Reflection.Metadata;
 
 namespace ZomboidBackupManager
 {
     public partial class MainWindow : Form
     {
         private Form? PZScriptHookWindow = null;
+
+        public bool isInSelectionMode = false;
 
         public MainWindow()
         {
@@ -45,7 +48,6 @@ namespace ZomboidBackupManager
                 return;
             }
             SetBackupButtonsEn(false);
-            DeleteAllBackupsButton.Enabled = false;
             BackupButton.Enabled = false;
             var item = GamemodeComboBox.SelectedItem;
             if (item != null)
@@ -142,7 +144,6 @@ namespace ZomboidBackupManager
             {
                 BackupButton.Enabled = true;
                 //MiniWindowButton.Visible = true;
-                DeleteAllBackupsButton.Enabled = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
                 LoadAndDisplayBackups();
@@ -155,7 +156,6 @@ namespace ZomboidBackupManager
                     string? itemName = item.ToString();
                     LoadJustGamemode(itemName, GamemodeComboBox.SelectedIndex);
                 }
-                DeleteAllBackupsButton.Enabled = false;
                 BackupButton.Enabled = false;
                 //MiniWindowButton.Visible = false;
             }
@@ -223,21 +223,9 @@ namespace ZomboidBackupManager
         }
         private bool LoadBackupThumbnail()
         {
-            var selBackup = BackupListBox.SelectedItem;
-            if (selBackup == null)
-            {
-                return false;
-            }
-
-            string? selBackupName = selBackup.ToString();
-            if (string.IsNullOrEmpty(selBackupName))
-            {
-                return false;
-            }
+            string backupPATH = GetBackupFolderPathFromJson(BackupListBox.SelectedIndex);
             string imageName = @"thumb.png";
-            string fullBackupPATH = Configuration.currentLoadedBackupFolderPATH;
-            string tmp = Path.Combine(fullBackupPATH, selBackupName);
-            string thumbnailPATH = Path.Combine(tmp, imageName);
+            string thumbnailPATH = Path.Combine(backupPATH, imageName);
             //MessageBox.Show(@"THUMBNAIL PATH --> " + thumbnailPATH);
             if (!File.Exists(thumbnailPATH))
             {
@@ -248,7 +236,7 @@ namespace ZomboidBackupManager
         }
 
         private void SetSavegameRemote()
-        { 
+        {
             if (!Configuration.autoSelectSavegameOnStart)
             {
                 PrintDebug($"[SetSavegameRemote] - [Aborted] - autoSelectSavegameOnStart = [{Configuration.autoSelectSavegameOnStart}]");
@@ -283,7 +271,6 @@ namespace ZomboidBackupManager
             {
                 BackupButton.Enabled = true;
                 //MiniWindowButton.Visible = true;
-                DeleteAllBackupsButton.Enabled = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
                 LoadAndDisplayBackups();
@@ -448,9 +435,11 @@ namespace ZomboidBackupManager
 
         private void SetBackupButtonsEn(bool val)
         {
+            if (isInSelectionMode)
+            {
+                return;
+            }
             RestoreButton.Enabled = val;
-            DeleteBackupButton.Enabled = val;
-            RenameBackupButton.Enabled = val;
         }
 
         private async void BackupListBox_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -574,65 +563,20 @@ namespace ZomboidBackupManager
             BackupSizeInfoValueLabel.Text = size;
         }
 
-        private void RenameBackupButton_Click(object sender, EventArgs e)
+
+        private void EditBackupButton_MouseClick(object sender, MouseEventArgs e)
         {
-            if (BackupListBox.SelectedIndex < 0 || BackupListBox.SelectedIndex >= BackupListBox.Items.Count)
-            {
-                MessageBox.Show($"Please select a valid backup first! Selected Index = [{BackupListBox.SelectedIndex}]");
-                return;
-            }
-            LoadRenameBackupWindow();
+            this.EditBackupsContextMenu.Show();
         }
 
-        private void LoadRenameBackupWindow()
-        {
-            var backupItem = BackupListBox.SelectedItem;
-            if (backupItem == null)
-            {
-                return;
-            }
-            string? backupName = backupItem.ToString();
-            if (backupName == null)
-            {
-                return;
-            }
-            var form = new RenameBackupWindow(backupName);
-            var result = form.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                RenameBackup(BackupListBox.SelectedIndex, form.InputText);
-                LoadAndDisplayBackups();
-                return;
-            }
-        }
-
-        private async void DeleteBackupButton_Click(object sender, EventArgs e)
-        {
-            var result = MessageBox.Show($"Are you sure you want to delete this backup? \n Name: {GetBackupDataNameFromJson(BackupListBox.SelectedIndex)} \n Index: {BackupListBox.SelectedIndex} ", "Confirm deletion!", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-            Delete delete = new Delete();
-            await delete.DoDelete(BackupListBox.SelectedIndex, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
-            LoadAndDisplayBackups();
-            SetSavegameLabelValues();
-            SetBackupLabelValues();
-        }
-
-        private void MiniWindowButton_Click(object sender, EventArgs e)
-        {
-            LoadMiniWindow();
-        }
-
-        private void LoadMiniWindow()
-        {
-            var form = new MiniBackupWindow();
-            this.Hide();
-            form.ShowDialog();
-            this.Show();
-            LoadAndDisplayBackups();
-        }
+        //private void LoadMiniWindow()
+        //{
+        //    var form = new MiniBackupWindow();
+        //    this.Hide();
+        //    form.ShowDialog();
+        //   this.Show();
+        //    LoadAndDisplayBackups();
+        //}
 
         private void StartHookButton_Click(object sender, EventArgs e)
         {
@@ -671,9 +615,13 @@ namespace ZomboidBackupManager
             SavegameListBox.SelectedIndex = currentLoadedSavegameIndex;
             LoadAndDisplayBackups();
         }
-
-        private async void DeleteAllBackupsButton_Click(object sender, EventArgs e)
+        /*
+        private async void DeleteAllBackupsButton_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
             if (SavegameListBox.SelectedIndex < 0)
             {
                 return;
@@ -696,6 +644,224 @@ namespace ZomboidBackupManager
             DeleteAll deleteAll = new DeleteAll();
             await deleteAll.DoDeleteAll(ProgressbarLabel, ProgressBarA, ProgressbarPanel);
             LoadSavegamesInSelectedGamemode();
+        }
+        */
+
+        private void ConfirmRenameBackup()
+        {
+            var backupItem = BackupListBox.SelectedItem;
+            if (backupItem == null)
+            {
+                MessageBox.Show("Please enter a backup to before you try to rename a backup!");
+                return;
+            }
+            string? backupName = backupItem.ToString();
+            if (string.IsNullOrWhiteSpace(backupName))
+            {
+                return;
+            }
+            string newName = RenameEnterTextOption.Text;
+            if (string.IsNullOrWhiteSpace(newName))
+            {
+                MessageBox.Show("Please enter a name to rename a backup!");
+                return;
+            }
+            RenameBackup(BackupListBox.SelectedIndex, newName);
+            LoadAndDisplayBackups();
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------[  Edit Backup Menu  ]---------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+        private void DeleteSelected_OnClick(object sender, EventArgs e)
+        {
+            if (BackupListBox.SelectedIndex < 0 || BackupListBox.SelectedIndex >= BackupListBox.Items.Count)
+            {
+                PrintDebug($"[Error] - [DeleteSelected_OnClick] - [BackupListBox.SelectedIndex = {BackupListBox.SelectedIndex}]");
+                return;
+            }
+            if (BackupListBox.SelectedItems.Count == 1)
+            {
+                DeleteSingleBackup(BackupListBox.SelectedIndex);
+            }
+            else if (BackupListBox.SelectedItems.Count > 1)
+            {
+                DeleteMultipleBackups();
+            }
+            else
+            {
+                return ;
+            }
+        }
+
+        private async void DeleteSingleBackup(int idx)
+        {
+            var result = MessageBox.Show($"Are you sure you want to delete this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm deletion!", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            Delete delete = new Delete();
+            await delete.DoDelete(BackupListBox.SelectedIndex, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
+            LoadAndDisplayBackups();
+            SetSavegameLabelValues();
+            SetBackupLabelValues();
+        }
+
+        private void DeleteMultipleBackups()
+        {
+            List<string> u = new List<string>();
+            foreach (var item in BackupListBox.SelectedItems)
+            {
+                if (item != null)
+                {
+                    string? name = item.ToString();
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        u.Add(name);
+                    }
+                }
+            }
+
+            string[] s = u.ToArray();
+            BackupListBox.SelectedItems.CopyTo(s, 0);
+            string strList= string.Join("\n", s);
+            var result = MessageBox.Show($"Are you sure you want to delete the {BackupListBox.SelectedItems.Count} selected backups? \n {strList}", "Please confirm!", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            result = MessageBox.Show($"Are you really sure you want to do that right now? It can take some time, tho!", "Please confirm again!" , MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            ListBox.SelectedIndexCollection col = BackupListBox.SelectedIndices;
+            List<string> paths = new List<string>();
+            Dictionary<string,int> keys = new Dictionary<string, int>();
+            foreach (int index in col)
+            {
+                string? path = GetBackupFolderPathFromJson(index);
+                PrintDebug($"[DeleteMultipleBackups] - [index = {index}] - [path = {path}]");
+                if (path != null)
+                {
+                    paths.Add(path);
+                    keys.Add(path, index);
+                }
+            }
+            if (isInSelectionMode)
+            {
+                SetSelectionMode(false);
+            }
+            DeleteMulti multiDelete = new DeleteMulti(paths, keys);
+            if (multiDelete.Status == Status.FAILED)
+            {
+                MessageBox.Show("Failed to init DeleteMulti.cs. Creation returned - STATUS.FAILED!");
+                return ;
+            }
+            multiDelete.OnStatusChanged += DeleteMulti_OnStatusChanged;
+            this.Enabled = false;
+            multiDelete.StartDeleteMultiple();
+        }
+
+        private void DeleteMulti_OnStatusChanged(object? sender, Status s)
+        {
+            PrintDebug($"[DeleteMulti] - [OnStatusChanged] - [To = {s.ToString()}]");
+            if (s == Status.FAILED)
+            {
+                MessageBox.Show($"DEBUG - DeleteMulti_OnStatusChanged - Status = {s.ToString()} " );
+
+            }
+            else if (s == Status.DONE)
+            {
+                this.Enabled = true;
+                LoadAndDisplayBackups();
+                SetSavegameLabelValues();
+                SetBackupLabelValues();
+            }
+
+        }
+
+        private void SelectMultiOption_Click(object sender, EventArgs e)
+        {
+            SetSelectionMode(true);
+        }
+
+        private void SelectAllOption_Click(object sender, EventArgs e)
+        {
+            SetSelectionMode(true);
+        }
+
+        private void SetSelectionMode(bool multi)
+        {
+            if (multi)
+            {
+                isInSelectionMode = true;
+                RestoreButton.Enabled = false;
+                BackupButton.Enabled = false;
+                StartHookButton.Enabled = false;
+                GamemodeComboBox.Enabled = false;
+                SavegameListBox.Enabled = false;
+                RenameContextMenuItem.Visible = false;
+                SelectContextMenuItem.Visible = false;
+                StopMultiSelectMenuItem.Visible = true;
+                BackupListBox.SelectionMode = SelectionMode.MultiExtended;
+            }
+            else
+            {
+                isInSelectionMode = false;
+                RestoreButton.Enabled = true;
+                BackupButton.Enabled = true;
+                StartHookButton.Enabled = true;
+                GamemodeComboBox.Enabled = true;
+                SavegameListBox.Enabled = true;
+                RenameContextMenuItem.Visible = true;
+                SelectContextMenuItem.Visible = true;
+                StopMultiSelectMenuItem.Visible = false;
+                BackupListBox.SelectionMode = SelectionMode.One;
+            }
+        }
+
+        private void SetRenameLabelTextItem()
+        {
+            var backup = BackupListBox.SelectedItem;
+            if (backup == null)
+            {
+                return;
+            }
+            string? backupName = backup.ToString();
+            if (string.IsNullOrWhiteSpace(backupName))
+            {
+                return;
+            }
+            RenameLabelTextItem.Text = $"Savegame: {backupName}";
+        }
+
+        private void RenameEnterTextOption_Click(object sender, EventArgs e)
+        {
+            RenameEnterTextOption.Text = string.Empty;
+        }
+
+        private void ConfrimRenameOption_Click(object sender, EventArgs e)
+        {
+            ConfirmRenameBackup();
+        }
+
+        private void EditBackupsContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SetRenameLabelTextItem();
+            if (isInSelectionMode)
+            {
+                SelectContextMenuItem.Visible = false;
+                StopMultiSelectMenuItem.Visible = true;
+            }
+        }
+
+        private void StopMultiSelectMenuItem_MouseDown(object sender, MouseEventArgs e)
+        {
+            SetSelectionMode(false);
         }
     }
 }

@@ -10,6 +10,8 @@ using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 using System.Resources;
 using System.ComponentModel;
+using static System.Windows.Forms.DataFormats;
+using System.Reflection.Metadata;
 
 namespace ZomboidBackupManager
 {
@@ -408,7 +410,7 @@ namespace ZomboidBackupManager
             SavegameComboBox.Text = @" - ";
         }
 
-        private void MinimizedNotifyIcon_MouseClick(object sender, MouseEventArgs e)
+        private void MinimizedNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -418,11 +420,14 @@ namespace ZomboidBackupManager
             }
         }
 
-        private void maximizeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void maximizeToolStripMenuItem_OnMouseDown(object sender, MouseEventArgs e)
         {
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-            MinimizedNotifyIcon.Visible = false;
+            if (e.Button == MouseButtons.Left)
+            {
+                this.WindowState = FormWindowState.Normal;
+                this.ShowInTaskbar = true;
+                MinimizedNotifyIcon.Visible = false;
+            }
         }
 
         private void OnMinimizingWindow(object sender, EventArgs e)
@@ -435,10 +440,11 @@ namespace ZomboidBackupManager
                 {
                     MinimizedNotifyIcon.ShowBalloonTip(10000);
                 }
-
                 SetNotifyIconMenuData();
             }
         }
+
+
 
         private void SetNotifyIconMenuData()
         {
