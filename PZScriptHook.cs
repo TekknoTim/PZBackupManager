@@ -444,8 +444,6 @@ namespace ZomboidBackupManager
             }
         }
 
-
-
         private void SetNotifyIconMenuData()
         {
             if (fileWatcher.EnableRaisingEvents)
@@ -495,6 +493,11 @@ namespace ZomboidBackupManager
             {
                 myParentForm.Close();
             }
+        }
+
+        private void txtLog_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

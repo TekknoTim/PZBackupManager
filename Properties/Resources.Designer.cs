@@ -90,5 +90,41 @@ namespace ZomboidBackupManager.Properties
                 return ((System.Drawing.Icon)(obj));
             }
         }
+
+        internal static System.Drawing.Bitmap IconImage
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("IconImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap DoneButtonSelectMulti
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("DoneButtonSelectMulti", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ConnectSpiffo
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ConnectSpiffo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap RadiowaveIconImage
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RadiowaveIconImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

@@ -398,3 +398,14 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Resources/AntennaIconImage512.bmp
+/Resources/AppIconImage512.bmp
+/Resources/ConnectToSpiffo2048x1244.bmp
+/Resources/ConnectToSpiffo2k.bmp
+/Resources/DoneButtonImage512.bmp
+/Resources/EarIconImage512.bmp
+/Resources/Gear512.bmp
+/Resources/PenIconImage512.bmp
+/Resources/RadiowaveIconImage512.bmp
+/Resources/SelectMultiButtonImage512.bmp
+/Resources/TrashbinIconImage512.bmp

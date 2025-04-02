@@ -82,6 +82,7 @@
             txtLog.SelectionMode = SelectionMode.None;
             txtLog.Size = new Size(360, 132);
             txtLog.TabIndex = 1;
+            txtLog.SelectedIndexChanged += txtLog_SelectedIndexChanged;
             // 
             // LoadedSavegameInfoPanel
             // 
@@ -289,8 +290,7 @@
             ToggleTrackingContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             ToggleTrackingContextMenu.Items.AddRange(new ToolStripItem[] { ToggleTrackingMenuItem });
             ToggleTrackingContextMenu.Name = "contextMenuStrip1";
-            ToggleTrackingContextMenu.OwnerItem = toggleTrackingToolStripMenuItem;
-            ToggleTrackingContextMenu.Size = new Size(189, 56);
+            ToggleTrackingContextMenu.Size = new Size(140, 34);
             ToggleTrackingContextMenu.Text = "ToggleTrackingContextMenu";
             // 
             // ToggleTrackingMenuItem
@@ -304,7 +304,7 @@
             ToggleTrackingMenuItem.ImageTransparentColor = Color.Transparent;
             ToggleTrackingMenuItem.Name = "ToggleTrackingMenuItem";
             ToggleTrackingMenuItem.RightToLeft = RightToLeft.No;
-            ToggleTrackingMenuItem.Size = new Size(188, 30);
+            ToggleTrackingMenuItem.Size = new Size(139, 30);
             ToggleTrackingMenuItem.Text = "Tracking";
             ToggleTrackingMenuItem.CheckedChanged += ToggleTrackingMenuItem_CheckedChanged;
             // 

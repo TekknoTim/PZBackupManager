@@ -1,4 +1,6 @@
 ﻿using System.IO;
+
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 using static ZomboidBackupManager.JsonData;
@@ -46,8 +48,23 @@ namespace ZomboidBackupManager
     }
     public class Backup
     {
-        public async Task DoBackup(string savegameName, string gamemode, string savegamePath, string path, int index, Label statusLabel, ProgressBar progressBar, Panel? panel = null)
+
+        private Status status;
+        public Status Status { get { return status; } }
+
+        public event EventHandler<Status>? OnStatusChanged;
+        public event EventHandler<Status>? OnDone;
+
+        private void ChangeCurrentStatus(Status s)
         {
+            status = s;
+            if (s == Status.DONE) { OnDone?.Invoke(this, s); }
+            OnStatusChanged?.Invoke(this, s);
+        }
+
+        public async Task DoBackup(string savegameName, string gamemode, string savegamePath, string path, int index, Label statusLabel, System.Windows.Forms.ProgressBar progressBar, Panel? panel = null)
+        {
+            ChangeCurrentStatus(Status.BUSY);
             BackupProcess backupProcess = new BackupProcess();
             if (panel != null)
             {
@@ -89,10 +106,12 @@ namespace ZomboidBackupManager
                 panel.Visible = false;
             }
             statusLabel.Text = @" - ";
+            ChangeCurrentStatus(Status.DONE);
         }
 
         public async Task DoBackupFromRemote(ListBox statusLog, PZScriptHook scriptHook)
         {
+            ChangeCurrentStatus(Status.BUSY);
             BackupProcess backupProcess = new BackupProcess();
             int i = 0;
             var progress = new Progress<int>(percent =>
@@ -121,6 +140,8 @@ namespace ZomboidBackupManager
             Thread.Sleep(500);
 
             PrintStatusLog(statusLog, "Backup Process Finished!");
+
+            ChangeCurrentStatus(Status.DONE);
         }
 
 

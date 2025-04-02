@@ -29,8 +29,11 @@ namespace ZomboidBackupManager
 
         private void RefreshCheckboxes()
         {
-            ShowMessageBoxBackupCheckbox.Checked = Configuration.showMsgWhenBackupProcessDone;
-            LoadSavegameOnLoadCheckbox.Checked = Configuration.autoSelectSavegameOnStart;
+            ShowMsgSettingMenuOption.Checked = Configuration.showMsgWhenBackupProcessDone;
+            AutoSelectSGSettingMenuOption.Checked = Configuration.autoSelectSavegameOnStart;
+            CompressZipSettingMenuOption.Checked = Configuration.saveBackupsAsZipFile;
+
+
         }
 
         private void LoadGamemodes()
@@ -409,16 +412,6 @@ namespace ZomboidBackupManager
             return true;
         }
 
-        private void ThumbnailPictureBox_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BackgroundPanel_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void BackupListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (IsValidBackupSelected())
@@ -440,6 +433,7 @@ namespace ZomboidBackupManager
                 return;
             }
             RestoreButton.Enabled = val;
+            DeleteSelectedToolStripButton.Enabled = val;
         }
 
         private async void BackupListBox_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -475,48 +469,28 @@ namespace ZomboidBackupManager
                 return;
             }
             Backup backup = new Backup();
+            backup.OnStatusChanged += Backup_OnStatusChanged;
             await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel, ProgressBarA, ProgressbarPanel);
-            LoadAndDisplayBackups();
-            SetSavegameLabelValues();
-            SetBackupLabelValues();
-        }
 
-        private void ShowMessageBoxBackupCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetShowMessageboxWhenBackupDone();
         }
 
         private async void SetShowMessageboxWhenBackupDone()
         {
-            if (ShowMessageBoxBackupCheckbox.Checked)
-            {
-                Configuration.showMsgWhenBackupProcessDone = true;
-            }
-            else
-            {
-                Configuration.showMsgWhenBackupProcessDone = false;
-            }
+            Configuration.showMsgWhenBackupProcessDone = ShowMsgSettingMenuOption.Checked;
             await Configuration.WriteCfgToJson();
-        }
-
-        private void LoadSavegameOnLoadCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetAutoSelectSavegameOnStart();
         }
 
         private async void SetAutoSelectSavegameOnStart()
         {
-            if (LoadSavegameOnLoadCheckbox.Checked)
-            {
-                Configuration.autoSelectSavegameOnStart = true;
-            }
-            else
-            {
-                Configuration.autoSelectSavegameOnStart = false;
-            }
+            Configuration.autoSelectSavegameOnStart = AutoSelectSGSettingMenuOption.Checked;
             await Configuration.WriteCfgToJson();
         }
 
+        private async void SetSaveBackupsAsZipSetting()
+        {
+            Configuration.saveBackupsAsZipFile = CompressZipSettingMenuOption.Checked;
+            await Configuration.WriteCfgToJson();
+        }
 
         private void SetSavegameLabelValues()
         {
@@ -577,35 +551,6 @@ namespace ZomboidBackupManager
         //   this.Show();
         //    LoadAndDisplayBackups();
         //}
-
-        private void StartHookButton_Click(object sender, EventArgs e)
-        {
-            LoadHookWindow();
-        }
-
-        private void LoadHookWindow()
-        {
-            var form = new PZScriptHook();
-            form.FormClosing += new FormClosingEventHandler(OnHookWindowClosing);
-            PZScriptHookWindow = form;
-            form.myParentForm = this;
-            form.Show();
-            this.Hide();
-
-
-        }
-
-        public void OnHookWindowClosing(object? sender, EventArgs e)
-        {
-            if (PZScriptHookWindow != null)
-            {
-                PZScriptHookWindow.FormClosing -= OnHookWindowClosing;
-
-                PZScriptHookWindow = null;
-            }
-            UnhideForm();
-        }
-
 
         private void UnhideForm()
         {
@@ -692,7 +637,7 @@ namespace ZomboidBackupManager
             }
             else
             {
-                return ;
+                return;
             }
         }
 
@@ -727,20 +672,20 @@ namespace ZomboidBackupManager
 
             string[] s = u.ToArray();
             BackupListBox.SelectedItems.CopyTo(s, 0);
-            string strList= string.Join("\n", s);
+            string strList = string.Join("\n", s);
             var result = MessageBox.Show($"Are you sure you want to delete the {BackupListBox.SelectedItems.Count} selected backups? \n {strList}", "Please confirm!", MessageBoxButtons.YesNo);
             if (result == DialogResult.No)
             {
                 return;
             }
-            result = MessageBox.Show($"Are you really sure you want to do that right now? It can take some time, tho!", "Please confirm again!" , MessageBoxButtons.YesNo);
+            result = MessageBox.Show($"Are you really sure you want to do that right now? It can take some time, tho!", "Please confirm again!", MessageBoxButtons.YesNo);
             if (result == DialogResult.No)
             {
                 return;
             }
             ListBox.SelectedIndexCollection col = BackupListBox.SelectedIndices;
             List<string> paths = new List<string>();
-            Dictionary<string,int> keys = new Dictionary<string, int>();
+            Dictionary<string, int> keys = new Dictionary<string, int>();
             foreach (int index in col)
             {
                 string? path = GetBackupFolderPathFromJson(index);
@@ -759,7 +704,7 @@ namespace ZomboidBackupManager
             if (multiDelete.Status == Status.FAILED)
             {
                 MessageBox.Show("Failed to init DeleteMulti.cs. Creation returned - STATUS.FAILED!");
-                return ;
+                return;
             }
             multiDelete.OnStatusChanged += DeleteMulti_OnStatusChanged;
             this.Enabled = false;
@@ -771,12 +716,34 @@ namespace ZomboidBackupManager
             PrintDebug($"[DeleteMulti] - [OnStatusChanged] - [To = {s.ToString()}]");
             if (s == Status.FAILED)
             {
-                MessageBox.Show($"DEBUG - DeleteMulti_OnStatusChanged - Status = {s.ToString()} " );
+                MessageBox.Show($"DEBUG - DeleteMulti_OnStatusChanged - Status = {s.ToString()} ");
 
             }
             else if (s == Status.DONE)
             {
                 this.Enabled = true;
+                LoadAndDisplayBackups();
+                SetSavegameLabelValues();
+                SetBackupLabelValues();
+            }
+
+        }
+
+        private async void Backup_OnStatusChanged(object? sender, Status s)
+        {
+            PrintDebug($"[Backup] - [OnStatusChanged] - [To = {s.ToString()}]");
+            if (s == Status.FAILED)
+            {
+                MessageBox.Show($"DEBUG - Backup_OnStatusChanged - Status = {s.ToString()} ");
+
+            }
+            else if (s == Status.DONE)
+            {
+                if (saveBackupsAsZipFile)
+                {
+                    Compress compress = new Compress();
+                    await compress.DoCompress(GetDefaultBackupFolderName(GetLastBackupFolderNumber()), currentLoadedBackupFolderPATH, ProgressbarLabel);
+                }
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
                 SetBackupLabelValues();
@@ -801,12 +768,14 @@ namespace ZomboidBackupManager
                 isInSelectionMode = true;
                 RestoreButton.Enabled = false;
                 BackupButton.Enabled = false;
-                StartHookButton.Enabled = false;
+                ListenToPZToolStripButton.Enabled = false;
                 GamemodeComboBox.Enabled = false;
                 SavegameListBox.Enabled = false;
                 RenameContextMenuItem.Visible = false;
                 SelectContextMenuItem.Visible = false;
                 StopMultiSelectMenuItem.Visible = true;
+                StartMultiSelectToolTipButton.Visible = false;
+                StopMultiSelectToolTipButton.Visible = true;
                 BackupListBox.SelectionMode = SelectionMode.MultiExtended;
             }
             else
@@ -814,12 +783,14 @@ namespace ZomboidBackupManager
                 isInSelectionMode = false;
                 RestoreButton.Enabled = true;
                 BackupButton.Enabled = true;
-                StartHookButton.Enabled = true;
+                ListenToPZToolStripButton.Enabled = true;
                 GamemodeComboBox.Enabled = true;
                 SavegameListBox.Enabled = true;
                 RenameContextMenuItem.Visible = true;
                 SelectContextMenuItem.Visible = true;
                 StopMultiSelectMenuItem.Visible = false;
+                StartMultiSelectToolTipButton.Visible = true;
+                StopMultiSelectToolTipButton.Visible = false;
                 BackupListBox.SelectionMode = SelectionMode.One;
             }
         }
@@ -836,7 +807,7 @@ namespace ZomboidBackupManager
             {
                 return;
             }
-            RenameLabelTextItem.Text = $"Savegame: {backupName}";
+            RenameLabelTextItem.Text = $"Backup: {backupName}";
         }
 
         private void RenameEnterTextOption_Click(object sender, EventArgs e)
@@ -862,6 +833,95 @@ namespace ZomboidBackupManager
         private void StopMultiSelectMenuItem_MouseDown(object sender, MouseEventArgs e)
         {
             SetSelectionMode(false);
+        }
+
+        private void CompressZipSettingMenuOption_CheckedChanged(object sender, EventArgs e)
+        {
+            SetSaveBackupsAsZipSetting();
+        }
+
+        private void AutoSelectSGSettingMenuOption_CheckedChanged(object sender, EventArgs e)
+        {
+            SetAutoSelectSavegameOnStart();
+        }
+
+        private void ShowMsgSettingMenuOption_CheckedChanged(object sender, EventArgs e)
+        {
+            SetShowMessageboxWhenBackupDone();
+        }
+
+        private void ListenToPZToolStripButton_Click(object sender, EventArgs e)
+        {
+            LoadHookWindow();
+        }
+
+        private void LoadHookWindow()
+        {
+            var form = new PZScriptHook();
+            form.FormClosing += new FormClosingEventHandler(OnHookWindowClosing);
+            PZScriptHookWindow = form;
+            form.myParentForm = this;
+            form.Show();
+            this.Hide();
+
+
+        }
+
+        public void OnHookWindowClosing(object? sender, EventArgs e)
+        {
+            if (PZScriptHookWindow != null)
+            {
+                PZScriptHookWindow.FormClosing -= OnHookWindowClosing;
+
+                PZScriptHookWindow = null;
+            }
+            UnhideForm();
+        }
+
+        private void SettingsDropDownButton_Click(object sender, EventArgs e)
+        {
+            AboutInfoVersionTextBox.Text = appVersion;
+        }
+
+        private void StartMultiSelectToolTipButton_Click(object sender, EventArgs e)
+        {
+            SetSelectionMode(true);
+        }
+
+        private void StopMultiSelectToolTipButton_Click(object sender, EventArgs e)
+        {
+            SetSelectionMode(false);
+        }
+
+        private void DeleteSelectedToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (BackupListBox.SelectedIndex < 0 || BackupListBox.SelectedIndex >= BackupListBox.Items.Count)
+            {
+                PrintDebug($"[Error] - [DeleteSelected_OnClick] - [BackupListBox.SelectedIndex = {BackupListBox.SelectedIndex}]");
+                return;
+            }
+            if (BackupListBox.SelectedItems.Count == 1)
+            {
+                DeleteSingleBackup(BackupListBox.SelectedIndex);
+            }
+            else if (BackupListBox.SelectedItems.Count > 1)
+            {
+                DeleteMultipleBackups();
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void CompressZipSettingMenuOption_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AutoSelectSGSettingMenuOption_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
