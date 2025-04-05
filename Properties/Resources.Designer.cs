@@ -126,5 +126,23 @@ namespace ZomboidBackupManager.Properties
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        internal static System.Drawing.Bitmap CheckmarkFilled
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("CheckmarkFilled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap Checkmark
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Checkmark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

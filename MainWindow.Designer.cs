@@ -58,14 +58,17 @@ namespace ZomboidBackupManager
             BackgroundPanel = new Panel();
             SelectBackupPanel = new Panel();
             BackupInfoPanel = new Panel();
-            BackupMetaDataInfoPanel = new Panel();
+            BackupDataInfoPanel = new Panel();
+            HasLooseValuePictureBox = new PictureBox();
+            HasLooseTextLabel = new Label();
+            HasZipValuePictureBox = new PictureBox();
+            HasZipTextLabel = new Label();
             BackupSizeInfoTextLabel = new Label();
             BackupSizeInfoValueLabel = new Label();
             BackupDateInfoTextLabel = new Label();
             BackupTimeInfoTextLabel = new Label();
             BackupTimeInfoValueLabel = new Label();
             BackupDateInfoValueLabel = new Label();
-            BackupDataInfoPanel = new Panel();
             BackupFolderTextLabel = new Label();
             BackupFolderValueLabel = new Label();
             BackupIndexTextLabel = new Label();
@@ -78,8 +81,10 @@ namespace ZomboidBackupManager
             GeneralSettingsMenuOption = new ToolStripMenuItem();
             GeneralSettingsContextMenuStrip = new ContextMenuStrip(components);
             CompressZipSettingMenuOption = new ToolStripMenuItem();
+            KeepFolderSettingMenuOption = new ToolStripMenuItem();
             AutoSelectSGSettingMenuOption = new ToolStripMenuItem();
             ShowMsgSettingMenuOption = new ToolStripMenuItem();
+            AutoDeleteBackupMenuOption = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             AboutInfoLabelTextBox = new ToolStripTextBox();
             AboutInfoVersionTextBox = new ToolStripTextBox();
@@ -102,13 +107,14 @@ namespace ZomboidBackupManager
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
+            ToolStripSeparator3 = new ToolStripSeparator();
+            CreateZipEditBackupMenuOption = new ToolStripMenuItem();
             ToolStripSeparator1 = new ToolStripSeparator();
             DeleteSelectedToolStripButton = new ToolStripButton();
             StopMultiSelectToolTipButton = new ToolStripButton();
             StartMultiSelectToolTipButton = new ToolStripButton();
             ToolStripSeparator2 = new ToolStripSeparator();
             ListenToPZToolStripButton = new ToolStripButton();
-            ProgressbarLabel = new Label();
             BackupButton = new Button();
             SelectBackupLabel = new Label();
             BackupsPictureBox = new PictureBox();
@@ -116,6 +122,7 @@ namespace ZomboidBackupManager
             RestoreButton = new Button();
             ProgressbarPanel = new Panel();
             ProgressBarA = new ProgressBar();
+            ProgressbarLabel = new Label();
             MinimizeButtonToolTip = new ToolTip(components);
             SelectSavegamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
@@ -127,8 +134,9 @@ namespace ZomboidBackupManager
             BackgroundPanel.SuspendLayout();
             SelectBackupPanel.SuspendLayout();
             BackupInfoPanel.SuspendLayout();
-            BackupMetaDataInfoPanel.SuspendLayout();
             BackupDataInfoPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)HasLooseValuePictureBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)HasZipValuePictureBox).BeginInit();
             SettingsPanelA.SuspendLayout();
             Toolstrip1.SuspendLayout();
             GeneralSettingsContextMenuStrip.SuspendLayout();
@@ -421,7 +429,6 @@ namespace ZomboidBackupManager
             SelectBackupPanel.BackColor = SystemColors.ControlLight;
             SelectBackupPanel.Controls.Add(BackupInfoPanel);
             SelectBackupPanel.Controls.Add(SettingsPanelA);
-            SelectBackupPanel.Controls.Add(ProgressbarLabel);
             SelectBackupPanel.Controls.Add(BackupButton);
             SelectBackupPanel.Controls.Add(SelectBackupLabel);
             SelectBackupPanel.Controls.Add(BackupsPictureBox);
@@ -438,36 +445,93 @@ namespace ZomboidBackupManager
             // BackupInfoPanel
             // 
             BackupInfoPanel.BackColor = SystemColors.ControlText;
-            BackupInfoPanel.Controls.Add(BackupMetaDataInfoPanel);
             BackupInfoPanel.Controls.Add(BackupDataInfoPanel);
             BackupInfoPanel.Location = new Point(289, 150);
             BackupInfoPanel.Name = "BackupInfoPanel";
             BackupInfoPanel.Size = new Size(256, 256);
             BackupInfoPanel.TabIndex = 19;
             // 
-            // BackupMetaDataInfoPanel
+            // BackupDataInfoPanel
             // 
-            BackupMetaDataInfoPanel.BackColor = SystemColors.ControlDarkDark;
-            BackupMetaDataInfoPanel.Controls.Add(BackupSizeInfoTextLabel);
-            BackupMetaDataInfoPanel.Controls.Add(BackupSizeInfoValueLabel);
-            BackupMetaDataInfoPanel.Controls.Add(BackupDateInfoTextLabel);
-            BackupMetaDataInfoPanel.Controls.Add(BackupTimeInfoTextLabel);
-            BackupMetaDataInfoPanel.Controls.Add(BackupTimeInfoValueLabel);
-            BackupMetaDataInfoPanel.Controls.Add(BackupDateInfoValueLabel);
-            BackupMetaDataInfoPanel.Location = new Point(5, 134);
-            BackupMetaDataInfoPanel.Name = "BackupMetaDataInfoPanel";
-            BackupMetaDataInfoPanel.Size = new Size(246, 113);
-            BackupMetaDataInfoPanel.TabIndex = 20;
+            BackupDataInfoPanel.BackColor = SystemColors.ControlDarkDark;
+            BackupDataInfoPanel.Controls.Add(HasLooseValuePictureBox);
+            BackupDataInfoPanel.Controls.Add(HasLooseTextLabel);
+            BackupDataInfoPanel.Controls.Add(HasZipValuePictureBox);
+            BackupDataInfoPanel.Controls.Add(HasZipTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupSizeInfoTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupSizeInfoValueLabel);
+            BackupDataInfoPanel.Controls.Add(BackupDateInfoTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupTimeInfoTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupTimeInfoValueLabel);
+            BackupDataInfoPanel.Controls.Add(BackupDateInfoValueLabel);
+            BackupDataInfoPanel.Controls.Add(BackupFolderTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupFolderValueLabel);
+            BackupDataInfoPanel.Controls.Add(BackupIndexTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupNameTextLabel);
+            BackupDataInfoPanel.Controls.Add(BackupIndexValueLabel);
+            BackupDataInfoPanel.Controls.Add(BackupNameValueLabel);
+            BackupDataInfoPanel.Location = new Point(3, 3);
+            BackupDataInfoPanel.Name = "BackupDataInfoPanel";
+            BackupDataInfoPanel.Size = new Size(250, 250);
+            BackupDataInfoPanel.TabIndex = 12;
+            // 
+            // HasLooseValuePictureBox
+            // 
+            HasLooseValuePictureBox.BackColor = SystemColors.Control;
+            HasLooseValuePictureBox.BorderStyle = BorderStyle.FixedSingle;
+            HasLooseValuePictureBox.Image = Resources.CheckmarkFilled;
+            HasLooseValuePictureBox.Location = new Point(218, 110);
+            HasLooseValuePictureBox.Name = "HasLooseValuePictureBox";
+            HasLooseValuePictureBox.Size = new Size(30, 30);
+            HasLooseValuePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            HasLooseValuePictureBox.TabIndex = 31;
+            HasLooseValuePictureBox.TabStop = false;
+            // 
+            // HasLooseTextLabel
+            // 
+            HasLooseTextLabel.BackColor = SystemColors.Control;
+            HasLooseTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            HasLooseTextLabel.Font = new Font("Bahnschrift", 10F);
+            HasLooseTextLabel.Location = new Point(125, 110);
+            HasLooseTextLabel.Name = "HasLooseTextLabel";
+            HasLooseTextLabel.Size = new Size(93, 30);
+            HasLooseTextLabel.TabIndex = 30;
+            HasLooseTextLabel.Text = "Loose:";
+            HasLooseTextLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // HasZipValuePictureBox
+            // 
+            HasZipValuePictureBox.BackColor = SystemColors.Control;
+            HasZipValuePictureBox.BorderStyle = BorderStyle.FixedSingle;
+            HasZipValuePictureBox.Image = Resources.CheckmarkFilled;
+            HasZipValuePictureBox.Location = new Point(95, 110);
+            HasZipValuePictureBox.Name = "HasZipValuePictureBox";
+            HasZipValuePictureBox.Size = new Size(30, 30);
+            HasZipValuePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            HasZipValuePictureBox.TabIndex = 29;
+            HasZipValuePictureBox.TabStop = false;
+            // 
+            // HasZipTextLabel
+            // 
+            HasZipTextLabel.BackColor = SystemColors.Control;
+            HasZipTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            HasZipTextLabel.Font = new Font("Bahnschrift", 10F);
+            HasZipTextLabel.Location = new Point(1, 110);
+            HasZipTextLabel.Name = "HasZipTextLabel";
+            HasZipTextLabel.Size = new Size(94, 30);
+            HasZipTextLabel.TabIndex = 28;
+            HasZipTextLabel.Text = "Zip:";
+            HasZipTextLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BackupSizeInfoTextLabel
             // 
             BackupSizeInfoTextLabel.BackColor = SystemColors.Control;
             BackupSizeInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupSizeInfoTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupSizeInfoTextLabel.Location = new Point(5, 75);
+            BackupSizeInfoTextLabel.Location = new Point(1, 210);
             BackupSizeInfoTextLabel.Name = "BackupSizeInfoTextLabel";
-            BackupSizeInfoTextLabel.Size = new Size(69, 30);
-            BackupSizeInfoTextLabel.TabIndex = 20;
+            BackupSizeInfoTextLabel.Size = new Size(60, 30);
+            BackupSizeInfoTextLabel.TabIndex = 26;
             BackupSizeInfoTextLabel.Text = "Size:";
             BackupSizeInfoTextLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -476,11 +540,11 @@ namespace ZomboidBackupManager
             BackupSizeInfoValueLabel.BackColor = SystemColors.Control;
             BackupSizeInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupSizeInfoValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupSizeInfoValueLabel.Location = new Point(73, 75);
+            BackupSizeInfoValueLabel.Location = new Point(60, 210);
             BackupSizeInfoValueLabel.Margin = new Padding(5, 0, 5, 0);
             BackupSizeInfoValueLabel.Name = "BackupSizeInfoValueLabel";
-            BackupSizeInfoValueLabel.Size = new Size(170, 30);
-            BackupSizeInfoValueLabel.TabIndex = 21;
+            BackupSizeInfoValueLabel.Size = new Size(188, 30);
+            BackupSizeInfoValueLabel.TabIndex = 27;
             BackupSizeInfoValueLabel.Text = "-";
             BackupSizeInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -489,10 +553,10 @@ namespace ZomboidBackupManager
             BackupDateInfoTextLabel.BackColor = SystemColors.Control;
             BackupDateInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupDateInfoTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupDateInfoTextLabel.Location = new Point(5, 5);
+            BackupDateInfoTextLabel.Location = new Point(1, 146);
             BackupDateInfoTextLabel.Name = "BackupDateInfoTextLabel";
-            BackupDateInfoTextLabel.Size = new Size(69, 30);
-            BackupDateInfoTextLabel.TabIndex = 19;
+            BackupDateInfoTextLabel.Size = new Size(60, 30);
+            BackupDateInfoTextLabel.TabIndex = 25;
             BackupDateInfoTextLabel.Text = "Date:";
             BackupDateInfoTextLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -501,10 +565,10 @@ namespace ZomboidBackupManager
             BackupTimeInfoTextLabel.BackColor = SystemColors.Control;
             BackupTimeInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupTimeInfoTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupTimeInfoTextLabel.Location = new Point(5, 40);
+            BackupTimeInfoTextLabel.Location = new Point(1, 178);
             BackupTimeInfoTextLabel.Name = "BackupTimeInfoTextLabel";
-            BackupTimeInfoTextLabel.Size = new Size(69, 30);
-            BackupTimeInfoTextLabel.TabIndex = 12;
+            BackupTimeInfoTextLabel.Size = new Size(60, 30);
+            BackupTimeInfoTextLabel.TabIndex = 23;
             BackupTimeInfoTextLabel.Text = "Time:";
             BackupTimeInfoTextLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -513,11 +577,11 @@ namespace ZomboidBackupManager
             BackupTimeInfoValueLabel.BackColor = SystemColors.Control;
             BackupTimeInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupTimeInfoValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupTimeInfoValueLabel.Location = new Point(73, 40);
+            BackupTimeInfoValueLabel.Location = new Point(60, 178);
             BackupTimeInfoValueLabel.Margin = new Padding(5, 0, 5, 0);
             BackupTimeInfoValueLabel.Name = "BackupTimeInfoValueLabel";
-            BackupTimeInfoValueLabel.Size = new Size(170, 30);
-            BackupTimeInfoValueLabel.TabIndex = 13;
+            BackupTimeInfoValueLabel.Size = new Size(188, 30);
+            BackupTimeInfoValueLabel.TabIndex = 24;
             BackupTimeInfoValueLabel.Text = "-";
             BackupTimeInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -526,36 +590,22 @@ namespace ZomboidBackupManager
             BackupDateInfoValueLabel.BackColor = SystemColors.Control;
             BackupDateInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupDateInfoValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupDateInfoValueLabel.Location = new Point(73, 5);
+            BackupDateInfoValueLabel.Location = new Point(60, 146);
             BackupDateInfoValueLabel.Margin = new Padding(5, 0, 5, 0);
             BackupDateInfoValueLabel.Name = "BackupDateInfoValueLabel";
-            BackupDateInfoValueLabel.Size = new Size(170, 30);
-            BackupDateInfoValueLabel.TabIndex = 11;
+            BackupDateInfoValueLabel.Size = new Size(188, 30);
+            BackupDateInfoValueLabel.TabIndex = 22;
             BackupDateInfoValueLabel.Text = "-";
             BackupDateInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // BackupDataInfoPanel
-            // 
-            BackupDataInfoPanel.BackColor = SystemColors.ControlDarkDark;
-            BackupDataInfoPanel.Controls.Add(BackupFolderTextLabel);
-            BackupDataInfoPanel.Controls.Add(BackupFolderValueLabel);
-            BackupDataInfoPanel.Controls.Add(BackupIndexTextLabel);
-            BackupDataInfoPanel.Controls.Add(BackupNameTextLabel);
-            BackupDataInfoPanel.Controls.Add(BackupIndexValueLabel);
-            BackupDataInfoPanel.Controls.Add(BackupNameValueLabel);
-            BackupDataInfoPanel.Location = new Point(5, 12);
-            BackupDataInfoPanel.Name = "BackupDataInfoPanel";
-            BackupDataInfoPanel.Size = new Size(246, 113);
-            BackupDataInfoPanel.TabIndex = 12;
             // 
             // BackupFolderTextLabel
             // 
             BackupFolderTextLabel.BackColor = SystemColors.Control;
             BackupFolderTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupFolderTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupFolderTextLabel.Location = new Point(5, 75);
+            BackupFolderTextLabel.Location = new Point(1, 73);
             BackupFolderTextLabel.Name = "BackupFolderTextLabel";
-            BackupFolderTextLabel.Size = new Size(69, 30);
+            BackupFolderTextLabel.Size = new Size(60, 30);
             BackupFolderTextLabel.TabIndex = 14;
             BackupFolderTextLabel.Text = "Folder:";
             BackupFolderTextLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -565,9 +615,9 @@ namespace ZomboidBackupManager
             BackupFolderValueLabel.BackColor = SystemColors.Control;
             BackupFolderValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupFolderValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupFolderValueLabel.Location = new Point(73, 75);
+            BackupFolderValueLabel.Location = new Point(60, 73);
             BackupFolderValueLabel.Name = "BackupFolderValueLabel";
-            BackupFolderValueLabel.Size = new Size(170, 30);
+            BackupFolderValueLabel.Size = new Size(188, 30);
             BackupFolderValueLabel.TabIndex = 15;
             BackupFolderValueLabel.Text = "-";
             BackupFolderValueLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -577,9 +627,9 @@ namespace ZomboidBackupManager
             BackupIndexTextLabel.BackColor = SystemColors.Control;
             BackupIndexTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupIndexTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupIndexTextLabel.Location = new Point(5, 40);
+            BackupIndexTextLabel.Location = new Point(1, 41);
             BackupIndexTextLabel.Name = "BackupIndexTextLabel";
-            BackupIndexTextLabel.Size = new Size(69, 30);
+            BackupIndexTextLabel.Size = new Size(60, 30);
             BackupIndexTextLabel.TabIndex = 12;
             BackupIndexTextLabel.Text = "Index";
             BackupIndexTextLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -589,9 +639,9 @@ namespace ZomboidBackupManager
             BackupNameTextLabel.BackColor = SystemColors.Control;
             BackupNameTextLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupNameTextLabel.Font = new Font("Bahnschrift", 10F);
-            BackupNameTextLabel.Location = new Point(5, 5);
+            BackupNameTextLabel.Location = new Point(1, 10);
             BackupNameTextLabel.Name = "BackupNameTextLabel";
-            BackupNameTextLabel.Size = new Size(69, 30);
+            BackupNameTextLabel.Size = new Size(60, 30);
             BackupNameTextLabel.TabIndex = 10;
             BackupNameTextLabel.Text = "Backup:";
             BackupNameTextLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -601,9 +651,9 @@ namespace ZomboidBackupManager
             BackupIndexValueLabel.BackColor = SystemColors.Control;
             BackupIndexValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupIndexValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupIndexValueLabel.Location = new Point(73, 40);
+            BackupIndexValueLabel.Location = new Point(60, 41);
             BackupIndexValueLabel.Name = "BackupIndexValueLabel";
-            BackupIndexValueLabel.Size = new Size(170, 30);
+            BackupIndexValueLabel.Size = new Size(188, 30);
             BackupIndexValueLabel.TabIndex = 13;
             BackupIndexValueLabel.Text = "-";
             BackupIndexValueLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -613,9 +663,9 @@ namespace ZomboidBackupManager
             BackupNameValueLabel.BackColor = SystemColors.Control;
             BackupNameValueLabel.BorderStyle = BorderStyle.FixedSingle;
             BackupNameValueLabel.Font = new Font("Bahnschrift", 10F);
-            BackupNameValueLabel.Location = new Point(73, 5);
+            BackupNameValueLabel.Location = new Point(60, 10);
             BackupNameValueLabel.Name = "BackupNameValueLabel";
-            BackupNameValueLabel.Size = new Size(170, 30);
+            BackupNameValueLabel.Size = new Size(188, 30);
             BackupNameValueLabel.TabIndex = 11;
             BackupNameValueLabel.Text = "-";
             BackupNameValueLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -650,7 +700,7 @@ namespace ZomboidBackupManager
             // 
             // SettingsDropDownButton
             // 
-            SettingsDropDownButton.BackColor = SystemColors.ButtonFace;
+            SettingsDropDownButton.BackColor = SystemColors.Control;
             SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, aboutToolStripMenuItem });
             SettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SettingsDropDownButton.Image = (Image)resources.GetObject("SettingsDropDownButton.Image");
@@ -668,21 +718,22 @@ namespace ZomboidBackupManager
             GeneralSettingsMenuOption.BackColor = SystemColors.ControlDarkDark;
             GeneralSettingsMenuOption.DropDown = GeneralSettingsContextMenuStrip;
             GeneralSettingsMenuOption.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            GeneralSettingsMenuOption.ForeColor = SystemColors.Info;
+            GeneralSettingsMenuOption.ForeColor = SystemColors.Control;
             GeneralSettingsMenuOption.Name = "GeneralSettingsMenuOption";
-            GeneralSettingsMenuOption.Size = new Size(180, 24);
+            GeneralSettingsMenuOption.Size = new Size(136, 24);
             GeneralSettingsMenuOption.Text = "General";
             // 
             // GeneralSettingsContextMenuStrip
             // 
+            GeneralSettingsContextMenuStrip.BackColor = SystemColors.ControlDark;
             GeneralSettingsContextMenuStrip.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            GeneralSettingsContextMenuStrip.Items.AddRange(new ToolStripItem[] { CompressZipSettingMenuOption, AutoSelectSGSettingMenuOption, ShowMsgSettingMenuOption });
+            GeneralSettingsContextMenuStrip.Items.AddRange(new ToolStripItem[] { CompressZipSettingMenuOption, KeepFolderSettingMenuOption, AutoSelectSGSettingMenuOption, ShowMsgSettingMenuOption, AutoDeleteBackupMenuOption });
             GeneralSettingsContextMenuStrip.Name = "GeneralSettingsContextMenuStrip";
             GeneralSettingsContextMenuStrip.OwnerItem = GeneralSettingsMenuOption;
             GeneralSettingsContextMenuStrip.RightToLeft = RightToLeft.Yes;
             GeneralSettingsContextMenuStrip.ShowCheckMargin = true;
             GeneralSettingsContextMenuStrip.ShowImageMargin = false;
-            GeneralSettingsContextMenuStrip.Size = new Size(320, 76);
+            GeneralSettingsContextMenuStrip.Size = new Size(320, 124);
             // 
             // CompressZipSettingMenuOption
             // 
@@ -690,12 +741,26 @@ namespace ZomboidBackupManager
             CompressZipSettingMenuOption.CheckOnClick = true;
             CompressZipSettingMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
             CompressZipSettingMenuOption.Font = new Font("Bahnschrift", 12F);
-            CompressZipSettingMenuOption.ForeColor = SystemColors.Info;
+            CompressZipSettingMenuOption.ForeColor = SystemColors.Control;
+            CompressZipSettingMenuOption.MergeAction = MergeAction.MatchOnly;
+            CompressZipSettingMenuOption.MergeIndex = 0;
             CompressZipSettingMenuOption.Name = "CompressZipSettingMenuOption";
             CompressZipSettingMenuOption.Size = new Size(319, 24);
             CompressZipSettingMenuOption.Text = "Save backups as .zip file";
             CompressZipSettingMenuOption.CheckedChanged += CompressZipSettingMenuOption_CheckedChanged;
-            CompressZipSettingMenuOption.Click += CompressZipSettingMenuOption_Click;
+            // 
+            // KeepFolderSettingMenuOption
+            // 
+            KeepFolderSettingMenuOption.BackColor = SystemColors.ControlDarkDark;
+            KeepFolderSettingMenuOption.CheckOnClick = true;
+            KeepFolderSettingMenuOption.ForeColor = SystemColors.Control;
+            KeepFolderSettingMenuOption.MergeAction = MergeAction.MatchOnly;
+            KeepFolderSettingMenuOption.MergeIndex = 1;
+            KeepFolderSettingMenuOption.Name = "KeepFolderSettingMenuOption";
+            KeepFolderSettingMenuOption.Size = new Size(319, 24);
+            KeepFolderSettingMenuOption.Text = "Keep backup folder";
+            KeepFolderSettingMenuOption.Visible = false;
+            KeepFolderSettingMenuOption.CheckedChanged += KeepFolderSettingMenuOption_CheckedChanged;
             // 
             // AutoSelectSGSettingMenuOption
             // 
@@ -703,12 +768,13 @@ namespace ZomboidBackupManager
             AutoSelectSGSettingMenuOption.CheckOnClick = true;
             AutoSelectSGSettingMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
             AutoSelectSGSettingMenuOption.Font = new Font("Bahnschrift", 12F);
-            AutoSelectSGSettingMenuOption.ForeColor = SystemColors.Info;
+            AutoSelectSGSettingMenuOption.ForeColor = SystemColors.Control;
+            AutoSelectSGSettingMenuOption.MergeAction = MergeAction.MatchOnly;
+            AutoSelectSGSettingMenuOption.MergeIndex = 2;
             AutoSelectSGSettingMenuOption.Name = "AutoSelectSGSettingMenuOption";
             AutoSelectSGSettingMenuOption.Size = new Size(319, 24);
             AutoSelectSGSettingMenuOption.Text = "Auto select last loaded state";
             AutoSelectSGSettingMenuOption.CheckedChanged += AutoSelectSGSettingMenuOption_CheckedChanged;
-            AutoSelectSGSettingMenuOption.Click += AutoSelectSGSettingMenuOption_Click;
             // 
             // ShowMsgSettingMenuOption
             // 
@@ -716,20 +782,30 @@ namespace ZomboidBackupManager
             ShowMsgSettingMenuOption.CheckOnClick = true;
             ShowMsgSettingMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
             ShowMsgSettingMenuOption.Font = new Font("Bahnschrift", 12F);
-            ShowMsgSettingMenuOption.ForeColor = SystemColors.Info;
+            ShowMsgSettingMenuOption.ForeColor = SystemColors.Control;
+            ShowMsgSettingMenuOption.MergeAction = MergeAction.MatchOnly;
+            ShowMsgSettingMenuOption.MergeIndex = 3;
             ShowMsgSettingMenuOption.Name = "ShowMsgSettingMenuOption";
             ShowMsgSettingMenuOption.Size = new Size(319, 24);
             ShowMsgSettingMenuOption.Text = "Show message when action done";
             ShowMsgSettingMenuOption.CheckedChanged += ShowMsgSettingMenuOption_CheckedChanged;
             // 
+            // AutoDeleteBackupMenuOption
+            // 
+            AutoDeleteBackupMenuOption.BackColor = SystemColors.ControlDarkDark;
+            AutoDeleteBackupMenuOption.ForeColor = SystemColors.Control;
+            AutoDeleteBackupMenuOption.Name = "AutoDeleteBackupMenuOption";
+            AutoDeleteBackupMenuOption.Size = new Size(319, 24);
+            AutoDeleteBackupMenuOption.Text = "Auto delete";
+            // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.BackColor = SystemColors.ControlDarkDark;
             aboutToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { AboutInfoLabelTextBox, AboutInfoVersionTextBox, AboutInfoAuthorTextBox, AboutInfoAuthorNameTextBox, AboutInfoGithubTextBox, AboutInfoGithubLinkTextBox });
-            aboutToolStripMenuItem.ForeColor = SystemColors.Info;
+            aboutToolStripMenuItem.ForeColor = SystemColors.Control;
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Padding = new Padding(0);
-            aboutToolStripMenuItem.Size = new Size(180, 22);
+            aboutToolStripMenuItem.Size = new Size(136, 22);
             aboutToolStripMenuItem.Text = "About";
             // 
             // AboutInfoLabelTextBox
@@ -817,6 +893,7 @@ namespace ZomboidBackupManager
             // 
             // EditSettingsDropDownButton
             // 
+            EditSettingsDropDownButton.AccessibleRole = AccessibleRole.Cursor;
             EditSettingsDropDownButton.DropDown = EditBackupsContextMenu;
             EditSettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold);
             EditSettingsDropDownButton.Image = (Image)resources.GetObject("EditSettingsDropDownButton.Image");
@@ -828,12 +905,14 @@ namespace ZomboidBackupManager
             // 
             // EditBackupsContextMenu
             // 
-            EditBackupsContextMenu.BackColor = SystemColors.ControlLight;
+            EditBackupsContextMenu.AccessibleRole = AccessibleRole.Cursor;
+            EditBackupsContextMenu.AllowClickThrough = true;
+            EditBackupsContextMenu.BackColor = SystemColors.ControlDark;
             EditBackupsContextMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            EditBackupsContextMenu.Items.AddRange(new ToolStripItem[] { SelectContextMenuItem, DeleteContextMenuItem, RenameContextMenuItem, StopMultiSelectMenuItem });
+            EditBackupsContextMenu.Items.AddRange(new ToolStripItem[] { SelectContextMenuItem, DeleteContextMenuItem, RenameContextMenuItem, StopMultiSelectMenuItem, ToolStripSeparator3, CreateZipEditBackupMenuOption });
             EditBackupsContextMenu.Name = "EditBackupsMenuButton";
             EditBackupsContextMenu.ShowImageMargin = false;
-            EditBackupsContextMenu.Size = new Size(176, 100);
+            EditBackupsContextMenu.Size = new Size(176, 130);
             EditBackupsContextMenu.Text = "Edit";
             EditBackupsContextMenu.Opening += EditBackupsContextMenu_Opening;
             // 
@@ -911,6 +990,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
+            RenameContextMenu.OwnerItem = RenameContextMenuItem;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -975,6 +1055,23 @@ namespace ZomboidBackupManager
             StopMultiSelectMenuItem.Text = "Stop Multi Select";
             StopMultiSelectMenuItem.Visible = false;
             StopMultiSelectMenuItem.MouseDown += StopMultiSelectMenuItem_MouseDown;
+            // 
+            // ToolStripSeparator3
+            // 
+            ToolStripSeparator3.BackColor = SystemColors.ControlDarkDark;
+            ToolStripSeparator3.ForeColor = SystemColors.ControlDarkDark;
+            ToolStripSeparator3.Name = "ToolStripSeparator3";
+            ToolStripSeparator3.Overflow = ToolStripItemOverflow.Never;
+            ToolStripSeparator3.Size = new Size(172, 6);
+            // 
+            // CreateZipEditBackupMenuOption
+            // 
+            CreateZipEditBackupMenuOption.BackColor = SystemColors.ControlDarkDark;
+            CreateZipEditBackupMenuOption.ForeColor = SystemColors.Control;
+            CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
+            CreateZipEditBackupMenuOption.Size = new Size(175, 24);
+            CreateZipEditBackupMenuOption.Text = "Create Zip";
+            CreateZipEditBackupMenuOption.Click += CreateZipEditBackupMenuOption_Click;
             // 
             // ToolStripSeparator1
             // 
@@ -1062,19 +1159,6 @@ namespace ZomboidBackupManager
             ListenToPZToolStripButton.TextImageRelation = TextImageRelation.TextBeforeImage;
             ListenToPZToolStripButton.Click += ListenToPZToolStripButton_Click;
             // 
-            // ProgressbarLabel
-            // 
-            ProgressbarLabel.BackColor = SystemColors.Control;
-            ProgressbarLabel.BorderStyle = BorderStyle.Fixed3D;
-            ProgressbarLabel.Font = new Font("Bahnschrift", 10F);
-            ProgressbarLabel.Location = new Point(15, 760);
-            ProgressbarLabel.Name = "ProgressbarLabel";
-            ProgressbarLabel.Size = new Size(250, 25);
-            ProgressbarLabel.TabIndex = 7;
-            ProgressbarLabel.Text = "-";
-            ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
-            ProgressbarLabel.Visible = false;
-            // 
             // BackupButton
             // 
             BackupButton.BackColor = SystemColors.Control;
@@ -1123,6 +1207,7 @@ namespace ZomboidBackupManager
             BackupListBox.TabIndex = 1;
             BackupListBox.SelectedIndexChanged += BackupListBox_SelectedIndexChanged;
             BackupListBox.MouseDoubleClick += BackupListBox_MouseDoubleClick;
+            BackupListBox.MouseUp += BackupListBox_MouseUp;
             // 
             // RestoreButton
             // 
@@ -1141,6 +1226,7 @@ namespace ZomboidBackupManager
             ProgressbarPanel.BackColor = SystemColors.ControlLightLight;
             ProgressbarPanel.BorderStyle = BorderStyle.FixedSingle;
             ProgressbarPanel.Controls.Add(ProgressBarA);
+            ProgressbarPanel.Controls.Add(ProgressbarLabel);
             ProgressbarPanel.Dock = DockStyle.Bottom;
             ProgressbarPanel.Location = new Point(0, 702);
             ProgressbarPanel.Name = "ProgressbarPanel";
@@ -1158,7 +1244,18 @@ namespace ZomboidBackupManager
             ProgressBarA.Step = 15;
             ProgressBarA.Style = ProgressBarStyle.Continuous;
             ProgressBarA.TabIndex = 6;
-            ProgressBarA.Visible = false;
+            // 
+            // ProgressbarLabel
+            // 
+            ProgressbarLabel.BackColor = SystemColors.Control;
+            ProgressbarLabel.BorderStyle = BorderStyle.Fixed3D;
+            ProgressbarLabel.Font = new Font("Bahnschrift", 10F);
+            ProgressbarLabel.Location = new Point(14, 66);
+            ProgressbarLabel.Name = "ProgressbarLabel";
+            ProgressbarLabel.Size = new Size(250, 25);
+            ProgressbarLabel.TabIndex = 7;
+            ProgressbarLabel.Text = "-";
+            ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // MainWindow
             // 
@@ -1183,8 +1280,9 @@ namespace ZomboidBackupManager
             BackgroundPanel.PerformLayout();
             SelectBackupPanel.ResumeLayout(false);
             BackupInfoPanel.ResumeLayout(false);
-            BackupMetaDataInfoPanel.ResumeLayout(false);
             BackupDataInfoPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)HasLooseValuePictureBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)HasZipValuePictureBox).EndInit();
             SettingsPanelA.ResumeLayout(false);
             SettingsPanelA.PerformLayout();
             Toolstrip1.ResumeLayout(false);
@@ -1238,13 +1336,6 @@ namespace ZomboidBackupManager
         private Panel BackupDataInfoPanel;
         private Label BackupIndexTextLabel;
         private Label BackupIndexValueLabel;
-        private Panel BackupMetaDataInfoPanel;
-        private Label BackupDateInfoTextLabel;
-        private Label BackupTimeInfoTextLabel;
-        private Label BackupTimeInfoValueLabel;
-        private Label BackupDateInfoValueLabel;
-        private Label BackupSizeInfoTextLabel;
-        private Label BackupSizeInfoValueLabel;
         private Label BackupFolderTextLabel;
         private Label BackupFolderValueLabel;
         private ToolTip MinimizeButtonToolTip;
@@ -1283,5 +1374,19 @@ namespace ZomboidBackupManager
         private ToolStripMenuItem CompressZipSettingMenuOption;
         private ToolStripMenuItem AutoSelectSGSettingMenuOption;
         private ToolStripMenuItem ShowMsgSettingMenuOption;
+        private ToolStripSeparator ToolStripSeparator3;
+        private ToolStripMenuItem CreateZipEditBackupMenuOption;
+        private ToolStripMenuItem KeepFolderSettingMenuOption;
+        private Label HasZipTextLabel;
+        private Label BackupSizeInfoTextLabel;
+        private Label BackupSizeInfoValueLabel;
+        private Label BackupDateInfoTextLabel;
+        private Label BackupTimeInfoTextLabel;
+        private Label BackupTimeInfoValueLabel;
+        private Label BackupDateInfoValueLabel;
+        private PictureBox HasZipValuePictureBox;
+        private PictureBox HasLooseValuePictureBox;
+        private Label HasLooseTextLabel;
+        private ToolStripMenuItem AutoDeleteBackupMenuOption;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 
@@ -35,9 +36,9 @@ namespace ZomboidBackupManager
             return newJsonData;
         }
 
-        public static BackupData NewBackupData(int index, string name, string path)
+        public static BackupData NewBackupData(int index, string name, string path = "", string zipPath = "")
         {
-            return new BackupData(index, name, path, GetCurrentDate(), GetCurrentTime(), GetDirSizeInMegaBytes(path));
+            return new BackupData(index, name, path,zipPath , GetCurrentDate(), GetCurrentTime(), GetDirSizeInMegaBytes(path));
         }
 
         public static int GetLastBackupDataIndex(JsonData jsonData)
@@ -52,11 +53,11 @@ namespace ZomboidBackupManager
             return backups.Count;
         }
 
-        public static JsonData AddNewBackup(JsonData jsonData, string path)
+        public static JsonData AddNewBackup(JsonData jsonData, string path = "", string zipPath = "")
         {
             int i = GetLastBackupDataIndex(jsonData);
             string name = GetDefaultBackupFolderName(GetLastBackupFolderNumber());
-            BackupData backupData = NewBackupData(i + 1, name, path);
+            BackupData backupData = NewBackupData(i + 1, name, path, zipPath);
             return AddBackup(jsonData, backupData);
         }
 
@@ -102,6 +103,7 @@ namespace ZomboidBackupManager
                 MessageBox.Show($"[ERROR] - (WriteJsonDataToJson) - [ERROR] \n--> [jsonDataFilePath (data.json directory)] == null or empty! \n--> [jsonDataFilePath] == {jsonDataFilePath}");
                 return;
             }
+            PrintDebug($"[WriteJsonDataToJson] - [Savegame = {jsonData.Name}] - [BackupData Length = {jsonData.Backups.Count}]");
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(jsonData, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
@@ -126,7 +128,75 @@ namespace ZomboidBackupManager
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(outputData, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
+
+
+        //===========================================================================================================================================
+        //=========================--------------------------------[ Start Zip Archive Functions ]--------------------------------===================
+        //===========================================================================================================================================
+
+
+        public static bool AddZipPathToBackupData(int idx, string? zipPath, bool addPath = true)
+        {
+            if ((string.IsNullOrWhiteSpace(zipPath)) && (addPath))
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [Failed] - [zipPath = {zipPath}] - [addPath = {addPath}]");
+                return false;
+            }
+            if (IsBackupZipped(idx))
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [IsBackupZipped] - [Result = true]");
+                DialogResult result = MessageBox.Show($"Warning: There is an existing zip archive found for backup [{GetBackupDataNameFromJson(idx)}]. \n\n If you continue, the existing zip will be overwritten!","Warning!",MessageBoxButtons.OKCancel);
+                if (result == DialogResult.Cancel)
+                {
+                    return false;
+                }
+            }
+            JsonData? jsonData = ReadJsonDataFromJson();
+            if (jsonData == null)
+            {
+                if (string.IsNullOrWhiteSpace(currentLoadedSavegame))
+                {
+                    PrintDebug($"[AddZipPathToBackupData] - [Failed] - [JsonData = {jsonData}] - [currentLoadedSavegame = {currentLoadedSavegame}]");
+                    return false;
+                }
+                jsonData = NewJsonData(currentLoadedSavegame);
+            }
+            List<BackupData>? dataList = jsonData.Backups;
+            if ((dataList == null) || (idx < 0) || (dataList.Count <= idx))
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [Failed] - [dataList.count = {dataList?.Count}] - [idx = {idx}]");
+                return false;
+            }
+            BackupData? data = dataList[idx];
+            if (data == null)
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [Failed] - [data (BackupData) = {data}]");
+                return false;
+            }
+            if (addPath)
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [Adding Path] - [ZipPath = {zipPath}]");
+                data.ZipPath = zipPath;
+            }
+            else
+            {
+                PrintDebug($"[AddZipPathToBackupData] - [Clearing Path] - [Current ZipPath = {data.ZipPath}]");
+                data.ZipPath = string.Empty;
+            }
+            dataList.RemoveAt(idx);
+            dataList.Insert(idx, data);
+            jsonData.Backups = dataList;
+            WriteJsonDataToJson(jsonData);
+            return true;
+        }
+
+        //===========================================================================================================================================
+        //=========================--------------------------------[ End Zip Archive Functions ]--------------------------------===================
+        //===========================================================================================================================================
+
     }
+
+
 
     public class BackupData
     {
@@ -134,15 +204,17 @@ namespace ZomboidBackupManager
         public int Index { get; set; }
         public string? Name { get; set; }
         public string? Path { get; }
+        public string? ZipPath { get; set; }
         public string? Date { get; }
         public string? Time { get; }
         public string? Size { get; }
 
-        public BackupData(int index, string name, string path, string date, string time, string size)
+        public BackupData(int index, string name, string path,string zipPath, string date, string time, string size)
         {
             Index = index;
             Name = name;
             Path = path;
+            ZipPath = zipPath;
             Date = date;
             Time = time;
             Size = size;

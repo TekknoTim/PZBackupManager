@@ -9,12 +9,79 @@ using System.Windows.Forms;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.JsonData;
 using System.Reflection;
+using SharpCompress.Compressors.Xz;
 
 
 namespace ZomboidBackupManager
 {
     public static class FunctionLibrary
     {
+
+        //===========================================================================================================================================
+        //=========================--------------------------------[ Start Zip Archive Functions ]--------------------------------===================
+        //===========================================================================================================================================
+
+        public static bool IsBackupZipped(int index)
+        {
+            JsonData? jsonData = ReadJsonDataFromJson();
+            if (jsonData == null)
+            {
+                PrintDebug($"[IsBackupZipped] - [jsonData was null!]",2);
+                return false;
+            }
+            List<BackupData>? dataList = jsonData.Backups;
+            if (dataList == null || dataList.Count <= index)
+            {
+                PrintDebug($"[IsBackupZipped] - [dataList (backupDataList) was null!]", 2);
+                return false;
+            }
+            return !string.IsNullOrWhiteSpace(dataList[index].ZipPath);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //===========================================================================================================================================
+        //=========================--------------------------------[ End Zip Archive Functions ]--------------------------------=====================
+        //===========================================================================================================================================
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------
+
+        //===========================================================================================================================================
+        //=========================----------------------------------[ Start General Functions ]----------------------------------===================
+        //===========================================================================================================================================
+
+        public static bool IsBackupSavedLoose(int index)
+        {
+            BackupData? data = GetBackupDataFromJson(index);
+            if (data == null)
+            {
+                return false;
+            }
+            string? fullPath = data.Path;
+            if (string.IsNullOrWhiteSpace(fullPath))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+
+        //===========================================================================================================================================
+        //=========================-----------------------------------[ End General Functions ]-----------------------------------===================
+        //===========================================================================================================================================
+
         public static List<string> GetAllSavegamesInAllGamemodes()
         {
             List<string> gamemodes = GetGamemodes();
@@ -60,23 +127,6 @@ namespace ZomboidBackupManager
 
             return outputList;
 
-        }
-
-        public static void DeleteSingleBackup(int index)
-        {
-            string? path = GetBackupFolderPathFromJson(index);
-            if (string.IsNullOrEmpty(path))
-            {
-                return;
-            }
-            if (System.IO.Directory.Exists(path))
-            {
-                System.IO.Directory.Delete(path, true);
-            }
-            else
-            {
-                MessageBox.Show($"[ERROR] - The selected backup folder directory wasn't found! \n Path: {path}");
-            }
         }
 
         public static void DeleteAllBackupsFromJson()
@@ -333,9 +383,7 @@ namespace ZomboidBackupManager
                 outputList.Add(dirInfo.Name);
                 i++;
             }
-
             return outputList.ToArray();
-
         }
 
         //==========================================================================================================

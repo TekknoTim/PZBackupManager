@@ -21,12 +21,13 @@ namespace ZomboidBackupManager
         public bool showMessageWhenBackupProcessDone { get; set; }
         public bool SelectLastLoadedOnStart { get; set; }
         public bool SaveBackupsAsZip {  get; set; }
+        public bool KeepBackupFolder { get; set; }
         public int LastLoadedSavegameIndex { get; set; }
         public int LastLoadedGamemodeIndex { get; set; }
         public string? LastLoadedSavegame { get; set; }
         public string? LastLoadedGamemode { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -34,6 +35,7 @@ namespace ZomboidBackupManager
             showMessageWhenBackupProcessDone = showMsg;
             SelectLastLoadedOnStart = selectLastLoadedOnStart;
             SaveBackupsAsZip = saveAsZip;
+            KeepBackupFolder = keepBackupFolder;
             if (currentLoadedSavegameIndex >= 0) { LastLoadedSavegameIndex = currentLoadedSavegameIndex; } else { LastLoadedSavegameIndex = -1; }
             if (currentLoadedGamemodeIndex >= 0) { LastLoadedGamemodeIndex = currentLoadedGamemodeIndex; } else {  LastLoadedGamemodeIndex = -1; }
             if (!string.IsNullOrWhiteSpace(currentLoadedSavegame)) { LastLoadedSavegame = currentLoadedSavegame; } else { LastLoadedSavegame = string.Empty; }
@@ -57,7 +59,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -138,6 +140,7 @@ namespace ZomboidBackupManager
                     showMsgWhenBackupProcessDone = cfg.showMessageWhenBackupProcessDone;
                     autoSelectSavegameOnStart = cfg.SelectLastLoadedOnStart;
                     saveBackupsAsZipFile = cfg.SaveBackupsAsZip;
+                    keepBackupFolderAfterZip = cfg.KeepBackupFolder;
 
                 }
             }
@@ -154,6 +157,7 @@ namespace ZomboidBackupManager
         //General Properties:
         private static readonly float version = 2504.01f;
         public static readonly string appVersion = "v0.0.3";
+        public static bool initRunning = false;
 
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
         public static readonly string placeholderThumbnail = Application.StartupPath + @"\placeholder.png";
@@ -191,7 +195,8 @@ namespace ZomboidBackupManager
         public static int currentLoadedGamemodeIndex = -1;
         public static bool showMsgWhenBackupProcessDone = true;
         public static bool autoSelectSavegameOnStart = false;
-        public static bool saveBackupsAsZipFile = true;
+        public static bool saveBackupsAsZipFile = false;
+        public static bool keepBackupFolderAfterZip = true;
 
         public static bool indexChangeEventsSuspended = false;
 
@@ -221,6 +226,7 @@ namespace ZomboidBackupManager
         //Initialization
         public static void Init()
         {
+            initRunning = true;
             PrintDebug("======================================================");
             PrintDebug("-------------[ Starting Initialization! ]-------------");
             PrintDebug("======================================================");

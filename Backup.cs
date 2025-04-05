@@ -70,8 +70,6 @@ namespace ZomboidBackupManager
             {
                 panel.Visible = true;
             }
-            progressBar.Visible = true;
-            statusLabel.Visible = true;
             var progress = new Progress<int>(percent =>
             {
                 statusLabel.Text = $"Creating Backup... {percent}%";
@@ -98,14 +96,6 @@ namespace ZomboidBackupManager
 
             Thread.Sleep(500);
 
-            progressBar.Visible = false;
-            progressBar.Value = 0;
-            statusLabel.Visible = false;
-            if (panel != null)
-            {
-                panel.Visible = false;
-            }
-            statusLabel.Text = @" - ";
             ChangeCurrentStatus(Status.DONE);
         }
 

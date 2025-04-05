@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 using System.Reflection.Metadata;
+using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ZomboidBackupManager
 {
@@ -25,6 +27,7 @@ namespace ZomboidBackupManager
             LoadGamemodes();
             SetBackupFolderPathTextbox();
             SetSavegameRemote();
+            initRunning = false;
         }
 
         private void RefreshCheckboxes()
@@ -32,7 +35,7 @@ namespace ZomboidBackupManager
             ShowMsgSettingMenuOption.Checked = Configuration.showMsgWhenBackupProcessDone;
             AutoSelectSGSettingMenuOption.Checked = Configuration.autoSelectSavegameOnStart;
             CompressZipSettingMenuOption.Checked = Configuration.saveBackupsAsZipFile;
-
+            KeepFolderSettingMenuOption.Checked = Configuration.keepBackupFolderAfterZip;
 
         }
 
@@ -206,6 +209,8 @@ namespace ZomboidBackupManager
             BackupNameValueLabel.Text = @" - ";
             BackupIndexValueLabel.Text = @" - ";
             BackupFolderValueLabel.Text = @" - ";
+            HasZipValuePictureBox.Image = null;
+            HasLooseValuePictureBox.Image = null;
             BackupDateInfoValueLabel.Text = @" - ";
             BackupTimeInfoValueLabel.Text = @" - ";
             BackupSizeInfoValueLabel.Text = @" - ";
@@ -285,7 +290,7 @@ namespace ZomboidBackupManager
 
         private int FindGamemodeListIndexByName(string itemName)
         {
-            ComboBox.ObjectCollection itemCollection = GamemodeComboBox.Items;
+            System.Windows.Forms.ComboBox.ObjectCollection itemCollection = GamemodeComboBox.Items;
             foreach (var item in itemCollection)
             {
                 if (item.ToString() == itemName)
@@ -386,7 +391,8 @@ namespace ZomboidBackupManager
         private bool IsValidBackupSelected()
         {
             int listBoxIdx = BackupListBox.SelectedIndex;
-            if (listBoxIdx < 0 || string.IsNullOrWhiteSpace(currentLoadedSavegame) || string.IsNullOrWhiteSpace(currentLoadedGamemode))
+            int listBoxMax = BackupListBox.Items.Count - 1;
+            if ((listBoxIdx < 0) || (listBoxIdx > listBoxMax) || (string.IsNullOrWhiteSpace(currentLoadedSavegame)) || (string.IsNullOrWhiteSpace(currentLoadedGamemode)))
             {
                 return false;
 
@@ -432,6 +438,16 @@ namespace ZomboidBackupManager
             {
                 return;
             }
+            if (val)
+            {
+                HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+                HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+            }
+            else
+            {
+                HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+                HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+            }
             RestoreButton.Enabled = val;
             DeleteSelectedToolStripButton.Enabled = val;
         }
@@ -468,10 +484,35 @@ namespace ZomboidBackupManager
                 MessageBox.Show("Can't backup! Please load a valid savegame first!");
                 return;
             }
+            ProgressbarPanel.Visible = true;
             Backup backup = new Backup();
             backup.OnStatusChanged += Backup_OnStatusChanged;
             await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel, ProgressBarA, ProgressbarPanel);
 
+        }
+
+        private async void SetSaveBackupsAsZipSetting()
+        {
+            if (CompressZipSettingMenuOption.Checked)
+            {
+                if (!initRunning)
+                {
+                    MessageBox.Show("Warning! This feature is experimental,\nbecause at the moment it can take up to minutes to compress a backup into a  zip archive.");
+                }
+                KeepFolderSettingMenuOption.Visible = true;
+            }
+            else
+            {
+                KeepFolderSettingMenuOption.Visible = false;
+            }
+            Configuration.saveBackupsAsZipFile = CompressZipSettingMenuOption.Checked;
+            await Configuration.WriteCfgToJson();
+        }
+
+        private async void SetKeepBackupFolderSetting()
+        {
+            Configuration.keepBackupFolderAfterZip = KeepFolderSettingMenuOption.Checked;
+            await Configuration.WriteCfgToJson();
         }
 
         private async void SetShowMessageboxWhenBackupDone()
@@ -485,13 +526,6 @@ namespace ZomboidBackupManager
             Configuration.autoSelectSavegameOnStart = AutoSelectSGSettingMenuOption.Checked;
             await Configuration.WriteCfgToJson();
         }
-
-        private async void SetSaveBackupsAsZipSetting()
-        {
-            Configuration.saveBackupsAsZipFile = CompressZipSettingMenuOption.Checked;
-            await Configuration.WriteCfgToJson();
-        }
-
         private void SetSavegameLabelValues()
         {
             SavgameInfoValueLabel.Text = currentLoadedSavegame;
@@ -532,6 +566,10 @@ namespace ZomboidBackupManager
             BackupNameValueLabel.Text = data.Name;
             BackupIndexValueLabel.Text = data.Index.ToString();
             BackupFolderValueLabel.Text = folderName;
+            if (IsBackupZipped(BackupListBox.SelectedIndex)) { HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled; } else { HasZipValuePictureBox.Image = Properties.Resources.Checkmark; }
+            ;
+            if (IsBackupSavedLoose(BackupListBox.SelectedIndex)) { HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled; } else { HasLooseValuePictureBox.Image = Properties.Resources.Checkmark; }
+            ;
             BackupDateInfoValueLabel.Text = data.Date;
             BackupTimeInfoValueLabel.Text = data.Time;
             BackupSizeInfoValueLabel.Text = size;
@@ -619,6 +657,39 @@ namespace ZomboidBackupManager
         //--------------------------------------------------------------------[  Edit Backup Menu  ]---------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+        private void CreateZipEditBackupMenuOption_Click(object sender, EventArgs e)
+        {
+            if (IsValidBackupSelected())
+            {
+                CompressBackupToZip(BackupListBox.SelectedIndex);
+            }
+            else
+            {
+                MessageBox.Show("No backup selected. Please select a backup first!");
+            }
+        }
+
+        private async void CompressBackupToZip(int idx)
+        {
+            var result = MessageBox.Show($"Are you sure you want to create a zip archive for this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm action!", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            result = MessageBox.Show($"WARNING! This feature is currently WIP & can take up to minutes to complete even a single archive!\nAre you really sure, you want to continue?");
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            DirectoryInfo dirInfo = new DirectoryInfo(GetBackupFolderPathFromJson(idx));
+            ProgressbarLabel.Visible = true;
+            this.Enabled = false;
+            Compress comp = new Compress();
+            await comp.DoCompress(dirInfo.Name, currentLoadedBackupFolderPATH, BackupListBox.SelectedIndex, ProgressbarLabel);
+            SetBackupLabelValues();
+            this.Enabled = true;
+            ProgressbarLabel.Visible = false;
+        }
 
         private void DeleteSelected_OnClick(object sender, EventArgs e)
         {
@@ -742,8 +813,11 @@ namespace ZomboidBackupManager
                 if (saveBackupsAsZipFile)
                 {
                     Compress compress = new Compress();
-                    await compress.DoCompress(GetDefaultBackupFolderName(GetLastBackupFolderNumber()), currentLoadedBackupFolderPATH, ProgressbarLabel);
+                    await compress.DoCompress(GetDefaultBackupFolderName(GetLastBackupFolderNumber()), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel);
                 }
+                ProgressBarA.Value = 0;
+                ProgressbarLabel.Text = @" - ";
+                ProgressbarPanel.Visible = false;
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
                 SetBackupLabelValues();
@@ -759,6 +833,16 @@ namespace ZomboidBackupManager
         private void SelectAllOption_Click(object sender, EventArgs e)
         {
             SetSelectionMode(true);
+            SetAllBackupsSelected();
+        }
+
+        private void SetAllBackupsSelected()
+        {
+            int itemCount = BackupListBox.Items.Count;
+            for (int i = 0; i < itemCount; i++)
+            {
+                BackupListBox.SelectedItems.Add(BackupListBox.Items[i]);
+            }
         }
 
         private void SetSelectionMode(bool multi)
@@ -840,6 +924,11 @@ namespace ZomboidBackupManager
             SetSaveBackupsAsZipSetting();
         }
 
+        private void KeepFolderSettingMenuOption_CheckedChanged(object sender, EventArgs e)
+        {
+            SetKeepBackupFolderSetting();
+        }
+
         private void AutoSelectSGSettingMenuOption_CheckedChanged(object sender, EventArgs e)
         {
             SetAutoSelectSavegameOnStart();
@@ -913,15 +1002,12 @@ namespace ZomboidBackupManager
                 return;
             }
         }
-
-        private void CompressZipSettingMenuOption_Click(object sender, EventArgs e)
+        private void BackupListBox_MouseUp(object sender, MouseEventArgs e)
         {
-
-        }
-
-        private void AutoSelectSGSettingMenuOption_Click(object sender, EventArgs e)
-        {
-
+            if (e.Button == MouseButtons.Right)
+            {
+                EditBackupsContextMenu.Show(BackupListBox, e.Location);
+            }
         }
     }
 }
