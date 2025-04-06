@@ -33,6 +33,7 @@
             StartStopButton = new Button();
             txtLog = new ListBox();
             LoadedSavegameInfoPanel = new Panel();
+            AutoDeleteCheckbox = new CheckBox();
             AddToTaskBarCheckbox = new CheckBox();
             ChangeSelectionLabelText = new Label();
             SavegameComboBox = new ComboBox();
@@ -87,6 +88,7 @@
             // LoadedSavegameInfoPanel
             // 
             LoadedSavegameInfoPanel.BackColor = SystemColors.ControlDarkDark;
+            LoadedSavegameInfoPanel.Controls.Add(AutoDeleteCheckbox);
             LoadedSavegameInfoPanel.Controls.Add(AddToTaskBarCheckbox);
             LoadedSavegameInfoPanel.Controls.Add(ChangeSelectionLabelText);
             LoadedSavegameInfoPanel.Controls.Add(SavegameComboBox);
@@ -100,18 +102,36 @@
             LoadedSavegameInfoPanel.Size = new Size(360, 182);
             LoadedSavegameInfoPanel.TabIndex = 13;
             // 
+            // AutoDeleteCheckbox
+            // 
+            AutoDeleteCheckbox.Font = new Font("Bahnschrift", 12F);
+            AutoDeleteCheckbox.ForeColor = SystemColors.ControlLightLight;
+            AutoDeleteCheckbox.Location = new Point(220, 155);
+            AutoDeleteCheckbox.Margin = new Padding(5, 5, 5, 2);
+            AutoDeleteCheckbox.Name = "AutoDeleteCheckbox";
+            AutoDeleteCheckbox.RightToLeft = RightToLeft.Yes;
+            AutoDeleteCheckbox.Size = new Size(130, 23);
+            AutoDeleteCheckbox.TabIndex = 18;
+            AutoDeleteCheckbox.Text = "Autodelete";
+            AutoDeleteCheckbox.TextAlign = ContentAlignment.MiddleCenter;
+            PZScriptHookTooltip.SetToolTip(AutoDeleteCheckbox, "Enable/Disable \"Autodelete\" feature. For more information,\r\ngo back to: Main Window -> Settings -> Autodelete");
+            AutoDeleteCheckbox.UseVisualStyleBackColor = true;
+            AutoDeleteCheckbox.CheckedChanged += AutoDeleteCheckbox_CheckedChanged;
+            AutoDeleteCheckbox.Click += AutoDeleteCheckbox_Click;
+            // 
             // AddToTaskBarCheckbox
             // 
             AddToTaskBarCheckbox.Checked = true;
             AddToTaskBarCheckbox.CheckState = CheckState.Checked;
             AddToTaskBarCheckbox.Font = new Font("Bahnschrift", 12F);
             AddToTaskBarCheckbox.ForeColor = SystemColors.Control;
-            AddToTaskBarCheckbox.Location = new Point(5, 134);
+            AddToTaskBarCheckbox.Location = new Point(11, 135);
             AddToTaskBarCheckbox.Margin = new Padding(5, 5, 5, 2);
             AddToTaskBarCheckbox.Name = "AddToTaskBarCheckbox";
             AddToTaskBarCheckbox.Size = new Size(150, 23);
             AddToTaskBarCheckbox.TabIndex = 17;
             AddToTaskBarCheckbox.Text = "Add to taskbar";
+            AddToTaskBarCheckbox.TextAlign = ContentAlignment.MiddleCenter;
             PZScriptHookTooltip.SetToolTip(AddToTaskBarCheckbox, "If checked, hide this window from taskbar when minimizing\r\nand add an icon to the taskbar notification area (the area e.g. \r\nwhere your volume/sound icon & steam icon is present)");
             AddToTaskBarCheckbox.UseVisualStyleBackColor = true;
             AddToTaskBarCheckbox.CheckedChanged += AddToTaskBarCheckbox_CheckedChanged;
@@ -151,13 +171,14 @@
             // AlwaysOnTopCheckbox
             // 
             AlwaysOnTopCheckbox.Font = new Font("Bahnschrift", 12F);
-            AlwaysOnTopCheckbox.ForeColor = SystemColors.Control;
-            AlwaysOnTopCheckbox.Location = new Point(5, 157);
+            AlwaysOnTopCheckbox.ForeColor = SystemColors.ControlLight;
+            AlwaysOnTopCheckbox.Location = new Point(11, 155);
             AlwaysOnTopCheckbox.Margin = new Padding(5, 5, 5, 2);
             AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox";
             AlwaysOnTopCheckbox.Size = new Size(130, 23);
             AlwaysOnTopCheckbox.TabIndex = 13;
             AlwaysOnTopCheckbox.Text = "Always on top";
+            AlwaysOnTopCheckbox.TextAlign = ContentAlignment.MiddleCenter;
             AlwaysOnTopCheckbox.UseVisualStyleBackColor = true;
             AlwaysOnTopCheckbox.CheckedChanged += AlwaysOnTopCheckbox_CheckedChanged;
             // 
@@ -290,6 +311,7 @@
             ToggleTrackingContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             ToggleTrackingContextMenu.Items.AddRange(new ToolStripItem[] { ToggleTrackingMenuItem });
             ToggleTrackingContextMenu.Name = "contextMenuStrip1";
+            ToggleTrackingContextMenu.OwnerItem = toggleTrackingToolStripMenuItem;
             ToggleTrackingContextMenu.Size = new Size(140, 34);
             ToggleTrackingContextMenu.Text = "ToggleTrackingContextMenu";
             // 
@@ -384,5 +406,6 @@
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripTextBox ToolStripGamemodeTextBox;
         private ToolStripTextBox ToolStripSavegameTextBox;
+        private CheckBox AutoDeleteCheckbox;
     }
 }

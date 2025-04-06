@@ -26,8 +26,12 @@ namespace ZomboidBackupManager
         public int LastLoadedGamemodeIndex { get; set; }
         public string? LastLoadedSavegame { get; set; }
         public string? LastLoadedGamemode { get; set; }
+        public int AutoDeleteKeepBackupsCount { get; set; }
+        public bool AutoDeleteFeatureEnabled { get; set; }
+        public int UsedZipArchiverID { get; set; }
+        public string ZipArchiverExePath { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -40,6 +44,10 @@ namespace ZomboidBackupManager
             if (currentLoadedGamemodeIndex >= 0) { LastLoadedGamemodeIndex = currentLoadedGamemodeIndex; } else {  LastLoadedGamemodeIndex = -1; }
             if (!string.IsNullOrWhiteSpace(currentLoadedSavegame)) { LastLoadedSavegame = currentLoadedSavegame; } else { LastLoadedSavegame = string.Empty; }
             if (!string.IsNullOrWhiteSpace(currentLoadedGamemode)) { LastLoadedGamemode = currentLoadedGamemode; } else { LastLoadedGamemode = string.Empty; }
+            AutoDeleteKeepBackupsCount = autoDelKeepBackupsCount;
+            AutoDeleteFeatureEnabled = autoDeleteFeatureEnabled;
+            UsedZipArchiverID = zipArchiver;
+            ZipArchiverExePath = archiverExe;
         }
     }
 
@@ -59,7 +67,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -141,6 +149,10 @@ namespace ZomboidBackupManager
                     autoSelectSavegameOnStart = cfg.SelectLastLoadedOnStart;
                     saveBackupsAsZipFile = cfg.SaveBackupsAsZip;
                     keepBackupFolderAfterZip = cfg.KeepBackupFolder;
+                    autoDeleteKeepBackupsCount = cfg.AutoDeleteKeepBackupsCount;
+                    autoDeleteEnabled = cfg.AutoDeleteFeatureEnabled;
+                    usedZipArchiver = cfg.UsedZipArchiverID;
+                    zipArchiverExePath = cfg.ZipArchiverExePath;
 
                 }
             }
@@ -155,7 +167,7 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2504.01f;
+        private static readonly float version = 2505.04f;
         public static readonly string appVersion = "v0.0.3";
         public static bool initRunning = false;
 
@@ -197,6 +209,13 @@ namespace ZomboidBackupManager
         public static bool autoSelectSavegameOnStart = false;
         public static bool saveBackupsAsZipFile = false;
         public static bool keepBackupFolderAfterZip = true;
+        public static bool autoDeleteEnabled = false;
+
+        public static int autoDeleteKeepBackupsCount = 5;
+        public static readonly int autoDeleteKeepBackupsMax = 15;
+
+        public static int usedZipArchiver = 0; // 0 = intern (slowest) ; 1 = WinRar (faster) ; 1 = 7Zip (fastest)
+        public static string zipArchiverExePath = string.Empty;
 
         public static bool indexChangeEventsSuspended = false;
 

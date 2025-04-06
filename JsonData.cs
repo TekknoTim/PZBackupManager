@@ -142,15 +142,6 @@ namespace ZomboidBackupManager
                 PrintDebug($"[AddZipPathToBackupData] - [Failed] - [zipPath = {zipPath}] - [addPath = {addPath}]");
                 return false;
             }
-            if (IsBackupZipped(idx))
-            {
-                PrintDebug($"[AddZipPathToBackupData] - [IsBackupZipped] - [Result = true]");
-                DialogResult result = MessageBox.Show($"Warning: There is an existing zip archive found for backup [{GetBackupDataNameFromJson(idx)}]. \n\n If you continue, the existing zip will be overwritten!","Warning!",MessageBoxButtons.OKCancel);
-                if (result == DialogResult.Cancel)
-                {
-                    return false;
-                }
-            }
             JsonData? jsonData = ReadJsonDataFromJson();
             if (jsonData == null)
             {

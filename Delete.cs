@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 
 namespace ZomboidBackupManager
@@ -32,8 +33,8 @@ namespace ZomboidBackupManager
                 }
                 else
                 {
-                    Console.WriteLine($"[ERROR] - [ZOMBOID SAVE MANAGER] - [Delete.cs] -> combPath = {combPath}");
-                    MessageBox.Show($"[ERROR] - [ZOMBOID SAVE MANAGER] - [Delete.cs] -> combPath = {combPath}");
+                    PrintDebug($"[Delete.cs] - [DeleteDirectoryAsync] -> [combPath = {combPath}]", 2);
+                    MessageBox.Show($"ERROR! --> [Delete.cs] \n\n [combPath = {combPath}]");
                     progress.Report(0);
                 }
             }
@@ -72,6 +73,40 @@ namespace ZomboidBackupManager
             statusLabel.Visible = false;
             panel.Visible = false;
             statusLabel.Text = @" - ";
+        }
+    
+
+        public async Task DoDeleteFromRemote(ListBox statusLog, int index)
+        {
+            PrintStatusLog(statusLog, "Auto delete enabled. Deleting last listed backup -> Start!");
+            string path = GetBackupFolderPathFromJson(index);
+            DeleteProcess deleteProcess = new DeleteProcess();
+            int i = 0;
+            var progress = new Progress<int>(percent =>
+            {
+                if ((percent % 10) == 0 && (percent / 10) > i)
+                {
+                    i++;
+                    PrintStatusLog(statusLog, $"Deleting Backup... {percent}%");
+                }
+            });
+
+            await deleteProcess.DeleteDirectoryAsync(path, progress);
+
+            PrintStatusLog(statusLog, "Deleting last listed backup -> Done!");
+            Thread.Sleep(500);
+            PrintStatusLog(statusLog, "Modifying JSON File...");
+            DeleteBackupFromJson(index);
+            Thread.Sleep(500);
+            PrintStatusLog(statusLog, "Modifying JSON File --> Done!");
+        }
+
+        private void PrintStatusLog(ListBox statusLog, string txt = "")
+        {
+            int i = statusLog.Items.Count;
+            statusLog.Items.Add($"[{i.ToString()}] - " + txt);
+            statusLog.SelectionMode = SelectionMode.One;
+            statusLog.SetSelected(i, true);
         }
     }
 }

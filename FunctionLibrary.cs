@@ -39,7 +39,22 @@ namespace ZomboidBackupManager
         }
 
 
-
+        public static string? GetBackupZipPathFromJson(int index)
+        {
+            JsonData? jsonData = ReadJsonDataFromJson();
+            if (jsonData == null)
+            {
+                PrintDebug($"[IsBackupZipped] - [jsonData was null!]", 2);
+                return null;
+            }
+            List<BackupData>? dataList = jsonData.Backups;
+            if (dataList == null || dataList.Count <= index)
+            {
+                PrintDebug($"[IsBackupZipped] - [dataList (backupDataList) was null!]", 2);
+                return null;
+            }
+            return dataList[index].ZipPath;
+        }
 
 
 

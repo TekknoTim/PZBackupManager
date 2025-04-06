@@ -39,6 +39,7 @@ namespace ZomboidBackupManager
 
             SetAlwaysOnTop();
             SetAddToTaskBar();
+            AutoDeleteCheckbox.Checked = autoDeleteEnabled;
             LoadIconImages();
 
             GamemodesComboBox.Items.Clear();
@@ -224,6 +225,14 @@ namespace ZomboidBackupManager
             System.Threading.Thread.Sleep(5000);
             Backup backup = new Backup();
             await backup.DoBackupFromRemote(txtLog, this);
+            if (autoDeleteEnabled)
+            {
+                if (GetBackupCountFromJson() > autoDeleteKeepBackupsCount)
+                {
+                    Delete delete = new Delete();
+                    await delete.DoDeleteFromRemote(txtLog, 0);
+                }
+            }
             SendDoneCommand();
         }
 
@@ -294,6 +303,16 @@ namespace ZomboidBackupManager
         private void AddToTaskBarCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             SetAddToTaskBar();
+        }
+
+        private void SetAutoDelete()
+        {
+            autoDeleteEnabled = AutoDeleteCheckbox.Checked;
+        }
+
+        private void AutoDeleteCheckbox_Click(object sender, EventArgs e)
+        {
+            SetAutoDelete();
         }
 
         private void PZScriptHook_Shown(object sender, EventArgs e)
@@ -496,6 +515,11 @@ namespace ZomboidBackupManager
         }
 
         private void txtLog_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AutoDeleteCheckbox_CheckedChanged(object sender, EventArgs e)
         {
 
         }

@@ -3,21 +3,34 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
+using static ZomboidBackupManager.JsonData;
 using System.Reflection.Metadata;
 using System;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Threading.Tasks;
+using System.Drawing;
+using System.Runtime;
+using System.IO.Compression;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZomboidBackupManager
 {
     public partial class MainWindow : Form
     {
-        private Form? PZScriptHookWindow = null;
+        private Form? PZScriptHookWindow;
+
+        private ZipWatcher? Watcher;
 
         public bool isInSelectionMode = false;
+
+        private event EventHandler<string> OnSkip;
+
+        public List<ZipData> ZipDataCache = new List<ZipData>();
 
         public MainWindow()
         {
             InitializeComponent();
+            this.OnSkip += OnSkipCompressToZip;
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -27,6 +40,7 @@ namespace ZomboidBackupManager
             LoadGamemodes();
             SetBackupFolderPathTextbox();
             SetSavegameRemote();
+            SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
             initRunning = false;
         }
 
@@ -149,10 +163,10 @@ namespace ZomboidBackupManager
             if (IsValidSavegameSelected())
             {
                 BackupButton.Enabled = true;
-                //MiniWindowButton.Visible = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
                 LoadAndDisplayBackups();
+                SetAutoDeleteInfoLabelEn(true);
             }
             else
             {
@@ -163,7 +177,7 @@ namespace ZomboidBackupManager
                     LoadJustGamemode(itemName, GamemodeComboBox.SelectedIndex);
                 }
                 BackupButton.Enabled = false;
-                //MiniWindowButton.Visible = false;
+                SetAutoDeleteInfoLabelEn(false);
             }
             SetSavegameLabelValues();
             ResetBackupThumbnailAndData();
@@ -199,18 +213,18 @@ namespace ZomboidBackupManager
 
         private void ResetBackupThumbnailAndData()
         {
-            Object? rm = Properties.Resources.ResourceManager.GetObject("ThumbnailPlaceholder");
-            Image? myImage = (Bitmap?)rm as Image;
-            if (myImage != null)
-            {
-                BackupsPictureBox.Image = myImage;
-            }
+            Bitmap imgThumbnail = Properties.Resources.ThumbnailPlaceholder;
+            Bitmap imgDataIcon = Properties.Resources.Checkmark;
+
+
+
+            BackupsPictureBox.Image = imgThumbnail;
 
             BackupNameValueLabel.Text = @" - ";
             BackupIndexValueLabel.Text = @" - ";
             BackupFolderValueLabel.Text = @" - ";
-            HasZipValuePictureBox.Image = null;
-            HasLooseValuePictureBox.Image = null;
+            HasZipValuePictureBox.Image = imgDataIcon;
+            HasLooseValuePictureBox.Image = imgDataIcon;
             BackupDateInfoValueLabel.Text = @" - ";
             BackupTimeInfoValueLabel.Text = @" - ";
             BackupSizeInfoValueLabel.Text = @" - ";
@@ -218,11 +232,10 @@ namespace ZomboidBackupManager
 
         private void ResetSavegameThumbnailAndData()
         {
-            Object? rm = Properties.Resources.ResourceManager.GetObject("ThumbnailPlaceholder");
-            Image? myImage = (Bitmap?)rm as Image;
-            if (myImage != null)
+            Bitmap img = Properties.Resources.ThumbnailPlaceholder;
+            if (img != null)
             {
-                ThumbnailPictureBox.Image = myImage;
+                ThumbnailPictureBox.Image = img;
             }
 
             SavgameInfoValueLabel.Text = @" - ";
@@ -420,6 +433,11 @@ namespace ZomboidBackupManager
 
         private void BackupListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (ProgressbarPanel.Visible)
+            {
+                ProgressbarPanel.Visible = false;
+            }
+            SetDeleteMenuOptions();
             if (IsValidBackupSelected())
             {
                 SetBackupButtonsEn(true);
@@ -432,24 +450,61 @@ namespace ZomboidBackupManager
             }
         }
 
+        private void SetAutoDeleteInfoLabelVal()
+        {
+            AutoDeleteInfoLabel.Text = $"Autodelete: [{BackupListBox.Items.Count} / {autoDeleteKeepBackupsCount}] Backups";
+        }
+
+        private void SetAutoDeleteInfoLabelEn(bool val)
+        {
+            if (autoDeleteEnabled)
+            {
+                AutoDeleteInfoLabel.Visible = val;
+                if (val)
+                {
+                    SetAutoDeleteInfoLabelVal();
+                }
+            }
+            else
+            {
+                AutoDeleteInfoLabel.Visible = false;
+            }
+        }
+
         private void SetBackupButtonsEn(bool val)
         {
             if (isInSelectionMode)
             {
                 return;
             }
-            if (val)
+            RestoreButton.Enabled = val;
+            DeleteSelectedToolStripButton.Enabled = val;
+        }
+
+        private void SetDeleteMenuOptions()
+        {
+            int idx = BackupListBox.SelectedIndex;
+            if (idx < 0)
             {
-                HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
-                HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+                PrintDebug($"[MainWindow.cs] - [SetDeleteMenuOptions] - [Index out of range!] - [idx = {idx}]");
+                return;
+            }
+            bool hasLoose = string.IsNullOrWhiteSpace(GetBackupFolderPathFromJson(idx));
+            bool hasZip = string.IsNullOrWhiteSpace(GetBackupZipPathFromJson(idx));
+            if (hasLoose && hasZip)
+            {
+                DeleteLooseToolbarOption.Enabled = true;
+                DeleteLooseMenuOption.Enabled = true;
+                DeleteZipToolbarOption.Enabled = true;
+                DeleteZipMenuOption.Enabled = true;
             }
             else
             {
-                HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
-                HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled;
+                DeleteLooseToolbarOption.Enabled = false;
+                DeleteLooseMenuOption.Enabled = false;
+                DeleteZipToolbarOption.Enabled = false;
+                DeleteZipMenuOption.Enabled = false;
             }
-            RestoreButton.Enabled = val;
-            DeleteSelectedToolStripButton.Enabled = val;
         }
 
         private async void BackupListBox_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -567,9 +622,9 @@ namespace ZomboidBackupManager
             BackupIndexValueLabel.Text = data.Index.ToString();
             BackupFolderValueLabel.Text = folderName;
             if (IsBackupZipped(BackupListBox.SelectedIndex)) { HasZipValuePictureBox.Image = Properties.Resources.CheckmarkFilled; } else { HasZipValuePictureBox.Image = Properties.Resources.Checkmark; }
-            ;
+
             if (IsBackupSavedLoose(BackupListBox.SelectedIndex)) { HasLooseValuePictureBox.Image = Properties.Resources.CheckmarkFilled; } else { HasLooseValuePictureBox.Image = Properties.Resources.Checkmark; }
-            ;
+
             BackupDateInfoValueLabel.Text = data.Date;
             BackupTimeInfoValueLabel.Text = data.Time;
             BackupSizeInfoValueLabel.Text = size;
@@ -598,37 +653,7 @@ namespace ZomboidBackupManager
             SavegameListBox.SelectedIndex = currentLoadedSavegameIndex;
             LoadAndDisplayBackups();
         }
-        /*
-        private async void DeleteAllBackupsButton_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-            {
-                return;
-            }
-            if (SavegameListBox.SelectedIndex < 0)
-            {
-                return;
-            }
-            var name = SavegameListBox.SelectedItem;
-            if (name == null)
-            {
-                return;
-            }
-            var result = MessageBox.Show($" Are you sure you want to delete ALL backups for this savegame? \n Savegame: {name.ToString()}", "Confirm deletion!", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-            result = MessageBox.Show($" Are you really sure you want to DELETE ALL BACKUPs for this savegame? \n SAVEGAME: {name.ToString()}", "Confirm deletion!", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-            DeleteAll deleteAll = new DeleteAll();
-            await deleteAll.DoDeleteAll(ProgressbarLabel, ProgressBarA, ProgressbarPanel);
-            LoadSavegamesInSelectedGamemode();
-        }
-        */
+
 
         private void ConfirmRenameBackup()
         {
@@ -657,39 +682,6 @@ namespace ZomboidBackupManager
         //--------------------------------------------------------------------[  Edit Backup Menu  ]---------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private void CreateZipEditBackupMenuOption_Click(object sender, EventArgs e)
-        {
-            if (IsValidBackupSelected())
-            {
-                CompressBackupToZip(BackupListBox.SelectedIndex);
-            }
-            else
-            {
-                MessageBox.Show("No backup selected. Please select a backup first!");
-            }
-        }
-
-        private async void CompressBackupToZip(int idx)
-        {
-            var result = MessageBox.Show($"Are you sure you want to create a zip archive for this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm action!", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-            result = MessageBox.Show($"WARNING! This feature is currently WIP & can take up to minutes to complete even a single archive!\nAre you really sure, you want to continue?");
-            if (result == DialogResult.No)
-            {
-                return;
-            }
-            DirectoryInfo dirInfo = new DirectoryInfo(GetBackupFolderPathFromJson(idx));
-            ProgressbarLabel.Visible = true;
-            this.Enabled = false;
-            Compress comp = new Compress();
-            await comp.DoCompress(dirInfo.Name, currentLoadedBackupFolderPATH, BackupListBox.SelectedIndex, ProgressbarLabel);
-            SetBackupLabelValues();
-            this.Enabled = true;
-            ProgressbarLabel.Visible = false;
-        }
 
         private void DeleteSelected_OnClick(object sender, EventArgs e)
         {
@@ -712,12 +704,15 @@ namespace ZomboidBackupManager
             }
         }
 
-        private async void DeleteSingleBackup(int idx)
+        private async void DeleteSingleBackup(int idx, bool ask = true)
         {
-            var result = MessageBox.Show($"Are you sure you want to delete this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm deletion!", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
+            if (ask)
             {
-                return;
+                var result = MessageBox.Show($"Are you sure you want to delete this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm deletion!", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
             }
             Delete delete = new Delete();
             await delete.DoDelete(BackupListBox.SelectedIndex, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
@@ -747,11 +742,13 @@ namespace ZomboidBackupManager
             var result = MessageBox.Show($"Are you sure you want to delete the {BackupListBox.SelectedItems.Count} selected backups? \n {strList}", "Please confirm!", MessageBoxButtons.YesNo);
             if (result == DialogResult.No)
             {
+                SetSelectionMode(false);
                 return;
             }
             result = MessageBox.Show($"Are you really sure you want to do that right now? It can take some time, tho!", "Please confirm again!", MessageBoxButtons.YesNo);
             if (result == DialogResult.No)
             {
+                SetSelectionMode(false);
                 return;
             }
             ListBox.SelectedIndexCollection col = BackupListBox.SelectedIndices;
@@ -775,6 +772,7 @@ namespace ZomboidBackupManager
             if (multiDelete.Status == Status.FAILED)
             {
                 MessageBox.Show("Failed to init DeleteMulti.cs. Creation returned - STATUS.FAILED!");
+                SetSelectionMode(false);
                 return;
             }
             multiDelete.OnStatusChanged += DeleteMulti_OnStatusChanged;
@@ -793,6 +791,7 @@ namespace ZomboidBackupManager
             else if (s == Status.DONE)
             {
                 this.Enabled = true;
+                SetSelectionMode(false);
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
                 SetBackupLabelValues();
@@ -800,7 +799,7 @@ namespace ZomboidBackupManager
 
         }
 
-        private async void Backup_OnStatusChanged(object? sender, Status s)
+        private void Backup_OnStatusChanged(object? sender, Status s)
         {
             PrintDebug($"[Backup] - [OnStatusChanged] - [To = {s.ToString()}]");
             if (s == Status.FAILED)
@@ -810,17 +809,29 @@ namespace ZomboidBackupManager
             }
             else if (s == Status.DONE)
             {
+                if (autoDeleteEnabled)
+                {
+                    if (BackupListBox.Items.Count > autoDeleteKeepBackupsCount)
+                    {
+                        DeleteSingleBackup(0, false);
+                    }
+
+                }
                 if (saveBackupsAsZipFile)
                 {
-                    Compress compress = new Compress();
-                    await compress.DoCompress(GetDefaultBackupFolderName(GetLastBackupFolderNumber()), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel);
+
+                    CompressBackupToZip(GetLastBackupIndexFromJson());
                 }
-                ProgressBarA.Value = 0;
-                ProgressbarLabel.Text = @" - ";
-                ProgressbarPanel.Visible = false;
-                LoadAndDisplayBackups();
-                SetSavegameLabelValues();
-                SetBackupLabelValues();
+                else
+                {
+                    LoadAndDisplayBackups();
+                    SetSavegameLabelValues();
+                    SetBackupLabelValues();
+                    ProgressBarA.Value = 0;
+                    ProgressbarLabel.Text = @" - ";
+                    ProgressbarPanel.Visible = false;
+                }
+
             }
 
         }
@@ -840,6 +851,21 @@ namespace ZomboidBackupManager
         {
             int itemCount = BackupListBox.Items.Count;
             for (int i = 0; i < itemCount; i++)
+            {
+                BackupListBox.SelectedItems.Add(BackupListBox.Items[i]);
+            }
+        }
+
+        private void SetBackupsSelected(int endIdx)
+        {
+            int itemCount = BackupListBox.Items.Count;
+            if ((endIdx < 0) || endIdx > itemCount)
+            {
+                PrintDebug($"[MainWindow] - [SetBackupsSelected] - [itemCount = {itemCount}] - [endIdx = {endIdx}]", 2);
+            }
+            SetSelectionMode(true);
+            BackupListBox.SelectedItems.Clear();
+            for (int i = 0; i < endIdx; i++)
             {
                 BackupListBox.SelectedItems.Add(BackupListBox.Items[i]);
             }
@@ -970,6 +996,7 @@ namespace ZomboidBackupManager
         private void SettingsDropDownButton_Click(object sender, EventArgs e)
         {
             AboutInfoVersionTextBox.Text = appVersion;
+            CompressZipSettingMenuOption.Checked = saveBackupsAsZipFile;
         }
 
         private void StartMultiSelectToolTipButton_Click(object sender, EventArgs e)
@@ -1006,8 +1033,342 @@ namespace ZomboidBackupManager
         {
             if (e.Button == MouseButtons.Right)
             {
-                EditBackupsContextMenu.Show(BackupListBox, e.Location);
+                EditBackupsContextMenu.Show(BackupListBox, new System.Drawing.Point(e.Location.X, e.Location.Y));
             }
         }
+
+        private void BackupListBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            BackupListBox.SelectedIndex = BackupListBox.IndexFromPoint(e.X, e.Y);
+        }
+
+        private async void AutoDeleteBackupMenuOption_Click(object sender, EventArgs e)
+        {
+            AutoDeleteSetupWindow autoDelWin = new AutoDeleteSetupWindow();
+            autoDelWin.ShowDialog();
+            autoDeleteEnabled = autoDelWin.CheckBoxValue;
+            autoDeleteKeepBackupsCount = autoDelWin.TrackBarValue;
+            await WriteCfgToJson();
+            if (autoDeleteEnabled)
+            {
+                int bCount = GetBackupCountFromJson();
+                if (bCount > autoDeleteKeepBackupsCount)
+                {
+                    int sel = bCount - autoDeleteKeepBackupsCount;
+                    DialogResult result = MessageBox.Show($"You enabled the auto delete feature.\nFound {bCount} backups on your current selected savegame.\nThe maximum allowed, are {autoDeleteKeepBackupsCount}!\nDo you want to delete the first {sel} backups?\n(If you cancel, the autodelete feature will be disabled again!)", "Please confirm!", MessageBoxButtons.OKCancel);
+                    if (result == DialogResult.OK)
+                    {
+                        SetBackupsSelected(sel);
+                        DeleteMultipleBackups();
+                    }
+                    else
+                    {
+                        autoDeleteEnabled = false;
+                        await WriteCfgToJson();
+                    }
+                }
+            }
+            SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
+        }
+
+        private async void ZipSetupMenuOption_Click(object sender, EventArgs e)
+        {
+            ZipArchiveSetup zipSetup = new ZipArchiveSetup();
+            DialogResult result = zipSetup.ShowDialog();
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+            saveBackupsAsZipFile = zipSetup.CreateZipCB;
+            keepBackupFolderAfterZip = zipSetup.KeepLooseCB;
+            usedZipArchiver = zipSetup.ArchiverID;
+            zipArchiverExePath = zipSetup.ArchiverPath;
+            await WriteCfgToJson();
+        }
+
+        //=================================================================================================================
+        //--------------------------------------[ Start Zip Archive Functions ]--------------------------------------------
+        //=================================================================================================================
+        // ZipWatcher:
+
+
+        private void InitWatcher(string path)
+        {
+            Watcher = new ZipWatcher();
+            Watcher.ZipFileReady += OnZipFileReady;
+            Watcher.StartWatching(path);
+        }
+
+        private void EndWatcher()
+        {
+            Watcher?.StopWatching();
+        }
+
+        // Main:
+
+        private void CreateZipEditBackupMenuOption_Click(object sender, EventArgs e)
+        {
+            if (IsValidBackupSelected())
+            {
+                ToggleProgressBarPanel(true);
+                if (BackupListBox.SelectedItems.Count > 1)
+                {
+                    CompressMultiToZip();
+                }
+                else
+                {
+                    CompressBackupToZip(BackupListBox.SelectedIndex);
+                }
+            }
+            else
+            {
+                MessageBox.Show("No backup selected. Please select a backup first!");
+            }
+        }
+
+        private async void CompressBackupToZip(int idx)
+        {
+            var result = MessageBox.Show($"Are you sure you want to create a zip archive for this backup? \n Name: {GetBackupDataNameFromJson(idx)} \n Index: {idx} ", "Please confirm action!", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            if (usedZipArchiver == 0)
+            {
+                result = MessageBox.Show($"WARNING! This feature is currently WIP & can take up to minutes to complete even a single archive!\nAre you really sure, you want to continue?", "Please confirm again!", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+            if (IsBackupZipped(idx))
+            {
+                result = MessageBox.Show($"It looks like there is a zip for this file already!\n\nDo you want to overwrite it?", "Please confirm again!", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+                string? delPath = GetBackupZipPathFromJson(idx);
+                if (!string.IsNullOrWhiteSpace(delPath))
+                {
+                    await Task.Run(() => File.Delete(delPath));
+                }
+            }
+            Compress comp = new Compress();
+            DirectoryInfo dirInfo = new DirectoryInfo(GetBackupFolderPathFromJson(idx));
+            string backupName = dirInfo.Name;
+
+            ZipData zipData = new ZipData(idx, backupName, currentLoadedBackupFolderPATH);
+            ZipDataCache.Add(zipData);
+            InitWatcher(currentLoadedBackupFolderPATH);
+            if (usedZipArchiver == 0)
+            {
+                await comp.SimpleCompress(ZipDataCache[0]);
+            }
+            else
+            {
+                await comp.ExternCompress(ZipDataCache[0]);
+            }
+
+        }
+
+        private async void CompressMultiToZip()
+        {
+            await CacheBackupZipData();
+
+            var result = MessageBox.Show($"Are you sure you want to create a zip archive for those {ZipDataCache.Count} backups?", "Please confirm action!", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+            {
+                PrintDebug($"[MainWindow.cs] - [CompressMultiToZip] - [Aborted by user] - [clearing ZipData cache...]");
+                ZipDataCache.Clear();
+                return;
+            }
+
+            CompressBackupToZipLoop();
+        }
+
+        private async Task CacheBackupZipData()
+        {
+            ListBox.SelectedIndexCollection col = BackupListBox.SelectedIndices;
+            List<ZipData> data = new List<ZipData>();
+            PrintDebug($"[MainWindow.cs] - [CacheBackupZipData] - [col.Count = {col.Count}] - [sourcePath = {currentLoadedBackupFolderPATH}] - [Caching started!]");
+            PrintDebug($"[MainWindow.cs] - [CacheBackupZipData] - [Caching started!]");
+            foreach (int index in col)
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(GetBackupFolderPathFromJson(index));
+                string backupName = dirInfo.Name;
+                ZipData zData = new ZipData(index, backupName, currentLoadedBackupFolderPATH);
+                PrintDebug($"[MainWindow.cs] - [CacheBackupZipData] - [index = {index}] - [backupName = {backupName}] - [name = {GetBackupDataNameFromJson(index)}]");
+                await Task.Delay(50);
+                data.Add(zData);
+            }
+            PrintDebug($"[MainWindow.cs] - [CacheBackupZipData] - [Caching done!]");
+            PrintDebug($"[MainWindow.cs] - [CacheBackupZipData] - [data.Count = {data.Count}]");
+            ZipDataCache.AddRange(data);
+        }
+
+        private async void CompressBackupToZipLoop()
+        {
+            ToggleProgressBarPanel(true);
+            ZipData data = ZipDataCache[0];
+            if (data == null)
+            {
+                PrintDebug($"[MainWindow.cs] - [CompressBackupToZipLoop] - [data = {data}] - [ZipDataCache.Count = {ZipDataCache.Count}]", 2);
+                return;
+            }
+            if (IsBackupZipped(data.Index))
+            {
+                PrintDebug($"[MainWindow.cs] - [CompressBackupToZipLoop] - [Backup = {data.BackupName}] - [already has a zip archive] - [Skipping!]", 1);
+                this.OnSkip.Invoke(this, data.BackupName);
+            }
+            Compress comp = new Compress();
+            PrintDebug($"[MainWindow.cs] - [CompressBackupToZipLoop] - [ZipDataCache.Count = {ZipDataCache.Count}]");
+            InitWatcher(currentLoadedBackupFolderPATH);
+            if (usedZipArchiver == 0)
+            {
+                await comp.SimpleCompress(data);
+            }
+            else
+            {
+                await comp.ExternCompress(data);
+            }
+            await Task.Delay(500);
+        }
+
+        private async void MoveZipArchive(ZipData data)
+        {
+            try
+            {
+                string? path = Path.GetDirectoryName(data.ZipDestPath);
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    throw new Exception();
+                }
+                await Task.Delay(1500);
+                PrintDebug($"[DoCompress] - [Start moving Zip archive] - [ZipFilePath = {data.ZipFilePath}] - [ZipDestPath = {data.ZipDestPath}]");
+                await Task.Run(() => Directory.Move(data.ZipFilePath, data.ZipDestPath));
+                PrintDebug($"[DoCompress] - [Done moving Zip archive]");
+                await Task.Delay(500);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"[ERROR] - [MoveArchive] - [ERROR] \n\n[Message: {e}]");
+            }
+        }
+
+        private void RefreshBackups(int i)
+        {
+            LoadAndDisplayBackups();
+            SetSavegameLabelValues();
+            SetBackupLabelValues();
+            BackupListBox.SelectedItems.Clear();
+            BackupListBox.SetSelected(i, true);
+
+        }
+
+        private void ToggleProgressBarPanel(bool bOn)
+        {
+            ProgressBarA.Value = 0;
+            ProgressbarLabel.Text = @" - ";
+            ProgressbarPanel.Visible = bOn;
+            ProgressBarA.Visible = bOn;
+            ProgressbarLabel.Visible = bOn;
+        }
+
+        // Events:
+
+        private void OnZipFileReady(object? sender, string fullPath)
+        {
+            EndWatcher();
+            this.Invoke((MethodInvoker)(() =>
+            {
+                PrintDebug($"[OnZipFileReady] - [ZIP - File is ready] - [fullPath = {fullPath}]");
+                ProgressBarA.Value = 50;
+                ProgressbarLabel.Text = "Zip file successfully created!";
+                ZipData? data = ZipDataCache[0];
+                if (data == null)
+                {
+                    return;
+                }
+                MoveZipArchive(data);
+                string name = data.BackupName;
+                bool result = AddZipPathToBackupData(data.Index, data.ZipDestPath, true);
+                ProgressBarA.Value = 80;
+                ProgressbarLabel.Text = "Zip Moved & Registered in jsonData";
+                PrintDebug($"[MainWindow.cs] - [OnZipFileReady] - [Done Added Path to Json] - [result = {result}]");
+                
+                RefreshBackups(ZipDataCache[0].Index);
+                ZipDataCache.RemoveAt(0);
+                PrintDebug($"[MainWindow.cs] - [OnZipFileReady] - [Done Added Path to Json] - [ZipDataCache.Count = {ZipDataCache.Count}]");
+                Watcher?.StopWatching();
+                Thread.Sleep(500);
+                ProgressBarA.Value = 100;
+                ProgressbarLabel.Text = $"Backup [{name}] [successfull archived]";
+                Thread.Sleep(500);
+                if (ZipDataCache.Count > 0)
+                {
+                    CompressBackupToZipLoop();
+                    return;
+                }
+                ToggleProgressBarPanel(false);
+
+            }));
+        }
+
+        private void OnSkipCompressToZip(object? sender, string backup)
+        {
+            PrintDebug($"[MainWindow.cs] - [OnSkipCompressToZip] - [Skipping backup = {backup}]");
+            ProgressBarA.Value = 50;
+            ProgressbarLabel.Text = $"Skipping backup [{backup}] ! Zip archive already present!";
+            ZipData? data = ZipDataCache[0];
+            if (data == null)
+            {
+                return;
+            }
+            ProgressBarA.Value = 100;
+            ProgressbarLabel.Text = "Zip Moved & Registered in jsonData";
+            RefreshBackups(ZipDataCache[0].Index);
+            ZipDataCache.RemoveAt(0);
+            PrintDebug($"[MainWindow.cs] - [OnZipFileReady] - [Done Added Path to Json] - [ZipDataCache.Count = {ZipDataCache.Count}]");
+            Watcher?.StopWatching();
+            Thread.Sleep(500);
+            if (ZipDataCache.Count > 0)
+            {
+                CompressBackupToZipLoop();
+                return;
+            }
+            ToggleProgressBarPanel(false);
+        }
+
+
+
+        //=================================================================================================================
+        //----------------------------------------[ End Zip Archive Functions ]--------------------------------------------
+        //=================================================================================================================
     }
+
+
+    public class ZipData
+    {
+        public int Index { get; set; }              // e.g. 5
+        public string BackupName { get; set; }      // e.g. Backup_6
+        public string SourcePath { get; set; }      // e.g. G:\ProjectZomboidBackups\Save01
+        public string DestPath { get; set; }        // e.g. G:\ProjectZomboidBackups\Save01\Backup_6
+        public string ZipFilePath { get; set; }     // e.g. G:\ProjectZomboidBackups\Save01\Backup_6.zip
+        public string ZipDestPath { get; set; }     // e.g. G:\ProjectZomboidBackups\Save01\Backup_6\Backup_6.zip
+
+        string fileExt = @".zip";
+
+        public ZipData(int idx, string backupName, string sourcePath)
+        {
+            Index = idx;
+            BackupName = backupName;
+            SourcePath = sourcePath;
+            DestPath = Path.Combine(sourcePath, backupName);
+            ZipFilePath = DestPath + fileExt;
+            ZipDestPath = Path.Combine(DestPath, backupName) + fileExt;
+        }
+
+    }
+
 }

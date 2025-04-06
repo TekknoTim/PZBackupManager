@@ -136,17 +136,17 @@
   <data name="ToggleTrackingMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVEhL7ZPBaxNBFMbf6kFQD170rtFUcxahJ/8DvRgF
-        0QoKRaQaUC+CoDRID3oSxJOeCoIWFERET4YKNdnZTZvUHgSpmZm3SYhN9VJtD8bv7U4vFszm3H7wMZm3
-        835vJm+GtrQJZUx4yFqVt9a/PJhVXuvgoMNsVKPhZ5j9p8xqBe4xl1ad11IY6yQnzn0iLIdNpLV/jLlc
-        k0XYzVv4hjH+CMYL/3MUBeftUv2MXfqct536FebwdVKoModvR2N4FIV7sbjk4Nfb7fnd8YcU+kK0g4nO
-        wkVDNNJ8WNzP7dmrCUt9EDbhb3GByoTLS6UW0QGAP8E9wH/KqIkCSzTE7erd5CT+GLndG/iwy+2rHtE2
-        gCYFCj+IiI5jfoc9bw3zF9jsEEdKCxsnqHSNUe8XF6t7XH5fud1r7HwaxbZLTEYUmUJ8JXo0foRbwRvm
-        mWUUmFk2pvJukAINogxABsCSnEZiGD3EnsO/osf3ckkB9QP3vjyNHzhOORtnp5DsFqBnaPIf63kTKDSM
-        +S326DdO9dJ+LWe1Ln8TNk6gCrBcrXGXn0qAZjV5AcDSh64ba+hHzraqtxOmKlCzObtPa/UxCfhjGHc6
-        Rl81iXah0EWA7wM82ijezESd2qiwhCnseKG1wTD6sCAf0PBXUgj3+HQ/myg8xZ25k7Y7f4K/1y/ZZjiV
-        MCoLwozh65KrhWs1+c+zH8TIKa0KQ1gOu1F4fTk883NIQG/8a+msCpIjuQ6zpc0jor8T4Wca3L78UwAA
-        AABJRU5ErkJggg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAI2SURBVEhL7ZPBaxNBFMbf6kFQD170rrGp5ixCT/4HejEK
+        ohUUikg1oF4EQWmQHvQkiCc9FQpaqCAiilBLhZrs7KZN2h4EqZmZt0mITfVSbQ/G7+2OFwsmObcffExm
+        dt7vvZeZoW1tQRkT9lmrstb6V3qzymodHHaYzapW/RSz/4xZrcFt5qn1xO83Olv2SUwc+1RYDptIa/84
+        c6Esm1DNG/imMf4gxov/cxQFF+xK5axdWczaZuUqc/gqSVScx7djMTyKwv3YPO3gNxqNhb3xhy70mWgX
+        E52D84ZosPYof5Abc9cSlvogbMLf4haKoy6uK9WJDgH8CW4D/kNGTRRYon5ulO4lnfjD5Ko38BEX21Ft
+        oh0AjQkUfhgRncD8LnveBuYvUGw/R0oLGx0UW8aod8vLpX0uvqNc9RqVzyDZTlmTEUkmsL4WPR45yvXg
+        NfPsKhLMrhpTfNtLgipRCiAD4LR0I2sYPaw9h39GT+5nkgTqO+59YQY/0E4hHUd3IakWoPFFot/W80aR
+        aADz2+zRL3Q1ab8U0loXvgobHagcLFdrxMV3JUDTmrwAYDmHlhvLOI+MrZfuJEyVo1pt7oDW6mOy4A9j
+        3O0YHVUj2oNElwB+APBQNX8rFTXLQ8ISprDjjdYGAziHJfmAA38piXCPz3SyicLT3Jw/ZVsLJ/lb5bKt
+        hRMJo7gkzBj+V3K1cK3G/nn2vRgxU+vCEJbDbhZeXwbP/DwCcDb+9e6schIjsQ6zra0joj+kaGbewO9U
+        tAAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="MinimizedNotifyIcon.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
