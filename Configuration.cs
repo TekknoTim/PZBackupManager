@@ -114,18 +114,21 @@ namespace ZomboidBackupManager
             if (!File.Exists(appConfig))
             {
                 PrintDebug("ReadCfgFromJson --> Config file not found! Creating a new one.");
+                showUpdateInfoWindow = true;
                 await WriteCfgToJson();
             }
             string? json = File.ReadAllText(appConfig);
             if (string.IsNullOrEmpty(json))
             {
                 PrintDebug("ReadCfgFromJson --> Config file is empty! Writing values..");
+                showUpdateInfoWindow = true;
                 await WriteCfgToJson();
             }
             Config? cfg = JsonConvert.DeserializeObject<Config>(json);
             if (cfg == null)
             {
                 PrintDebug("ReadCfgFromJson --> Deserialized Config is null! Writing values..");
+                showUpdateInfoWindow = true;
                 await WriteCfgToJson();
             }
             else
