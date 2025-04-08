@@ -24,22 +24,24 @@ jobs:
       - name: Build
         run: dotnet publish -c Release -r win-x64 --self-contained true --property:PublishDir=publish
 
-      - name: Create Build Directory
-        run: New-Item -ItemType Directory -Path Build -Force
+      - name: Create Builds Directory
+        run: |
+          New-Item -ItemType Directory -Path Builds/PZBackupManager -Force
+          Copy-Item -Path publish\* -Destination Builds/PZBackupManager -Recurse
 
       - name: Create Zip Archive
         run: |
-          Compress-Archive -Path publish\* -DestinationPath Build/PZBackupManager.zip
+          Compress-Archive -Path Builds/PZBackupManager\* -DestinationPath Builds/PZBackupManager.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PZBackupManager
-          path: Build/PZBackupManager.zip
+          path: Builds/PZBackupManager.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: Build/PZBackupManager.zip
+          files: Builds/PZBackupManager.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
