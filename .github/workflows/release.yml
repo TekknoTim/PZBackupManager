@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - "v*"  # Löst den Workflow aus, wenn ein Tag erstellt wird, z. B. v1.0.0
+      
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -24,20 +27,19 @@ jobs:
       - name: Build
         run: dotnet publish -c Release -r win-x64 --self-contained true --property:PublishDir=publish
 
-      - name: Create Builds Directory
+      - name: Create PZBackupManager Folder
         run: |
-          New-Item -ItemType Directory -Path Builds/PZBackupManager -Force
-          Copy-Item -Path publish\* -Destination Builds/PZBackupManager -Recurse
+          New-Item -ItemType Directory -Path Builds\PZBackupManager -Force
+          Copy-Item -Path publish\* -Destination Builds\PZBackupManager -Recurse
 
-      - name: Create Zip Archive
-        run: |
-          Compress-Archive -Path Builds/PZBackupManager\* -DestinationPath Builds/PZBackupManager.zip
+      - name: Create ZIP Archive
+        run: Compress-Archive -Path Builds\PZBackupManager -DestinationPath Builds\PZBackupManager.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PZBackupManager
-          path: Builds/PZBackupManager.zip
+          path: Builds\PZBackupManager.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
