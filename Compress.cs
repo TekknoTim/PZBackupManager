@@ -22,6 +22,7 @@ namespace ZomboidBackupManager
     {
         public async Task SimpleCompress(ZipData data)
         {
+            if (!expFeaturesEnabled) { return; }
             PrintDebug($"[DoCompress] - [SimpleCompress] - [Index = {data.Index}] - [BackupName = {data.BackupName}] - [SourcePath = {data.SourcePath}]");
             PrintDebug($"[DoCompress] - [SimpleCompress] - [DestPath = {data.DestPath}] - [ZipFilePath = {data.ZipFilePath}] - [ZipDestPath = {data.ZipDestPath}]");
             Thread.Sleep(1000);
@@ -47,6 +48,7 @@ namespace ZomboidBackupManager
 
         public async Task ExternCompress(ZipData data)
         {
+            if (!expFeaturesEnabled) { return; }
             Process p = new Process();
             p.StartInfo.FileName = zipArchiverExePath;
             p.StartInfo.WorkingDirectory = data.SourcePath;

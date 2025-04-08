@@ -88,12 +88,6 @@ namespace ZomboidBackupManager
             AutoDeleteBackupMenuOption = new ToolStripMenuItem();
             ZipSetupMenuOption = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
-            AboutInfoLabelTextBox = new ToolStripTextBox();
-            AboutInfoVersionTextBox = new ToolStripTextBox();
-            AboutInfoAuthorTextBox = new ToolStripTextBox();
-            AboutInfoAuthorNameTextBox = new ToolStripTextBox();
-            AboutInfoGithubTextBox = new ToolStripTextBox();
-            AboutInfoGithubLinkTextBox = new ToolStripTextBox();
             EditSettingsDropDownButton = new ToolStripDropDownButton();
             EditBackupsToolbarMenu = new ContextMenuStrip(components);
             SelectBackupsToolbarMenuOption = new ToolStripMenuItem();
@@ -101,6 +95,8 @@ namespace ZomboidBackupManager
             SelectAllBackupsToolbarOption = new ToolStripMenuItem();
             DeleteBackupsToolbarMenuOption = new ToolStripMenuItem();
             DeleteSelectedToolbarOption = new ToolStripMenuItem();
+            DeleteZipToolbarOption = new ToolStripMenuItem();
+            DeleteLooseToolbarOption = new ToolStripMenuItem();
             RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             RenameContextMenu = new ContextMenuStrip(components);
             RenameLabelTextItem = new ToolStripTextBox();
@@ -127,6 +123,8 @@ namespace ZomboidBackupManager
             SelectAllMenuItem = new ToolStripMenuItem();
             DeleteContextMenuItem = new ToolStripMenuItem();
             DeleteSelectedMenuOption = new ToolStripMenuItem();
+            DeleteZipMenuOption = new ToolStripMenuItem();
+            DeleteLooseMenuOption = new ToolStripMenuItem();
             RenameContextMenuItem = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
@@ -136,10 +134,6 @@ namespace ZomboidBackupManager
             ProgressBarA = new ProgressBar();
             ProgressbarLabel = new Label();
             MinimizeButtonToolTip = new ToolTip(components);
-            DeleteZipToolbarOption = new ToolStripMenuItem();
-            DeleteLooseToolbarOption = new ToolStripMenuItem();
-            DeleteZipMenuOption = new ToolStripMenuItem();
-            DeleteLooseMenuOption = new ToolStripMenuItem();
             SelectSavegamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
             SavegameInfoPanel.SuspendLayout();
@@ -758,6 +752,7 @@ namespace ZomboidBackupManager
             GeneralSettingsContextMenuStrip.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             GeneralSettingsContextMenuStrip.Items.AddRange(new ToolStripItem[] { CompressZipSettingMenuOption, KeepFolderSettingMenuOption, AutoSelectSGSettingMenuOption, ShowMsgSettingMenuOption });
             GeneralSettingsContextMenuStrip.Name = "GeneralSettingsContextMenuStrip";
+            GeneralSettingsContextMenuStrip.OwnerItem = GeneralSettingsMenuOption;
             GeneralSettingsContextMenuStrip.RightToLeft = RightToLeft.Yes;
             GeneralSettingsContextMenuStrip.ShowCheckMargin = true;
             GeneralSettingsContextMenuStrip.ShowImageMargin = false;
@@ -839,95 +834,12 @@ namespace ZomboidBackupManager
             // AboutToolStripMenuItem
             // 
             AboutToolStripMenuItem.BackColor = SystemColors.ControlDarkDark;
-            AboutToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { AboutInfoLabelTextBox, AboutInfoVersionTextBox, AboutInfoAuthorTextBox, AboutInfoAuthorNameTextBox, AboutInfoGithubTextBox, AboutInfoGithubLinkTextBox });
             AboutToolStripMenuItem.ForeColor = SystemColors.Control;
             AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             AboutToolStripMenuItem.Padding = new Padding(0);
             AboutToolStripMenuItem.Size = new Size(180, 22);
             AboutToolStripMenuItem.Text = "About";
-            // 
-            // AboutInfoLabelTextBox
-            // 
-            AboutInfoLabelTextBox.AutoSize = false;
-            AboutInfoLabelTextBox.BackColor = SystemColors.ControlLightLight;
-            AboutInfoLabelTextBox.BorderStyle = BorderStyle.FixedSingle;
-            AboutInfoLabelTextBox.Font = new Font("Bahnschrift", 12F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
-            AboutInfoLabelTextBox.ForeColor = SystemColors.ControlText;
-            AboutInfoLabelTextBox.Margin = new Padding(5);
-            AboutInfoLabelTextBox.Name = "AboutInfoLabelTextBox";
-            AboutInfoLabelTextBox.ReadOnly = true;
-            AboutInfoLabelTextBox.Size = new Size(350, 27);
-            AboutInfoLabelTextBox.Text = "About:";
-            AboutInfoLabelTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // AboutInfoVersionTextBox
-            // 
-            AboutInfoVersionTextBox.AutoSize = false;
-            AboutInfoVersionTextBox.BackColor = Color.White;
-            AboutInfoVersionTextBox.BorderStyle = BorderStyle.FixedSingle;
-            AboutInfoVersionTextBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            AboutInfoVersionTextBox.ForeColor = Color.Black;
-            AboutInfoVersionTextBox.Margin = new Padding(5);
-            AboutInfoVersionTextBox.Name = "AboutInfoVersionTextBox";
-            AboutInfoVersionTextBox.Overflow = ToolStripItemOverflow.Never;
-            AboutInfoVersionTextBox.ReadOnly = true;
-            AboutInfoVersionTextBox.Size = new Size(350, 23);
-            AboutInfoVersionTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // AboutInfoAuthorTextBox
-            // 
-            AboutInfoAuthorTextBox.AutoSize = false;
-            AboutInfoAuthorTextBox.BackColor = Color.White;
-            AboutInfoAuthorTextBox.BorderStyle = BorderStyle.None;
-            AboutInfoAuthorTextBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
-            AboutInfoAuthorTextBox.ForeColor = Color.Black;
-            AboutInfoAuthorTextBox.Margin = new Padding(5);
-            AboutInfoAuthorTextBox.Name = "AboutInfoAuthorTextBox";
-            AboutInfoAuthorTextBox.Overflow = ToolStripItemOverflow.Never;
-            AboutInfoAuthorTextBox.ReadOnly = true;
-            AboutInfoAuthorTextBox.Size = new Size(350, 30);
-            AboutInfoAuthorTextBox.Text = "Author:";
-            AboutInfoAuthorTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // AboutInfoAuthorNameTextBox
-            // 
-            AboutInfoAuthorNameTextBox.BorderStyle = BorderStyle.FixedSingle;
-            AboutInfoAuthorNameTextBox.Font = new Font("Bahnschrift", 10F);
-            AboutInfoAuthorNameTextBox.Margin = new Padding(5);
-            AboutInfoAuthorNameTextBox.Name = "AboutInfoAuthorNameTextBox";
-            AboutInfoAuthorNameTextBox.Size = new Size(350, 24);
-            AboutInfoAuthorNameTextBox.Text = "TekknoTim";
-            AboutInfoAuthorNameTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // AboutInfoGithubTextBox
-            // 
-            AboutInfoGithubTextBox.AutoSize = false;
-            AboutInfoGithubTextBox.BackColor = Color.White;
-            AboutInfoGithubTextBox.BorderStyle = BorderStyle.None;
-            AboutInfoGithubTextBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
-            AboutInfoGithubTextBox.ForeColor = Color.Black;
-            AboutInfoGithubTextBox.Margin = new Padding(5);
-            AboutInfoGithubTextBox.Name = "AboutInfoGithubTextBox";
-            AboutInfoGithubTextBox.Overflow = ToolStripItemOverflow.Never;
-            AboutInfoGithubTextBox.ReadOnly = true;
-            AboutInfoGithubTextBox.Size = new Size(350, 30);
-            AboutInfoGithubTextBox.Text = "GitHub:";
-            AboutInfoGithubTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // AboutInfoGithubLinkTextBox
-            // 
-            AboutInfoGithubLinkTextBox.AutoSize = false;
-            AboutInfoGithubLinkTextBox.BackColor = Color.White;
-            AboutInfoGithubLinkTextBox.BorderStyle = BorderStyle.FixedSingle;
-            AboutInfoGithubLinkTextBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            AboutInfoGithubLinkTextBox.ForeColor = Color.Black;
-            AboutInfoGithubLinkTextBox.Margin = new Padding(5);
-            AboutInfoGithubLinkTextBox.Name = "AboutInfoGithubLinkTextBox";
-            AboutInfoGithubLinkTextBox.Overflow = ToolStripItemOverflow.Never;
-            AboutInfoGithubLinkTextBox.ReadOnly = true;
-            AboutInfoGithubLinkTextBox.Size = new Size(350, 23);
-            AboutInfoGithubLinkTextBox.Text = "https://github.com/TekknoTim/PZBackupManager";
-            AboutInfoGithubLinkTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
+            AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
             // EditSettingsDropDownButton
             // 
@@ -949,6 +861,7 @@ namespace ZomboidBackupManager
             EditBackupsToolbarMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             EditBackupsToolbarMenu.Items.AddRange(new ToolStripItem[] { SelectBackupsToolbarMenuOption, DeleteBackupsToolbarMenuOption, RenameBackupsToolbarMenuOption, StopMultiSelBackupsToolbarMenuOption, EditBackupsToolbarSeparator, CreateZipToolbarMenuOption });
             EditBackupsToolbarMenu.Name = "EditBackupsMenuButton";
+            EditBackupsToolbarMenu.OwnerItem = EditSettingsDropDownButton;
             EditBackupsToolbarMenu.ShowImageMargin = false;
             EditBackupsToolbarMenu.Size = new Size(176, 130);
             // 
@@ -970,7 +883,7 @@ namespace ZomboidBackupManager
             SelectMultiBackupsToolbarOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
             SelectMultiBackupsToolbarOption.ForeColor = SystemColors.Control;
             SelectMultiBackupsToolbarOption.Name = "SelectMultiBackupsToolbarOption";
-            SelectMultiBackupsToolbarOption.Size = new Size(180, 24);
+            SelectMultiBackupsToolbarOption.Size = new Size(163, 24);
             SelectMultiBackupsToolbarOption.Text = "Select Multi";
             SelectMultiBackupsToolbarOption.Click += SelectMultiOption_Click;
             // 
@@ -980,7 +893,7 @@ namespace ZomboidBackupManager
             SelectAllBackupsToolbarOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
             SelectAllBackupsToolbarOption.ForeColor = SystemColors.Control;
             SelectAllBackupsToolbarOption.Name = "SelectAllBackupsToolbarOption";
-            SelectAllBackupsToolbarOption.Size = new Size(180, 24);
+            SelectAllBackupsToolbarOption.Size = new Size(163, 24);
             SelectAllBackupsToolbarOption.Text = "Select All";
             SelectAllBackupsToolbarOption.Click += SelectAllOption_Click;
             // 
@@ -1004,8 +917,26 @@ namespace ZomboidBackupManager
             DeleteSelectedToolbarOption.ForeColor = SystemColors.Control;
             DeleteSelectedToolbarOption.Name = "DeleteSelectedToolbarOption";
             DeleteSelectedToolbarOption.Size = new Size(175, 25);
-            DeleteSelectedToolbarOption.Text = "Delete Both";
+            DeleteSelectedToolbarOption.Text = "Delete";
             DeleteSelectedToolbarOption.Click += DeleteSelected_OnClick;
+            // 
+            // DeleteZipToolbarOption
+            // 
+            DeleteZipToolbarOption.AutoSize = false;
+            DeleteZipToolbarOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteZipToolbarOption.ForeColor = SystemColors.Control;
+            DeleteZipToolbarOption.Name = "DeleteZipToolbarOption";
+            DeleteZipToolbarOption.Size = new Size(175, 25);
+            DeleteZipToolbarOption.Text = "Delete Zip";
+            // 
+            // DeleteLooseToolbarOption
+            // 
+            DeleteLooseToolbarOption.AutoSize = false;
+            DeleteLooseToolbarOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteLooseToolbarOption.ForeColor = SystemColors.Control;
+            DeleteLooseToolbarOption.Name = "DeleteLooseToolbarOption";
+            DeleteLooseToolbarOption.Size = new Size(175, 25);
+            DeleteLooseToolbarOption.Text = "Delete Loose";
             // 
             // RenameBackupsToolbarMenuOption
             // 
@@ -1027,6 +958,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
+            RenameContextMenu.OwnerItem = RenameContextMenuItem;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -1163,7 +1095,7 @@ namespace ZomboidBackupManager
             StartMultiSelectToolTipButton.Name = "StartMultiSelectToolTipButton";
             StartMultiSelectToolTipButton.Size = new Size(36, 38);
             StartMultiSelectToolTipButton.TextImageRelation = TextImageRelation.TextBeforeImage;
-            StartMultiSelectToolTipButton.ToolTipText = "End selecting multiple backups";
+            StartMultiSelectToolTipButton.ToolTipText = "Select multiple backups at once\r\n(To delete multiple backups one after another)";
             StartMultiSelectToolTipButton.Click += StartMultiSelectToolTipButton_Click;
             // 
             // ToolStripSeparator2
@@ -1192,6 +1124,7 @@ namespace ZomboidBackupManager
             ListenToPZToolStripButton.Size = new Size(96, 38);
             ListenToPZToolStripButton.Text = "Connect";
             ListenToPZToolStripButton.TextImageRelation = TextImageRelation.TextBeforeImage;
+            ListenToPZToolStripButton.ToolTipText = "Connect this app with Project Zomboid\r\n(PZBackupManager mod from workshop required!)";
             ListenToPZToolStripButton.Click += ListenToPZToolStripButton_Click;
             // 
             // BackupButton
@@ -1254,7 +1187,7 @@ namespace ZomboidBackupManager
             EditBackupsContextMenu.Items.AddRange(new ToolStripItem[] { SelectContextMenuItem, DeleteContextMenuItem, RenameContextMenuItem, StopMultiSelectMenuItem, ToolStripSeparator3, CreateZipEditBackupMenuOption });
             EditBackupsContextMenu.Name = "EditBackupsMenuButton";
             EditBackupsContextMenu.ShowImageMargin = false;
-            EditBackupsContextMenu.Size = new Size(176, 152);
+            EditBackupsContextMenu.Size = new Size(176, 130);
             EditBackupsContextMenu.Text = "Edit";
             EditBackupsContextMenu.Opening += EditBackupsContextMenu_Opening;
             // 
@@ -1311,6 +1244,24 @@ namespace ZomboidBackupManager
             DeleteSelectedMenuOption.Size = new Size(175, 25);
             DeleteSelectedMenuOption.Text = "Delete";
             DeleteSelectedMenuOption.Click += DeleteSelected_OnClick;
+            // 
+            // DeleteZipMenuOption
+            // 
+            DeleteZipMenuOption.AutoSize = false;
+            DeleteZipMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteZipMenuOption.ForeColor = SystemColors.Control;
+            DeleteZipMenuOption.Name = "DeleteZipMenuOption";
+            DeleteZipMenuOption.Size = new Size(175, 25);
+            DeleteZipMenuOption.Text = "Delete Zip";
+            // 
+            // DeleteLooseMenuOption
+            // 
+            DeleteLooseMenuOption.AutoSize = false;
+            DeleteLooseMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteLooseMenuOption.ForeColor = SystemColors.Control;
+            DeleteLooseMenuOption.Name = "DeleteLooseMenuOption";
+            DeleteLooseMenuOption.Size = new Size(175, 25);
+            DeleteLooseMenuOption.Text = "Delete Loose";
             // 
             // RenameContextMenuItem
             // 
@@ -1402,42 +1353,6 @@ namespace ZomboidBackupManager
             ProgressbarLabel.TabIndex = 7;
             ProgressbarLabel.Text = "-";
             ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // DeleteZipToolbarOption
-            // 
-            DeleteZipToolbarOption.AutoSize = false;
-            DeleteZipToolbarOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteZipToolbarOption.ForeColor = SystemColors.Control;
-            DeleteZipToolbarOption.Name = "DeleteZipToolbarOption";
-            DeleteZipToolbarOption.Size = new Size(175, 25);
-            DeleteZipToolbarOption.Text = "Delete Zip";
-            // 
-            // DeleteLooseToolbarOption
-            // 
-            DeleteLooseToolbarOption.AutoSize = false;
-            DeleteLooseToolbarOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteLooseToolbarOption.ForeColor = SystemColors.Control;
-            DeleteLooseToolbarOption.Name = "DeleteLooseToolbarOption";
-            DeleteLooseToolbarOption.Size = new Size(175, 25);
-            DeleteLooseToolbarOption.Text = "Delete Loose";
-            // 
-            // DeleteZipMenuOption
-            // 
-            DeleteZipMenuOption.AutoSize = false;
-            DeleteZipMenuOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteZipMenuOption.ForeColor = SystemColors.Control;
-            DeleteZipMenuOption.Name = "DeleteZipMenuOption";
-            DeleteZipMenuOption.Size = new Size(175, 25);
-            DeleteZipMenuOption.Text = "Delete Zip";
-            // 
-            // DeleteLooseMenuOption
-            // 
-            DeleteLooseMenuOption.AutoSize = false;
-            DeleteLooseMenuOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteLooseMenuOption.ForeColor = SystemColors.Control;
-            DeleteLooseMenuOption.Name = "DeleteLooseMenuOption";
-            DeleteLooseMenuOption.Size = new Size(175, 25);
-            DeleteLooseMenuOption.Text = "Delete Loose";
             // 
             // MainWindow
             // 
@@ -1544,12 +1459,6 @@ namespace ZomboidBackupManager
         private ToolStripDropDownButton EditSettingsDropDownButton;
         private ToolStripMenuItem GeneralSettingsMenuOption;
         private ToolStripMenuItem AboutToolStripMenuItem;
-        private ToolStripTextBox AboutInfoLabelTextBox;
-        private ToolStripTextBox AboutInfoVersionTextBox;
-        private ToolStripTextBox AboutInfoAuthorTextBox;
-        private ToolStripTextBox AboutInfoGithubTextBox;
-        private ToolStripTextBox AboutInfoGithubLinkTextBox;
-        private ToolStripTextBox AboutInfoAuthorNameTextBox;
         private ToolStripButton StopMultiSelectToolTipButton;
         private ToolStripButton StartMultiSelectToolTipButton;
         private ToolStripButton DeleteSelectedToolStripButton;

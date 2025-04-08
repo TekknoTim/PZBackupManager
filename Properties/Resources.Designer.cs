@@ -144,5 +144,14 @@ namespace ZomboidBackupManager.Properties
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        internal static System.Drawing.Image PZBackupManagerLogo
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("PZBackupManagerLogo", resourceCulture);
+                return ((System.Drawing.Image)(obj));
+            }
+        }
     }
 }

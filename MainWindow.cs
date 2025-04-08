@@ -41,7 +41,35 @@ namespace ZomboidBackupManager
             SetBackupFolderPathTextbox();
             SetSavegameRemote();
             SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
+            EnableExperimentalFeatures(expFeaturesEnabled);
+            ShowUpdateInfoWindow();
             initRunning = false;
+        }
+
+        private void ShowUpdateInfoWindow()
+        {
+            if (showUpdateInfoWindow)
+            {
+                showUpdateInfoWindow = false;
+                UpdateInfoWindow updateInfo = new UpdateInfoWindow();
+                updateInfo.ShowDialog();
+            }
+        }
+
+        private void EnableExperimentalFeatures(bool enable)
+        {
+            HasZipTextLabel.Visible = enable;
+            HasZipValuePictureBox.Visible = enable;
+            HasLooseTextLabel.Visible = enable;
+            HasLooseValuePictureBox.Visible = enable;
+            ZipSetupMenuOption.Visible = enable;
+            CreateZipEditBackupMenuOption.Visible = enable;
+            CreateZipToolbarMenuOption.Visible = enable;
+            CompressZipSettingMenuOption.Visible = enable;
+            DeleteZipToolbarOption.Visible = enable;
+            DeleteZipMenuOption.Visible = enable;
+            DeleteLooseToolbarOption.Visible = enable;
+            DeleteLooseMenuOption.Visible = enable;
         }
 
         private void RefreshCheckboxes()
@@ -995,7 +1023,6 @@ namespace ZomboidBackupManager
 
         private void SettingsDropDownButton_Click(object sender, EventArgs e)
         {
-            AboutInfoVersionTextBox.Text = appVersion;
             CompressZipSettingMenuOption.Checked = saveBackupsAsZipFile;
         }
 
@@ -1296,7 +1323,7 @@ namespace ZomboidBackupManager
                 ProgressBarA.Value = 80;
                 ProgressbarLabel.Text = "Zip Moved & Registered in jsonData";
                 PrintDebug($"[MainWindow.cs] - [OnZipFileReady] - [Done Added Path to Json] - [result = {result}]");
-                
+
                 RefreshBackups(ZipDataCache[0].Index);
                 ZipDataCache.RemoveAt(0);
                 PrintDebug($"[MainWindow.cs] - [OnZipFileReady] - [Done Added Path to Json] - [ZipDataCache.Count = {ZipDataCache.Count}]");
@@ -1338,6 +1365,12 @@ namespace ZomboidBackupManager
                 return;
             }
             ToggleProgressBarPanel(false);
+        }
+
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutInfoWindow aboutInfoWindow = new AboutInfoWindow();
+            aboutInfoWindow.ShowDialog();
         }
 
 

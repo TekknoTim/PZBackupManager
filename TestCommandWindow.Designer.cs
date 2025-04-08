@@ -65,6 +65,7 @@
             Name = "TestCommandWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Backup Manager Test";
+            TopMost = true;
             ResumeLayout(false);
             PerformLayout();
         }

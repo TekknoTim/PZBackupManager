@@ -38,4 +38,13 @@
   <ItemGroup>
     <Folder Include="obj\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Changelog.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

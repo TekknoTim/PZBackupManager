@@ -30,8 +30,9 @@ namespace ZomboidBackupManager
         public bool AutoDeleteFeatureEnabled { get; set; }
         public int UsedZipArchiverID { get; set; }
         public string ZipArchiverExePath { get; set; }
+        public  bool ExperimentalFeatures {  get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -48,6 +49,7 @@ namespace ZomboidBackupManager
             AutoDeleteFeatureEnabled = autoDeleteFeatureEnabled;
             UsedZipArchiverID = zipArchiver;
             ZipArchiverExePath = archiverExe;
+            ExperimentalFeatures = expFeatures;
         }
     }
 
@@ -67,7 +69,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -131,7 +133,7 @@ namespace ZomboidBackupManager
                 if (cfg.ConfigVersion < version)
                 {
                     PrintDebug($"[Configuration] - [ReadCfgFromJson] - [Config file outdated!] - [cfg.ConfigVersion = {cfg.ConfigVersion}] - [version = {version}] Writing values..");
-                    DoUpdate();
+                    DoUpdate(cfg.ConfigVersion);
 
                     await WriteCfgToJson();
 
@@ -153,21 +155,21 @@ namespace ZomboidBackupManager
                     autoDeleteEnabled = cfg.AutoDeleteFeatureEnabled;
                     usedZipArchiver = cfg.UsedZipArchiverID;
                     zipArchiverExePath = cfg.ZipArchiverExePath;
+                    expFeaturesEnabled = cfg.ExperimentalFeatures;
 
                 }
             }
         }
 
-        private static void DoUpdate()
+        private static void DoUpdate(float oldVersion)
         {
-            PrintDebug($"[Configuration] - [DoUpdate] - [Doing update...]");
-
-
+            PrintDebug($"[Configuration] - [DoUpdate] - [Starting Update] - [Old Version = {oldVersion}] -> [New Version = {version}]");
+            showUpdateInfoWindow = true;
             PrintDebug($"[Configuration] - [DoUpdate] - [Update done]");
         }
 
         //General Properties:
-        private static readonly float version = 2505.04f;
+        private static readonly float version = 2505.08f;
         public static readonly string appVersion = "v0.0.3";
         public static bool initRunning = false;
 
@@ -210,14 +212,17 @@ namespace ZomboidBackupManager
         public static bool saveBackupsAsZipFile = false;
         public static bool keepBackupFolderAfterZip = true;
         public static bool autoDeleteEnabled = false;
+        public static bool expFeaturesEnabled = false;
 
         public static int autoDeleteKeepBackupsCount = 5;
-        public static readonly int autoDeleteKeepBackupsMax = 15;
+        public static readonly int autoDeleteKeepBackupsMax = 25;
 
         public static int usedZipArchiver = 0; // 0 = intern (slowest) ; 1 = WinRar (faster) ; 1 = 7Zip (fastest)
         public static string zipArchiverExePath = string.Empty;
 
         public static bool indexChangeEventsSuspended = false;
+
+        public static bool showUpdateInfoWindow = false;
 
         //Debug Functions:
 
