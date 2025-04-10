@@ -12,6 +12,7 @@ using System.Resources;
 using System.ComponentModel;
 using static System.Windows.Forms.DataFormats;
 using System.Reflection.Metadata;
+using System.Diagnostics;
 
 namespace ZomboidBackupManager
 {
@@ -21,6 +22,10 @@ namespace ZomboidBackupManager
         public Form? myParentForm { get; set; }
 
         private FileSystemWatcher fileWatcher;
+
+        private System.Windows.Forms.Timer checkTimer;
+
+        private bool wasRunning = true;
 
         private string lastContent = "";
 
@@ -47,6 +52,11 @@ namespace ZomboidBackupManager
 
             //MessageBox.Show($"selGamemode = {selGameMode}");
             GamemodesComboBox.SelectedIndex = currentLoadedGamemodeIndex;
+
+            // Init polling timer:
+            checkTimer = new System.Windows.Forms.Timer();
+            checkTimer.Interval = 2000;
+            checkTimer.Tick += CheckTimer_Tick;
 
             string? path = Path.GetDirectoryName(Configuration.absoluteHookFilePATH);
 
@@ -147,6 +157,7 @@ namespace ZomboidBackupManager
             GamemodesComboBox.Enabled = false;
             SavegameComboBox.Enabled = false;
             ResetHookCommandInFile();
+            BeginPolling();
             PrintDebug("[PZScriptHook] - [Tracking started]");
             PrintStatusLog("[Tracking started]");
             StartStopButton.Text = "Stop";
@@ -157,6 +168,10 @@ namespace ZomboidBackupManager
             fileWatcher.EnableRaisingEvents = false;
             GamemodesComboBox.Enabled = true;
             SavegameComboBox.Enabled = true;
+            if (checkTimer.Enabled)
+            {
+                EndPolling();
+            }
             PrintDebug("[PZScriptHook] - [Tracking stopped]");
             PrintStatusLog("[Tracking stopped]");
             StartStopButton.Text = "Start";
@@ -443,9 +458,7 @@ namespace ZomboidBackupManager
         {
             if (e.Button == MouseButtons.Left)
             {
-                this.WindowState = FormWindowState.Normal;
-                this.ShowInTaskbar = true;
-                MinimizedNotifyIcon.Visible = false;
+                UnMinimize();
             }
         }
 
@@ -501,9 +514,11 @@ namespace ZomboidBackupManager
             //NotifyIconTrackingInfoTextbox.Text = "Tracking: " + stateString;
         }
 
-        private void NotifyIconMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void UnMinimize()
         {
-
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+            MinimizedNotifyIcon.Visible = false;
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -514,14 +529,42 @@ namespace ZomboidBackupManager
             }
         }
 
-        private void txtLog_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        //===============================================================================================
+        //=======--------------------[ ProjectZomboid64 Process Tracking ]--------------------===========
+        //===============================================================================================
 
+        private void OnPZExeClosed()
+        {
+            UnMinimize();
         }
 
-        private void AutoDeleteCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void CheckTimer_Tick(object? sender, EventArgs e)
         {
+            var isRunning = Process.GetProcessesByName("ProjectZomboid64").Length > 0;
 
+            if (wasRunning && !isRunning)
+            {
+                checkTimer.Stop();
+                StopTracking();
+                PrintDebug("[PZScriptHook.cs] - [InitPollingTimer] - [ProjectZomboid64.exe was closed!] ");
+                OnPZExeClosed();
+            }
+
+            wasRunning = isRunning;
         }
+
+        private void BeginPolling()
+        {
+            wasRunning = Process.GetProcessesByName("ProjectZomboid64").Length > 0;
+            checkTimer.Start();
+        }
+
+        private void EndPolling()
+        {
+            wasRunning = true;
+            checkTimer.Stop();
+        }
+
+
     }
 }

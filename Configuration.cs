@@ -234,13 +234,13 @@ namespace ZomboidBackupManager
         // lvl = the level of the message. 1 = Warning ; 2 = Error ; any other = info
         {
             string label = string.Empty;
-            if (lvl > 0)
-            {
-                label = debugWarningLabel;
-            }
-            else if (lvl > 1)
+            if (lvl == 2)
             {
                 label = debugErrorLabel;
+            }
+            else if (lvl == 1)
+            {
+                label = debugWarningLabel;
             }
             else
             {

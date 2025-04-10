@@ -83,7 +83,6 @@
             txtLog.SelectionMode = SelectionMode.None;
             txtLog.Size = new Size(360, 132);
             txtLog.TabIndex = 1;
-            txtLog.SelectedIndexChanged += txtLog_SelectedIndexChanged;
             // 
             // LoadedSavegameInfoPanel
             // 
@@ -116,7 +115,6 @@
             AutoDeleteCheckbox.TextAlign = ContentAlignment.MiddleCenter;
             PZScriptHookTooltip.SetToolTip(AutoDeleteCheckbox, "Enable/Disable \"Autodelete\" feature. For more information,\r\ngo back to: Main Window -> Settings -> Autodelete");
             AutoDeleteCheckbox.UseVisualStyleBackColor = true;
-            AutoDeleteCheckbox.CheckedChanged += AutoDeleteCheckbox_CheckedChanged;
             AutoDeleteCheckbox.Click += AutoDeleteCheckbox_Click;
             // 
             // AddToTaskBarCheckbox
