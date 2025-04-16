@@ -23,7 +23,8 @@ namespace ZomboidBackupManager
         READY = 2,
         BUSY = 3,
         DONE = 4,
-        FAILED = 5
+        CANCELED = 5,
+        FAILED = 6
     }
 
     public partial class DeleteMulti : Form

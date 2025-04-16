@@ -62,14 +62,10 @@ namespace ZomboidBackupManager
             OnStatusChanged?.Invoke(this, s);
         }
 
-        public async Task DoBackup(string savegameName, string gamemode, string savegamePath, string path, int index, Label statusLabel, System.Windows.Forms.ProgressBar progressBar, Panel? panel = null)
+        public async Task DoBackup(string savegameName, string gamemode, string savegamePath, string path, int index, Label statusLabel, System.Windows.Forms.ProgressBar progressBar)
         {
             ChangeCurrentStatus(Status.BUSY);
             BackupProcess backupProcess = new BackupProcess();
-            if (panel != null)
-            {
-                panel.Visible = true;
-            }
             var progress = new Progress<int>(percent =>
             {
                 statusLabel.Text = $"Creating Backup... {percent}%";

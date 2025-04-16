@@ -48,12 +48,25 @@ namespace ZomboidBackupManager
 
     public class Restore
     {
-        public async Task DoRestore(string savegameName, string savegamePath, int index, ProgressBar progressBar, Label statusLabel, Panel panel)
+
+        private Status status;
+        public Status Status { get { return status; } }
+
+        public event EventHandler<Status>? OnStatusChanged;
+        public event EventHandler<Status>? OnDone;
+
+        private void ChangeCurrentStatus(Status s)
         {
-            panel.Visible = true;
-            progressBar.Visible = true;
+            status = s;
+            if (s == Status.DONE) { OnDone?.Invoke(this, s); }
+            OnStatusChanged?.Invoke(this, s);
+        }
+
+        public async Task DoRestore(string savegameName, string savegamePath, int index, ProgressBar progressBar, Label statusLabel)
+        {
+            ChangeCurrentStatus(Status.BUSY);
+
             statusLabel.Text = @"Starting restore process...";
-            statusLabel.Visible = true;
             DirectoryCopier copier = new DirectoryCopier();
             var progress = new Progress<int>(percent =>
             {
@@ -73,10 +86,8 @@ namespace ZomboidBackupManager
             if (result == DialogResult.Cancel)
             {
                 statusLabel.Text = @" - ";
-                progressBar.Visible = false;
                 progressBar.Value = 0;
-                statusLabel.Visible = false;
-                panel.Visible = false;
+                ChangeCurrentStatus(Status.CANCELED);
                 return;
             }
 
@@ -90,10 +101,8 @@ namespace ZomboidBackupManager
             Thread.Sleep(2000);
 
             statusLabel.Text = @" - ";
-            progressBar.Visible = false;
             progressBar.Value = 0;
-            statusLabel.Visible = false;
-            panel.Visible = false;
+            ChangeCurrentStatus(Status.DONE);
         }
     }
 }

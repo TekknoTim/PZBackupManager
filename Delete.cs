@@ -49,8 +49,6 @@ namespace ZomboidBackupManager
             string? path = GetBackupFolderPathFromJson(index);
             DeleteProcess deleteProcess = new DeleteProcess();
             panel.Visible = true;
-            progressBar.Visible = true;
-            statusLabel.Visible = true;
             var progress = new Progress<int>(percent =>
             {
                 statusLabel.Text = $"Deleting Backup... {percent}%";
@@ -68,9 +66,7 @@ namespace ZomboidBackupManager
 
             Thread.Sleep(500);
 
-            progressBar.Visible = false;
             progressBar.Value = 0;
-            statusLabel.Visible = false;
             panel.Visible = false;
             statusLabel.Text = @" - ";
         }

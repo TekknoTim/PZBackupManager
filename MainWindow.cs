@@ -544,20 +544,21 @@ namespace ZomboidBackupManager
             }
 
             Restore restore = new Restore();
-            await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel, ProgressbarPanel);
+            await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel);
         }
 
         private async void RestoreButton_Click(object sender, EventArgs e)
         {
-
             if (!IsValidBackupSelected())
             {
                 MessageBox.Show("Can't restore! Please select a valid backup first!");
                 return;
             }
-
+            ProgressbarPanel.Visible = true;
+            this.Enabled = false;
             Restore restore = new Restore();
-            await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel, ProgressbarPanel);
+            restore.OnStatusChanged += Restore_OnStatusChanged;
+            await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel);
         }
 
         private async void BackupButton_Click(object sender, EventArgs e)
@@ -568,9 +569,10 @@ namespace ZomboidBackupManager
                 return;
             }
             ProgressbarPanel.Visible = true;
+            this.Enabled = false;
             Backup backup = new Backup();
             backup.OnStatusChanged += Backup_OnStatusChanged;
-            await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel, ProgressBarA, ProgressbarPanel);
+            await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel, ProgressBarA);
 
         }
 
@@ -816,9 +818,10 @@ namespace ZomboidBackupManager
                 MessageBox.Show($"DEBUG - DeleteMulti_OnStatusChanged - Status = {s.ToString()} ");
 
             }
-            else if (s == Status.DONE)
+            else if ((s == Status.DONE) || (s == Status.CANCELED))
             {
                 this.Enabled = true;
+                this.WindowState = FormWindowState.Normal;
                 SetSelectionMode(false);
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
@@ -829,10 +832,10 @@ namespace ZomboidBackupManager
 
         private void Backup_OnStatusChanged(object? sender, Status s)
         {
-            PrintDebug($"[Backup] - [OnStatusChanged] - [To = {s.ToString()}]");
+            PrintDebug($"[MainWindow.cs] - [Backup_OnStatusChanged] - [To = {s.ToString()}]");
             if (s == Status.FAILED)
             {
-                MessageBox.Show($"DEBUG - Backup_OnStatusChanged - Status = {s.ToString()} ");
+                PrintDebug($"[MainWindow.cs] - [Backup_OnStatusChanged] - [Status = {s.ToString()}] ", 2);
 
             }
             else if (s == Status.DONE)
@@ -858,10 +861,31 @@ namespace ZomboidBackupManager
                     ProgressBarA.Value = 0;
                     ProgressbarLabel.Text = @" - ";
                     ProgressbarPanel.Visible = false;
+                    this.Enabled = true;
                 }
 
             }
 
+        }
+
+        private void Restore_OnStatusChanged(object? sender, Status s)
+        {
+            PrintDebug($"[MainWindow.cs] - [Restore_OnStatusChanged] - [To = {s.ToString()}]");
+            if (s == Status.FAILED)
+            {
+                PrintDebug($"[MainWindow.cs] - [Restore_OnStatusChanged] - [Status = {s.ToString()}] ", 2);
+
+            }
+            else if (s == Status.DONE)
+            {
+                LoadAndDisplayBackups();
+                SetSavegameLabelValues();
+                SetBackupLabelValues();
+                ProgressBarA.Value = 0;
+                ProgressbarLabel.Text = @" - ";
+                ProgressbarPanel.Visible = false;
+                this.Enabled = true;
+            }
         }
 
         private void SelectMultiOption_Click(object sender, EventArgs e)
