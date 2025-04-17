@@ -390,34 +390,6 @@ namespace ZomboidBackupManager
             ResetSavegameThumbnailAndData();
         }
 
-        private void SelectBackupFolderButton_Click(object sender, EventArgs e)
-        {
-            ShowFolderBrowserDialog();
-        }
-
-        private void ShowFolderBrowserDialog()
-        {
-            var dialog = new FolderBrowserDialog();
-
-            if (dialog.ShowDialog() == DialogResult.OK)  //check for OK...they might press cancel, so don't do anything if they did.
-            {
-                var path = dialog.SelectedPath;
-
-                if (Directory.Exists(path))
-                {
-                    Configuration.ChangeBackupFolderPath(path);
-
-                }
-
-                SetBackupFolderPathTextbox();
-            }
-        }
-
-        private void OpenBackupDirectoryButton_Click(object sender, EventArgs e)
-        {
-            Process.Start("explorer.exe", Configuration.currentBaseBackupFolderPATH);
-        }
-
         private bool IsValidSavegameSelected()
         {
             var item = SavegameListBox.SelectedItem;
@@ -447,16 +419,6 @@ namespace ZomboidBackupManager
         private void SetBackupFolderPathTextbox()
         {
             BackupFolderPathTextbox.Text = Configuration.currentBaseBackupFolderPATH;
-        }
-
-        private bool SetBackupFolderPath(string path)
-        {
-            if (!Directory.Exists(path))
-            {
-                return false;
-            }
-            Configuration.currentBaseBackupFolderPATH = path;
-            return true;
         }
 
         private void BackupListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1395,6 +1357,28 @@ namespace ZomboidBackupManager
         {
             AboutInfoWindow aboutInfoWindow = new AboutInfoWindow();
             aboutInfoWindow.ShowDialog();
+        }
+
+        private void ChangeDirectoryMenuOption_Click(object sender, EventArgs e)
+        {
+            ChangeDirectoryWindow changeDir = new ChangeDirectoryWindow();
+            DialogResult result = changeDir.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                Configuration.ChangeBackupFolderPath(changeDir.CurrentPath);
+            }
+            SetBackupFolderPathTextbox();
+        }
+
+        private void BackupFolderPathTextbox_DoubleClick(object sender, EventArgs e)
+        {
+            ChangeDirectoryWindow changeDir = new ChangeDirectoryWindow();
+            DialogResult result = changeDir.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                Configuration.ChangeBackupFolderPath(changeDir.CurrentPath);
+            }
+            SetBackupFolderPathTextbox();
         }
 
 

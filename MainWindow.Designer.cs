@@ -50,10 +50,8 @@ namespace ZomboidBackupManager
             SavegameInfoSubPanel = new Panel();
             SavgameInfoValueLabel = new Label();
             SavgameInfoTextLabel = new Label();
-            SelectBackupFolderButton = new Button();
             ChangeBackupFolderTextbox = new Panel();
-            ChangeBackupFolderLabel = new Label();
-            OpenBackupDirectoryButton = new Button();
+            BackupFolderLabel = new Label();
             BackupFolderPathTextbox = new RichTextBox();
             BackgroundPanel = new Panel();
             SelectBackupPanel = new Panel();
@@ -86,6 +84,7 @@ namespace ZomboidBackupManager
             AutoSelectSGSettingMenuOption = new ToolStripMenuItem();
             ShowMsgSettingMenuOption = new ToolStripMenuItem();
             AutoDeleteBackupMenuOption = new ToolStripMenuItem();
+            ChangeDirectoryMenuOption = new ToolStripMenuItem();
             ZipSetupMenuOption = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
             EditSettingsDropDownButton = new ToolStripDropDownButton();
@@ -104,6 +103,7 @@ namespace ZomboidBackupManager
             RenameEnterTextOption = new ToolStripTextBox();
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
+            RenameContextMenuItem = new ToolStripMenuItem();
             StopMultiSelBackupsToolbarMenuOption = new ToolStripMenuItem();
             EditBackupsToolbarSeparator = new ToolStripSeparator();
             CreateZipToolbarMenuOption = new ToolStripMenuItem();
@@ -125,7 +125,6 @@ namespace ZomboidBackupManager
             DeleteSelectedMenuOption = new ToolStripMenuItem();
             DeleteZipMenuOption = new ToolStripMenuItem();
             DeleteLooseMenuOption = new ToolStripMenuItem();
-            RenameContextMenuItem = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
             CreateZipEditBackupMenuOption = new ToolStripMenuItem();
@@ -193,7 +192,7 @@ namespace ZomboidBackupManager
             SelectSavegamePanel.Location = new Point(10, 10);
             SelectSavegamePanel.Margin = new Padding(10);
             SelectSavegamePanel.Name = "SelectSavegamePanel";
-            SelectSavegamePanel.Size = new Size(560, 705);
+            SelectSavegamePanel.Size = new Size(560, 813);
             SelectSavegamePanel.TabIndex = 2;
             // 
             // ThumbnailPictureBox
@@ -351,63 +350,34 @@ namespace ZomboidBackupManager
             SavgameInfoTextLabel.Text = "Savegame:";
             SavgameInfoTextLabel.TextAlign = ContentAlignment.TopCenter;
             // 
-            // SelectBackupFolderButton
-            // 
-            SelectBackupFolderButton.BackColor = SystemColors.Control;
-            SelectBackupFolderButton.Font = new Font("Bahnschrift", 10F);
-            SelectBackupFolderButton.Location = new Point(370, 60);
-            SelectBackupFolderButton.Margin = new Padding(3, 3, 30, 10);
-            SelectBackupFolderButton.Name = "SelectBackupFolderButton";
-            SelectBackupFolderButton.Size = new Size(157, 36);
-            SelectBackupFolderButton.TabIndex = 3;
-            SelectBackupFolderButton.Text = "Change Directory";
-            SelectBackupFolderButton.UseVisualStyleBackColor = false;
-            SelectBackupFolderButton.Click += SelectBackupFolderButton_Click;
-            // 
             // ChangeBackupFolderTextbox
             // 
-            ChangeBackupFolderTextbox.AutoSize = true;
-            ChangeBackupFolderTextbox.BackColor = SystemColors.ControlLightLight;
-            ChangeBackupFolderTextbox.BorderStyle = BorderStyle.FixedSingle;
-            ChangeBackupFolderTextbox.Controls.Add(ChangeBackupFolderLabel);
-            ChangeBackupFolderTextbox.Controls.Add(OpenBackupDirectoryButton);
+            ChangeBackupFolderTextbox.BackColor = SystemColors.ControlDark;
+            ChangeBackupFolderTextbox.BorderStyle = BorderStyle.Fixed3D;
+            ChangeBackupFolderTextbox.Controls.Add(BackupFolderLabel);
             ChangeBackupFolderTextbox.Controls.Add(BackupFolderPathTextbox);
-            ChangeBackupFolderTextbox.Controls.Add(SelectBackupFolderButton);
-            ChangeBackupFolderTextbox.Location = new Point(11, 713);
+            ChangeBackupFolderTextbox.Location = new Point(16, 55);
             ChangeBackupFolderTextbox.Margin = new Padding(10);
             ChangeBackupFolderTextbox.Name = "ChangeBackupFolderTextbox";
-            ChangeBackupFolderTextbox.Size = new Size(559, 110);
+            ChangeBackupFolderTextbox.Size = new Size(530, 73);
             ChangeBackupFolderTextbox.TabIndex = 4;
             // 
-            // ChangeBackupFolderLabel
+            // BackupFolderLabel
             // 
-            ChangeBackupFolderLabel.BackColor = SystemColors.Control;
-            ChangeBackupFolderLabel.BorderStyle = BorderStyle.FixedSingle;
-            ChangeBackupFolderLabel.Font = new Font("Bahnschrift", 10F);
-            ChangeBackupFolderLabel.Location = new Point(30, 5);
-            ChangeBackupFolderLabel.Margin = new Padding(30, 5, 30, 10);
-            ChangeBackupFolderLabel.Name = "ChangeBackupFolderLabel";
-            ChangeBackupFolderLabel.Size = new Size(497, 20);
-            ChangeBackupFolderLabel.TabIndex = 6;
-            ChangeBackupFolderLabel.Text = "Change Backup Folder";
-            ChangeBackupFolderLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // OpenBackupDirectoryButton
-            // 
-            OpenBackupDirectoryButton.BackColor = SystemColors.Control;
-            OpenBackupDirectoryButton.Font = new Font("Bahnschrift", 10F);
-            OpenBackupDirectoryButton.Location = new Point(30, 60);
-            OpenBackupDirectoryButton.Margin = new Padding(30, 3, 3, 10);
-            OpenBackupDirectoryButton.Name = "OpenBackupDirectoryButton";
-            OpenBackupDirectoryButton.Size = new Size(157, 36);
-            OpenBackupDirectoryButton.TabIndex = 5;
-            OpenBackupDirectoryButton.Text = "Open Directory";
-            OpenBackupDirectoryButton.UseVisualStyleBackColor = false;
-            OpenBackupDirectoryButton.Click += OpenBackupDirectoryButton_Click;
+            BackupFolderLabel.BackColor = SystemColors.ControlDark;
+            BackupFolderLabel.Font = new Font("Bahnschrift", 10F);
+            BackupFolderLabel.ForeColor = SystemColors.Control;
+            BackupFolderLabel.Location = new Point(30, 5);
+            BackupFolderLabel.Margin = new Padding(30, 5, 30, 10);
+            BackupFolderLabel.Name = "BackupFolderLabel";
+            BackupFolderLabel.Size = new Size(468, 20);
+            BackupFolderLabel.TabIndex = 6;
+            BackupFolderLabel.Text = "Backup Folder";
+            BackupFolderLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BackupFolderPathTextbox
             // 
-            BackupFolderPathTextbox.BackColor = SystemColors.Control;
+            BackupFolderPathTextbox.BackColor = SystemColors.ControlLightLight;
             BackupFolderPathTextbox.DetectUrls = false;
             BackupFolderPathTextbox.EnableAutoDragDrop = true;
             BackupFolderPathTextbox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -416,17 +386,17 @@ namespace ZomboidBackupManager
             BackupFolderPathTextbox.Multiline = false;
             BackupFolderPathTextbox.Name = "BackupFolderPathTextbox";
             BackupFolderPathTextbox.ScrollBars = RichTextBoxScrollBars.Horizontal;
-            BackupFolderPathTextbox.Size = new Size(497, 27);
+            BackupFolderPathTextbox.Size = new Size(468, 27);
             BackupFolderPathTextbox.TabIndex = 4;
             BackupFolderPathTextbox.TabStop = false;
             BackupFolderPathTextbox.Text = "";
+            BackupFolderPathTextbox.DoubleClick += BackupFolderPathTextbox_DoubleClick;
             // 
             // BackgroundPanel
             // 
             BackgroundPanel.AutoSize = true;
             BackgroundPanel.BackColor = SystemColors.ControlDark;
             BackgroundPanel.Controls.Add(SelectBackupPanel);
-            BackgroundPanel.Controls.Add(ChangeBackupFolderTextbox);
             BackgroundPanel.Controls.Add(SelectSavegamePanel);
             BackgroundPanel.Location = new Point(9, 9);
             BackgroundPanel.Margin = new Padding(15, 0, 15, 0);
@@ -439,6 +409,7 @@ namespace ZomboidBackupManager
             SelectBackupPanel.AutoSize = true;
             SelectBackupPanel.BackColor = SystemColors.ControlLight;
             SelectBackupPanel.Controls.Add(AutoDeleteInfoLabel);
+            SelectBackupPanel.Controls.Add(ChangeBackupFolderTextbox);
             SelectBackupPanel.Controls.Add(BackupInfoPanel);
             SelectBackupPanel.Controls.Add(SettingsPanelA);
             SelectBackupPanel.Controls.Add(BackupButton);
@@ -724,7 +695,7 @@ namespace ZomboidBackupManager
             // SettingsDropDownButton
             // 
             SettingsDropDownButton.BackColor = SystemColors.Control;
-            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, AutoDeleteBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
+            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
             SettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SettingsDropDownButton.Image = (Image)resources.GetObject("SettingsDropDownButton.Image");
             SettingsDropDownButton.ImageTransparentColor = Color.Magenta;
@@ -743,7 +714,7 @@ namespace ZomboidBackupManager
             GeneralSettingsMenuOption.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             GeneralSettingsMenuOption.ForeColor = SystemColors.Control;
             GeneralSettingsMenuOption.Name = "GeneralSettingsMenuOption";
-            GeneralSettingsMenuOption.Size = new Size(180, 24);
+            GeneralSettingsMenuOption.Size = new Size(205, 24);
             GeneralSettingsMenuOption.Text = "General";
             // 
             // GeneralSettingsContextMenuStrip
@@ -818,16 +789,25 @@ namespace ZomboidBackupManager
             AutoDeleteBackupMenuOption.BackColor = SystemColors.ControlDarkDark;
             AutoDeleteBackupMenuOption.ForeColor = SystemColors.Control;
             AutoDeleteBackupMenuOption.Name = "AutoDeleteBackupMenuOption";
-            AutoDeleteBackupMenuOption.Size = new Size(180, 24);
+            AutoDeleteBackupMenuOption.Size = new Size(205, 24);
             AutoDeleteBackupMenuOption.Text = "Auto Delete";
             AutoDeleteBackupMenuOption.Click += AutoDeleteBackupMenuOption_Click;
+            // 
+            // ChangeDirectoryMenuOption
+            // 
+            ChangeDirectoryMenuOption.BackColor = SystemColors.ControlDarkDark;
+            ChangeDirectoryMenuOption.ForeColor = SystemColors.Control;
+            ChangeDirectoryMenuOption.Name = "ChangeDirectoryMenuOption";
+            ChangeDirectoryMenuOption.Size = new Size(205, 24);
+            ChangeDirectoryMenuOption.Text = "Change Directory";
+            ChangeDirectoryMenuOption.Click += ChangeDirectoryMenuOption_Click;
             // 
             // ZipSetupMenuOption
             // 
             ZipSetupMenuOption.BackColor = SystemColors.ControlDarkDark;
             ZipSetupMenuOption.ForeColor = SystemColors.Control;
             ZipSetupMenuOption.Name = "ZipSetupMenuOption";
-            ZipSetupMenuOption.Size = new Size(180, 24);
+            ZipSetupMenuOption.Size = new Size(205, 24);
             ZipSetupMenuOption.Text = "Zip Setup";
             ZipSetupMenuOption.Click += ZipSetupMenuOption_Click;
             // 
@@ -837,7 +817,7 @@ namespace ZomboidBackupManager
             AboutToolStripMenuItem.ForeColor = SystemColors.Control;
             AboutToolStripMenuItem.Name = "AboutToolStripMenuItem";
             AboutToolStripMenuItem.Padding = new Padding(0);
-            AboutToolStripMenuItem.Size = new Size(180, 22);
+            AboutToolStripMenuItem.Size = new Size(205, 22);
             AboutToolStripMenuItem.Text = "About";
             AboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
@@ -861,7 +841,6 @@ namespace ZomboidBackupManager
             EditBackupsToolbarMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             EditBackupsToolbarMenu.Items.AddRange(new ToolStripItem[] { SelectBackupsToolbarMenuOption, DeleteBackupsToolbarMenuOption, RenameBackupsToolbarMenuOption, StopMultiSelBackupsToolbarMenuOption, EditBackupsToolbarSeparator, CreateZipToolbarMenuOption });
             EditBackupsToolbarMenu.Name = "EditBackupsMenuButton";
-            EditBackupsToolbarMenu.OwnerItem = EditSettingsDropDownButton;
             EditBackupsToolbarMenu.ShowImageMargin = false;
             EditBackupsToolbarMenu.Size = new Size(176, 130);
             // 
@@ -958,7 +937,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameContextMenuItem;
+            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -1010,6 +989,19 @@ namespace ZomboidBackupManager
             ConfrimRenameOption.Size = new Size(100, 30);
             ConfrimRenameOption.Text = "  Rename";
             ConfrimRenameOption.Click += ConfrimRenameOption_Click;
+            // 
+            // RenameContextMenuItem
+            // 
+            RenameContextMenuItem.BackColor = SystemColors.ControlDarkDark;
+            RenameContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameContextMenuItem.DropDown = RenameContextMenu;
+            RenameContextMenuItem.ForeColor = Color.White;
+            RenameContextMenuItem.MergeAction = MergeAction.Remove;
+            RenameContextMenuItem.MergeIndex = 0;
+            RenameContextMenuItem.Name = "RenameContextMenuItem";
+            RenameContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameContextMenuItem.Size = new Size(175, 24);
+            RenameContextMenuItem.Text = "Rename";
             // 
             // StopMultiSelBackupsToolbarMenuOption
             // 
@@ -1263,19 +1255,6 @@ namespace ZomboidBackupManager
             DeleteLooseMenuOption.Size = new Size(175, 25);
             DeleteLooseMenuOption.Text = "Delete Loose";
             // 
-            // RenameContextMenuItem
-            // 
-            RenameContextMenuItem.BackColor = SystemColors.ControlDarkDark;
-            RenameContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameContextMenuItem.DropDown = RenameContextMenu;
-            RenameContextMenuItem.ForeColor = Color.White;
-            RenameContextMenuItem.MergeAction = MergeAction.Remove;
-            RenameContextMenuItem.MergeIndex = 0;
-            RenameContextMenuItem.Name = "RenameContextMenuItem";
-            RenameContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameContextMenuItem.Size = new Size(175, 24);
-            RenameContextMenuItem.Text = "Rename";
-            // 
             // StopMultiSelectMenuItem
             // 
             StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
@@ -1403,9 +1382,7 @@ namespace ZomboidBackupManager
         private ListBox SavegameListBox;
         private Panel ChangeBackupFolderTextbox;
         private RichTextBox BackupFolderPathTextbox;
-        internal Label ChangeBackupFolderLabel;
-        internal Button SelectBackupFolderButton;
-        internal Button OpenBackupDirectoryButton;
+        internal Label BackupFolderLabel;
         internal Label SelectGamemodeLabel;
         private Panel BackgroundPanel;
         private PictureBox ThumbnailPictureBox;
@@ -1497,5 +1474,6 @@ namespace ZomboidBackupManager
         private ToolStripMenuItem DeleteLooseToolbarOption;
         private ToolStripMenuItem DeleteZipMenuOption;
         private ToolStripMenuItem DeleteLooseMenuOption;
+        private ToolStripMenuItem ChangeDirectoryMenuOption;
     }
 }
