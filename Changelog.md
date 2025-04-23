@@ -1,5 +1,18 @@
 PZ Backup Manager Changelog:
 
+[v0.0.4] - [22.04.2025] - [ScriptHook overhaul, Versioning & More]
+
+[IMPORTANT] - [For the newest workshop mod to work, this version is from now on the minimum requirement!] - [IMPORTANT]
+ 1. - Changed: They way, the script hook is communicating with the workshop mod. 
+ 2. - Added: A version file, for both programs to notice the user about updates. 
+ 3. - Added: Savegame validation. Can be enabled in the mods option menu.
+			 Checks if the correct savegame is selected when doing an update via the workshop mod
+ 4. - Added: Automatic savegame selection. If the wrong savegame is selected,
+			 you can switch to the correct one by pressing a UI button ingame.
+ 5. - Added: The changelog will be shown after an update or fresh installation once.
+ 6. - Fixed: The app verion. Last updates version were wrong & will be adjusted to the right one with this update.
+ 7. - Fixed: Some "File not exist" issues.
+
 [v0.0.3] - [09.04.2025] - [More UI Cleanup & Autodelete Update]
 
  1. - Added: Toolbar menu at the top of the main window.

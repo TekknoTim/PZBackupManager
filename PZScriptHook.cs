@@ -27,7 +27,7 @@ namespace ZomboidBackupManager
 
         private bool wasRunning = true;
 
-        private string lastContent = "";
+        private string[] lastContent = Array.Empty<string>();
 
         private string emptyCommand = @"command=";
 
@@ -67,6 +67,7 @@ namespace ZomboidBackupManager
                 PrintDebug("[PZScriptHook] - GetDirectoryName() returned null or empty.", 2);
                 this.Close();
             }
+            CheckHookFileExists();
             fileWatcher = new FileSystemWatcher
             {
                 Path = path!,
@@ -75,6 +76,21 @@ namespace ZomboidBackupManager
             };
 
             fileWatcher.Changed += OnFileChanged;
+            lastContent = File.ReadAllLines(Configuration.absoluteHookFilePATH);
+
+        }
+
+        private void CheckHookFileExists()
+        {
+            if (!File.Exists(Configuration.absoluteHookFilePATH))
+            {
+                List<string> data = new List<string>();
+                data.Add(@"command=");
+                data.Add(@"savegame=");
+                FileStream stream = System.IO.File.Create(Configuration.absoluteHookFilePATH);
+                stream.Close();
+                File.WriteAllLines(Configuration.absoluteHookFilePATH, data.ToArray());
+            }
         }
 
         private void LoadIconImages()
@@ -179,8 +195,8 @@ namespace ZomboidBackupManager
 
         private void ResetHookCommandInFile()
         {
-            lastContent = emptyCommand;
-            File.WriteAllText(Configuration.absoluteHookFilePATH, emptyCommand);
+            lastContent[0] = emptyCommand;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
             fileWatcher.EnableRaisingEvents = true;
             PrintStatusLog("[Reset] --> Done! - Tracking Unsuspended!");
 
@@ -192,15 +208,15 @@ namespace ZomboidBackupManager
 
             try
             {
-                string newContent = File.ReadAllText(Configuration.absoluteHookFilePATH);
-                if (newContent != lastContent && newContent != emptyCommand && newContent != emptyCommand + hookCommand_Done && newContent != emptyCommand + 50.ToString())
+                string[] newContent = File.ReadAllLines(Configuration.absoluteHookFilePATH);
+                if (newContent[0] != lastContent[0] && newContent[0] != emptyCommand && newContent[0] != emptyCommand + hookCommand_Done && newContent[0] != emptyCommand + 50.ToString())
                 {
                     Invoke(new Action(() =>
                     {
                         fileWatcher.EnableRaisingEvents = false;
                         PrintStatusLog("[Change Recognized]! - Tracking Suspended!");
-                        PrintStatusLog($"File - [last = <{lastContent}>] --> [new = <{newContent}>]");
-                        ExecuteHookCommand(newContent);
+                        PrintStatusLog($"File - [last = <{lastContent[0]}>] --> [new = <{newContent[0]}>]");
+                        ExecuteHookCommand(newContent[0]);
                     }));
                 }
             }
@@ -217,13 +233,31 @@ namespace ZomboidBackupManager
 
             if (command == Configuration.hookCommand_Backup)
             {
-                PrintStatusLog("[Backup] cmd detected! [b]");
+                PrintStatusLog($"[Backup] cmd detected! [{command}]");
                 ExecuteBackupCommand();
             }
             else if (command == Configuration.hookCommand_Test)
             {
-                PrintStatusLog("[Test] cmd detected! [t]");
+                PrintStatusLog($"[Test] cmd detected! [{command}]");
                 ExecuteTestCommand();
+            }
+            else if (command == @"v")
+            {
+                PrintStatusLog($"[Validate] cmd detected! [{command}]");
+                bool result = PreCheckBackup();
+                if (result)
+                {
+                    SendConfirmCommand();
+                    fileWatcher.EnableRaisingEvents = true;
+                }
+                else
+                {
+                    ExecutMismatchCommand();
+                }
+            }
+            else if (command == @"s")
+            {
+                SwitchSavegame();
             }
             else
             {
@@ -233,9 +267,43 @@ namespace ZomboidBackupManager
             }
         }
 
+        private bool PreCheckBackup()
+        {
+            string name = GetSavegameNameFromFile();
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+            if (name != Configuration.currentLoadedSavegame)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+        private void ExecutMismatchCommand()
+        {
+            PrintStatusLog("Sending [Mismatch] command...");
+            lastContent[0] = emptyCommand + @"m";
+            lastContent[1] = @"savegame=" + Configuration.currentLoadedSavegame;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
+            fileWatcher.EnableRaisingEvents = true;
+        }
+
+        private void SendAbortCommand()
+        {
+            PrintStatusLog("Sending [Abort] command...");
+            lastContent[0] = emptyCommand + @"a";
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
+            fileWatcher.EnableRaisingEvents = true;
+        }
+
         private async void ExecuteBackupCommand()
         {
-            PrintStatusLog("Executing [backup] command...");
             SendConfirmCommand();
             System.Threading.Thread.Sleep(5000);
             Backup backup = new Backup();
@@ -264,23 +332,56 @@ namespace ZomboidBackupManager
         private void SendConfirmCommand()
         {
             PrintStatusLog("Sending [Confirm] command...");
-            File.WriteAllText(Configuration.absoluteHookFilePATH, emptyCommand + hookCommand_Confirm);
+            lastContent[0] = emptyCommand + hookCommand_Confirm;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
         }
 
         public void SendProcessCommand(int iProcess)
         {
             string sProcess = iProcess.ToString();
             PrintStatusLog("Sending [Process] command...");
-            File.WriteAllText(Configuration.absoluteHookFilePATH, emptyCommand + sProcess);
+            lastContent[0] = emptyCommand + sProcess;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH,lastContent);
+        }
+
+        private string GetSavegameNameFromFile()
+        {
+            string[] lines = File.ReadAllLines(Configuration.absoluteHookFilePATH);
+            return lines[1].Split('=')[1];
         }
 
         public void SendDoneCommand()
         {
             PrintStatusLog("Executing [Done] command...");
-            File.WriteAllText(Configuration.absoluteHookFilePATH, emptyCommand + hookCommand_Done);
-            lastContent = emptyCommand + hookCommand_Done;
+            lastContent[0] = emptyCommand + hookCommand_Done;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
             fileWatcher.EnableRaisingEvents = true;
             PrintStatusLog("[Done] --> Done! - Tracking Unsuspended!");
+        }
+
+        private void SwitchSavegame()
+        {
+            string savegameName = GetSavegameNameFromFile();
+            PrintStatusLog($"Switching Savegame from [{Configuration.currentLoadedSavegame}] to [{savegameName}]");
+            List<string> savegames = GetSavegamesInLoadedGamemode();
+            int index = 0;
+            PrintStatusLog($"Does Savegame exist = [{savegameName}] ");
+            foreach (string savegame in  savegames)
+            {
+                if (savegame == savegameName)
+                {
+                    PrintStatusLog($"Savegame exists! Loading Savegame = [{savegameName}] ");
+                    Configuration.LoadSavegame(savegameName, Configuration.currentLoadedGamemode, index, Configuration.currentLoadedGamemodeIndex);
+                    LoadSavegamesInSelectedGamemode();
+                    SendConfirmCommand();
+                    SavegameComboBox.SelectedIndex = currentLoadedSavegameIndex;
+                    SetSavegameInfoPanelValue();
+                    fileWatcher.EnableRaisingEvents = true;
+                    return;
+                }
+                index++;
+            }
+            SendAbortCommand();
         }
 
         private void PrintStatusLog(string txt = "")
@@ -385,6 +486,26 @@ namespace ZomboidBackupManager
             }
 
             return outputList.ToArray();
+
+        }
+
+        private List<string> GetSavegamesInLoadedGamemode()
+        {
+            string gamemode = Configuration.currentLoadedGamemode;
+
+            string fullSavegamePath = Configuration.GetFullSavegamesPath(gamemode);
+
+            string[] savegameFolderList = Directory.GetDirectories(fullSavegamePath);
+
+            List<string> outputList = new List<string>();
+
+            foreach (var savegame in savegameFolderList)
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(fullSavegamePath + savegame);
+                outputList.Add(dirInfo.Name);
+            }
+
+            return outputList;
 
         }
 

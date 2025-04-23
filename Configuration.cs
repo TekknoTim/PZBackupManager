@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using static ZomboidBackupManager.Configuration;
+using SharpCompress.Common;
 
 namespace ZomboidBackupManager
 {
@@ -141,6 +142,14 @@ namespace ZomboidBackupManager
                     await WriteCfgToJson();
 
                 }
+                else if (cfg.ConfigVersion == 2505.08f)
+                {
+                    PrintDebug($"[Configuration] - [ReadCfgFromJson] - [Config file outdated!] - [cfg.ConfigVersion = {cfg.ConfigVersion}] - [version = {version}] Writing values..");
+                    DoUpdate(cfg.ConfigVersion);
+
+                    await WriteCfgToJson();
+
+                }
                 else if (string.IsNullOrEmpty(cfg.AbsoluteSavegamePATH) || string.IsNullOrEmpty(cfg.BaseBackupFolderPATH))
                 {
                     PrintDebug("ReadCfgFromJson --> Deserialized Config has null values! Writing values..");
@@ -168,12 +177,45 @@ namespace ZomboidBackupManager
         {
             PrintDebug($"[Configuration] - [DoUpdate] - [Starting Update] - [Old Version = {oldVersion}] -> [New Version = {version}]");
             showUpdateInfoWindow = true;
+            
             PrintDebug($"[Configuration] - [DoUpdate] - [Update done]");
         }
 
+        private static void WriteModVersionFile()
+        {
+            string? dirPath = Path.GetDirectoryName(absoluteModVersionFilePATH);
+            if (string.IsNullOrWhiteSpace(dirPath))
+            {
+                dirPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Zomboid\lua\PZBackupManager\";
+            }
+            if (!System.IO.Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+
+            }
+            if (!File.Exists(absoluteModVersionFilePATH))
+            {
+                FileStream stream = System.IO.File.Create(absoluteModVersionFilePATH);
+                stream.Close();
+            }
+            string[] data = new string[2];
+            string[] lines = File.ReadAllLines(absoluteModVersionFilePATH);
+            if (lines.Length < 1 || string.IsNullOrWhiteSpace(lines[0]))
+            {
+                data[0] = string.Empty;
+            }
+            else
+            {
+                data[0] = lines[0];
+            }
+            
+            data[1] = @"app=" + version.ToString();
+            File.WriteAllLines(absoluteModVersionFilePATH, data);
+        }
+
         //General Properties:
-        private static readonly float version = 2505.08f;
-        public static readonly string appVersion = "v0.0.3";
+        private static readonly float version = 2504.21f;
+        public static readonly string appVersion = "v0.0.4";
         public static bool initRunning = false;
 
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
@@ -188,7 +230,8 @@ namespace ZomboidBackupManager
 
         //Private Path Properties:
         private static readonly string relativeHookFilePATH = @"\Zomboid\lua\PZBaManagerHook.ini";
-        private static readonly string relativeHookStatsFilePATH = @"\Zomboid\lua\PZBaManStatsHook.ini";
+        //private static readonly string relativeHookStatsFilePATH = @"\Zomboid\lua\PZBaManStatsHook.ini";
+        private static readonly string relativeModVersionFilePATH = @"\Zomboid\lua\PZBackupManager\version.txt";
         private static readonly string relativeSavegamePATH = @"\Zomboid\Saves\";
         private static readonly string baseBackupFolderPATH = Application.StartupPath + @"Backups";
 
@@ -202,7 +245,8 @@ namespace ZomboidBackupManager
         public static string userProfilePATH = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         public static string absoluteSavegamePATH = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + relativeSavegamePATH;
         public static string absoluteHookFilePATH = userProfilePATH + relativeHookFilePATH;
-        public static string absoluteHookStatsFilePATH = userProfilePATH + relativeHookStatsFilePATH;
+        //public static string absoluteHookStatsFilePATH = userProfilePATH + relativeHookStatsFilePATH;
+        public static string absoluteModVersionFilePATH = userProfilePATH + relativeModVersionFilePATH;
         public static string currentBaseBackupFolderPATH = Application.StartupPath + @"Backups";
 
         public static string currentLoadedSavegame = string.Empty;
@@ -262,6 +306,7 @@ namespace ZomboidBackupManager
             absoluteSavegamePATH = userProfilePATH + relativeSavegamePATH;
             CreateDirStructures(currentBaseBackupFolderPATH);
             LoadConfigurationFromJson();
+            WriteModVersionFile();
             PrintDebug($"userProfilePATH = [{userProfilePATH}] \n absoluteSavegamePATH = [{absoluteSavegamePATH}] \n currentBaseBackupFolderPATH = [{currentBaseBackupFolderPATH}]");
             PrintDebug("[Initialization] --> Setting Properties Done! --> Loading last loaded savegame");
             if (autoSelectSavegameOnStart)
