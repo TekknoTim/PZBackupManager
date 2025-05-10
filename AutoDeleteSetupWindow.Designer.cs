@@ -117,19 +117,28 @@
             // 
             // AutoDeleteSetupWindow
             // 
+            AcceptButton = OkButton;
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(284, 161);
             Controls.Add(OkButton);
             Controls.Add(AutoDeleteEnabledCheckBox);
             Controls.Add(TrackbarPanel);
-            Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Font = new Font("Bahnschrift", 12F, FontStyle.Underline, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
+            MaximizeBox = false;
+            MdiChildrenMinimizedAnchorBottom = false;
+            MinimizeBox = false;
             Name = "AutoDeleteSetupWindow";
+            Opacity = 0.9D;
+            ShowInTaskbar = false;
+            SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Setup: Auto Delete";
+            TopMost = true;
             Shown += AutoDeleteSetupWindow_Shown;
             ((System.ComponentModel.ISupportInitialize)AutoDeleteCountTrackBar).EndInit();
             TrackbarPanel.ResumeLayout(false);

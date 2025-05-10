@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChangeDirectoryWindow));
             SaveButton = new Button();
-            CancelButton = new Button();
+            cButton = new Button();
             BackupFolderPathTextbox = new RichTextBox();
             ChangeDirLabel = new Label();
             ChangeDirectoryButton = new Button();
@@ -49,17 +49,17 @@
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
             // 
-            // CancelButton
+            // cButton
             // 
-            CancelButton.DialogResult = DialogResult.Cancel;
-            CancelButton.Location = new Point(14, 124);
-            CancelButton.Margin = new Padding(5);
-            CancelButton.Name = "CancelButton";
-            CancelButton.Size = new Size(100, 30);
-            CancelButton.TabIndex = 1;
-            CancelButton.Text = "Cancel";
-            CancelButton.UseVisualStyleBackColor = true;
-            CancelButton.Click += CancelButton_Click;
+            cButton.DialogResult = DialogResult.Cancel;
+            cButton.Location = new Point(14, 124);
+            cButton.Margin = new Padding(5);
+            cButton.Name = "cButton";
+            cButton.Size = new Size(100, 30);
+            cButton.TabIndex = 1;
+            cButton.Text = "Cancel";
+            cButton.UseVisualStyleBackColor = true;
+            cButton.Click += CancelButton_Click;
             // 
             // BackupFolderPathTextbox
             // 
@@ -114,13 +114,12 @@
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            CancelButton = CancelButton;
             ClientSize = new Size(584, 168);
             Controls.Add(OpenFolderButton);
             Controls.Add(ChangeDirectoryButton);
             Controls.Add(ChangeDirLabel);
             Controls.Add(BackupFolderPathTextbox);
-            Controls.Add(CancelButton);
+            Controls.Add(cButton);
             Controls.Add(SaveButton);
             Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -137,7 +136,7 @@
         #endregion
 
         private Button SaveButton;
-        private Button CancelButton;
+        private Button cButton;
         private RichTextBox BackupFolderPathTextbox;
         private Label ChangeDirLabel;
         private Button ChangeDirectoryButton;

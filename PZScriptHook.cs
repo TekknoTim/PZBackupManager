@@ -23,6 +23,8 @@ namespace ZomboidBackupManager
 
         private FileSystemWatcher fileWatcher;
 
+        private StatusLogWriter logWriter;
+
         private System.Windows.Forms.Timer checkTimer;
 
         private bool wasRunning = true;
@@ -39,6 +41,10 @@ namespace ZomboidBackupManager
         public PZScriptHook()
         {
             InitializeComponent();
+
+            
+            logWriter = new StatusLogWriter(txtLog, false, 9f);
+            logWriter.OnStatusChanged += StatusLogWriter_OnStatusChanged;
 
             SetIndexChangeEventsSuspended(this, true);
 
@@ -78,6 +84,14 @@ namespace ZomboidBackupManager
             fileWatcher.Changed += OnFileChanged;
             lastContent = File.ReadAllLines(Configuration.absoluteHookFilePATH);
 
+        }
+
+        private void StatusLogWriter_OnStatusChanged(object? sender, Status s)
+        {
+            if (s == Status.READY)
+            {
+                logWriter.WriteInitLabelToLog();
+            }
         }
 
         private void CheckHookFileExists()
@@ -214,8 +228,11 @@ namespace ZomboidBackupManager
                     Invoke(new Action(() =>
                     {
                         fileWatcher.EnableRaisingEvents = false;
+                        PrintStatusLog($"----------------------------------------");
                         PrintStatusLog("[Change Recognized]! - Tracking Suspended!");
-                        PrintStatusLog($"File - [last = <{lastContent[0]}>] --> [new = <{newContent[0]}>]");
+                        PrintStatusLog($"File - [last = <{lastContent[0]}>]");
+                        PrintStatusLog($"File - [new = <{newContent[0]}>]");
+                        PrintStatusLog($"----------------------------------------");
                         ExecuteHookCommand(newContent[0]);
                     }));
                 }
@@ -252,7 +269,7 @@ namespace ZomboidBackupManager
                 }
                 else
                 {
-                    ExecutMismatchCommand();
+                    ExecuteMismatchCommand();
                 }
             }
             else if (command == @"s")
@@ -285,7 +302,7 @@ namespace ZomboidBackupManager
         }
 
 
-        private void ExecutMismatchCommand()
+        private void ExecuteMismatchCommand()
         {
             PrintStatusLog("Sending [Mismatch] command...");
             lastContent[0] = emptyCommand + @"m";
@@ -685,7 +702,5 @@ namespace ZomboidBackupManager
             wasRunning = true;
             checkTimer.Stop();
         }
-
-
     }
 }

@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Runtime;
 using System.IO.Compression;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Policy;
 
 namespace ZomboidBackupManager
 {
@@ -27,9 +28,16 @@ namespace ZomboidBackupManager
 
         public List<ZipData> ZipDataCache = new List<ZipData>();
 
+        private string ZombieFont = "ZomboidBackupManager.Fonts.ZOMBIE.TTF";
+        //private string UbuntuFontRegular = "ZomboidBackupManager.Fonts.UbuntuMono-Regular.ttf";
+        private string UbuntuFontBolt = "ZomboidBackupManager.Fonts.UbuntuMono-Bolt.ttf";
+
         public MainWindow()
         {
             InitializeComponent();
+            SelectSavegameLabel.Font = FontLoader.LoadEmbeddedFont(ZombieFont, 40f);
+            SavegameListBox.Font = FontLoader.LoadEmbeddedFont(UbuntuFontBolt, 12f);
+            BackupListBox.Font = FontLoader.LoadEmbeddedFont(UbuntuFontBolt, 12f);
             this.OnSkip += OnSkipCompressToZip;
         }
 
@@ -97,6 +105,7 @@ namespace ZomboidBackupManager
             }
             SetBackupButtonsEn(false);
             BackupButton.Enabled = false;
+            HalfWindowModeRadioButton.Enabled = false;
             var item = GamemodeComboBox.SelectedItem;
             if (item != null)
             {
@@ -188,9 +197,11 @@ namespace ZomboidBackupManager
                 PrintDebug("[MainWindow] - [GamemodeComboBox] - Selected Index Changed aborted - Index change events are suspended!");
                 return;
             }
+            if (SavegameListBox.SelectedIndex < 0) { return; }
             if (IsValidSavegameSelected())
             {
                 BackupButton.Enabled = true;
+                HalfWindowModeRadioButton.Enabled = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
                 LoadAndDisplayBackups();
@@ -214,6 +225,10 @@ namespace ZomboidBackupManager
 
         private bool LoadSavegameThumbnail()
         {
+            if (GamemodeComboBox.SelectedIndex < 0 || SavegameListBox.SelectedIndex < 0)
+            {
+                return false;
+            }  
             var selSavegame = SavegameListBox.SelectedItem;
             if (selSavegame == null)
             {
@@ -319,6 +334,7 @@ namespace ZomboidBackupManager
             if (IsValidSavegameSelected())
             {
                 BackupButton.Enabled = true;
+                HalfWindowModeRadioButton.Enabled = true;
                 //MiniWindowButton.Visible = true;
                 SelectSavegame();
                 LoadSavegameThumbnail();
@@ -344,7 +360,7 @@ namespace ZomboidBackupManager
 
         private int FindSavegameListIndexByName(string itemName)
         {
-            ListBox.ObjectCollection itemCollection = SavegameListBox.Items;
+            System.Windows.Forms.ListBox.ObjectCollection itemCollection = SavegameListBox.Items;
             foreach (var item in itemCollection)
             {
                 if (item.ToString() == itemName)
@@ -442,6 +458,15 @@ namespace ZomboidBackupManager
 
         private void SetAutoDeleteInfoLabelVal()
         {
+            int bCount = GetBackupCountFromJson();
+            if (bCount > autoDelBackupCountUserSet)
+            {
+                autoDeleteKeepBackupsCount = bCount;
+            }
+            else
+            {
+                autoDeleteKeepBackupsCount = autoDelBackupCountUserSet;
+            }
             AutoDeleteInfoLabel.Text = $"Autodelete: [{BackupListBox.Items.Count} / {autoDeleteKeepBackupsCount}] Backups";
         }
 
@@ -595,7 +620,7 @@ namespace ZomboidBackupManager
             }
             else
             {
-                folderName = Path.GetRelativePath(Configuration.currentLoadedBackupFolderPATH, path);
+                folderName = Path.GetRelativePath(Configuration.currentBaseBackupFolderPATH, path);
             }
             string? s = data.Size;
             string size = string.Empty;
@@ -992,8 +1017,6 @@ namespace ZomboidBackupManager
             form.myParentForm = this;
             form.Show();
             this.Hide();
-
-
         }
 
         public void OnHookWindowClosing(object? sender, EventArgs e)
@@ -1060,19 +1083,24 @@ namespace ZomboidBackupManager
             AutoDeleteSetupWindow autoDelWin = new AutoDeleteSetupWindow();
             autoDelWin.ShowDialog();
             autoDeleteEnabled = autoDelWin.CheckBoxValue;
-            autoDeleteKeepBackupsCount = autoDelWin.TrackBarValue;
+            autoDelBackupCountUserSet = autoDelWin.TrackBarValue;
+            autoDeleteKeepBackupsCount = autoDelBackupCountUserSet;
             await WriteCfgToJson();
             if (autoDeleteEnabled)
             {
                 int bCount = GetBackupCountFromJson();
-                if (bCount > autoDeleteKeepBackupsCount)
+                if (bCount > autoDelBackupCountUserSet)
                 {
                     int sel = bCount - autoDeleteKeepBackupsCount;
-                    DialogResult result = MessageBox.Show($"You enabled the auto delete feature.\nFound {bCount} backups on your current selected savegame.\nThe maximum allowed, are {autoDeleteKeepBackupsCount}!\nDo you want to delete the first {sel} backups?\n(If you cancel, the autodelete feature will be disabled again!)", "Please confirm!", MessageBoxButtons.OKCancel);
-                    if (result == DialogResult.OK)
+                    DialogResult result = MessageBox.Show($"Found {bCount} backups on your current selected savegame.\nYou have set a maximum of {autoDeleteKeepBackupsCount} which is less!\nDo you want to delete the first {sel} backups?\n(If you select no, the maximum will be increased to {bCount})", "Please confirm!", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Yes)
                     {
                         SetBackupsSelected(sel);
                         DeleteMultipleBackups();
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        autoDeleteKeepBackupsCount = bCount;
                     }
                     else
                     {
@@ -1380,6 +1408,47 @@ namespace ZomboidBackupManager
             }
             SetBackupFolderPathTextbox();
         }
+
+        private void NormalWindowModeRadioButton_Click(object sender, EventArgs e)
+        {
+            SetWindowModeNormal();
+        }
+
+        private void HalfWindowModeRadioButton_Click(object sender, EventArgs e)
+        {
+            SetWindowModeHalf();
+        }
+
+        private void SetWindowModeNormal()
+        {
+            NormalWindowModeRadioButton.Checked = true;
+            HalfWindowModeRadioButton.Checked = false;
+            this.Size = new Size(1200, 875);
+            SelectSavegamePanel.Visible = true;
+        }
+
+        private void SetWindowModeHalf()
+        {
+            NormalWindowModeRadioButton.Checked = false;
+            HalfWindowModeRadioButton.Checked = true;
+            SelectSavegamePanel.Visible = false;
+            this.Size = new Size(600, 875);
+
+        }
+
+        private void SearchForUnlistedBackupsToolStripButton_Click(object sender, EventArgs e)
+        {
+            this.Visible = false;
+            //this.Opacity = 0.6;
+            UnlistedBackupsWindow unlistedBackupsWin = new UnlistedBackupsWindow();
+            unlistedBackupsWin.ShowDialog();
+            this.Visible = true;
+            //this.Opacity = 1.0;
+            LoadAndDisplayBackups();
+            SetSavegameLabelValues();
+            SetBackupLabelValues();
+        }
+
 
 
 

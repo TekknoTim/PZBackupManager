@@ -37,9 +37,9 @@ namespace ZomboidBackupManager
             GamemodeComboBox = new ComboBox();
             SelectSavegameLabel = new Label();
             SelectSavegamePanel = new Panel();
-            ThumbnailPictureBox = new PictureBox();
-            SelectGamemodeLabel = new Label();
+            SavegameHealineLabel = new Label();
             SavegameListBox = new ListBox();
+            ThumbnailPictureBox = new PictureBox();
             SavegameInfoPanel = new Panel();
             BackupCountSubPanel = new Panel();
             BackupCountValueLabel = new Label();
@@ -50,11 +50,42 @@ namespace ZomboidBackupManager
             SavegameInfoSubPanel = new Panel();
             SavgameInfoValueLabel = new Label();
             SavgameInfoTextLabel = new Label();
+            EditBackupsContextMenu = new ContextMenuStrip(components);
+            SelectContextMenuItem = new ToolStripMenuItem();
+            SelectMultiMenuItem = new ToolStripMenuItem();
+            SelectAllMenuItem = new ToolStripMenuItem();
+            DeleteContextMenuItem = new ToolStripMenuItem();
+            DeleteSelectedMenuOption = new ToolStripMenuItem();
+            DeleteZipMenuOption = new ToolStripMenuItem();
+            DeleteLooseMenuOption = new ToolStripMenuItem();
+            RenameContextMenuItem = new ToolStripMenuItem();
+            RenameContextMenu = new ContextMenuStrip(components);
+            RenameLabelTextItem = new ToolStripTextBox();
+            ToolStripSeparatorA = new ToolStripSeparator();
+            RenameEnterTextOption = new ToolStripTextBox();
+            ToolStripSeparatorB = new ToolStripSeparator();
+            ConfrimRenameOption = new ToolStripMenuItem();
+            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
+            StopMultiSelectMenuItem = new ToolStripMenuItem();
+            ToolStripSeparator3 = new ToolStripSeparator();
+            CreateZipEditBackupMenuOption = new ToolStripMenuItem();
+            ProgressbarPanel = new Panel();
+            ProgressBarA = new ProgressBar();
+            ProgressbarLabel = new Label();
             ChangeBackupFolderTextbox = new Panel();
             BackupFolderLabel = new Label();
             BackupFolderPathTextbox = new RichTextBox();
             BackgroundPanel = new Panel();
             SelectBackupPanel = new Panel();
+            HalfWindowModeRadioButton = new RadioButton();
+            NormalWindowModeRadioButton = new RadioButton();
+            BackupRestoreTSPanel = new Panel();
+            BackupRestoreToolStrip = new ToolStrip();
+            RestoreButton = new ToolStripButton();
+            TSSeparator1 = new ToolStripSeparator();
+            SearchForUnlistedBackupsToolStripButton = new ToolStripButton();
+            BackupButton = new ToolStripButton();
+            TSSeparator2 = new ToolStripSeparator();
             AutoDeleteInfoLabel = new Label();
             BackupInfoPanel = new Panel();
             BackupDataInfoPanel = new Panel();
@@ -74,6 +105,9 @@ namespace ZomboidBackupManager
             BackupNameTextLabel = new Label();
             BackupIndexValueLabel = new Label();
             BackupNameValueLabel = new Label();
+            SelectBackupLabel = new Label();
+            BackupsPictureBox = new PictureBox();
+            BackupListBox = new ListBox();
             SettingsPanelA = new Panel();
             Toolstrip1 = new ToolStrip();
             SettingsDropDownButton = new ToolStripDropDownButton();
@@ -96,14 +130,6 @@ namespace ZomboidBackupManager
             DeleteSelectedToolbarOption = new ToolStripMenuItem();
             DeleteZipToolbarOption = new ToolStripMenuItem();
             DeleteLooseToolbarOption = new ToolStripMenuItem();
-            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
-            RenameContextMenu = new ContextMenuStrip(components);
-            RenameLabelTextItem = new ToolStripTextBox();
-            ToolStripSeparatorA = new ToolStripSeparator();
-            RenameEnterTextOption = new ToolStripTextBox();
-            ToolStripSeparatorB = new ToolStripSeparator();
-            ConfrimRenameOption = new ToolStripMenuItem();
-            RenameContextMenuItem = new ToolStripMenuItem();
             StopMultiSelBackupsToolbarMenuOption = new ToolStripMenuItem();
             EditBackupsToolbarSeparator = new ToolStripSeparator();
             CreateZipToolbarMenuOption = new ToolStripMenuItem();
@@ -113,25 +139,6 @@ namespace ZomboidBackupManager
             StartMultiSelectToolTipButton = new ToolStripButton();
             ToolStripSeparator2 = new ToolStripSeparator();
             ListenToPZToolStripButton = new ToolStripButton();
-            BackupButton = new Button();
-            SelectBackupLabel = new Label();
-            BackupsPictureBox = new PictureBox();
-            BackupListBox = new ListBox();
-            EditBackupsContextMenu = new ContextMenuStrip(components);
-            SelectContextMenuItem = new ToolStripMenuItem();
-            SelectMultiMenuItem = new ToolStripMenuItem();
-            SelectAllMenuItem = new ToolStripMenuItem();
-            DeleteContextMenuItem = new ToolStripMenuItem();
-            DeleteSelectedMenuOption = new ToolStripMenuItem();
-            DeleteZipMenuOption = new ToolStripMenuItem();
-            DeleteLooseMenuOption = new ToolStripMenuItem();
-            StopMultiSelectMenuItem = new ToolStripMenuItem();
-            ToolStripSeparator3 = new ToolStripSeparator();
-            CreateZipEditBackupMenuOption = new ToolStripMenuItem();
-            RestoreButton = new Button();
-            ProgressbarPanel = new Panel();
-            ProgressBarA = new ProgressBar();
-            ProgressbarLabel = new Label();
             MinimizeButtonToolTip = new ToolTip(components);
             SelectSavegamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
@@ -139,105 +146,114 @@ namespace ZomboidBackupManager
             BackupCountSubPanel.SuspendLayout();
             GamemodeInfoSubPanel.SuspendLayout();
             SavegameInfoSubPanel.SuspendLayout();
+            EditBackupsContextMenu.SuspendLayout();
+            RenameContextMenu.SuspendLayout();
+            ProgressbarPanel.SuspendLayout();
             ChangeBackupFolderTextbox.SuspendLayout();
             BackgroundPanel.SuspendLayout();
             SelectBackupPanel.SuspendLayout();
+            BackupRestoreTSPanel.SuspendLayout();
+            BackupRestoreToolStrip.SuspendLayout();
             BackupInfoPanel.SuspendLayout();
             BackupDataInfoPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)HasLooseValuePictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)HasZipValuePictureBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)BackupsPictureBox).BeginInit();
             SettingsPanelA.SuspendLayout();
             Toolstrip1.SuspendLayout();
             GeneralSettingsContextMenuStrip.SuspendLayout();
             EditBackupsToolbarMenu.SuspendLayout();
-            RenameContextMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)BackupsPictureBox).BeginInit();
-            EditBackupsContextMenu.SuspendLayout();
-            ProgressbarPanel.SuspendLayout();
             SuspendLayout();
             // 
             // GamemodeComboBox
             // 
-            GamemodeComboBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            GamemodeComboBox.Location = new Point(25, 101);
+            GamemodeComboBox.BackColor = SystemColors.ControlLightLight;
+            GamemodeComboBox.Font = new Font("Bahnschrift", 13F);
+            GamemodeComboBox.Location = new Point(18, 114);
+            GamemodeComboBox.Margin = new Padding(18, 3, 3, 3);
             GamemodeComboBox.Name = "GamemodeComboBox";
-            GamemodeComboBox.Size = new Size(516, 27);
+            GamemodeComboBox.Size = new Size(535, 29);
             GamemodeComboBox.TabIndex = 0;
             GamemodeComboBox.Text = "Select Gamemode";
             GamemodeComboBox.SelectedIndexChanged += GamemodeComboBox_SelectedIndexChanged;
             // 
             // SelectSavegameLabel
             // 
-            SelectSavegameLabel.BackColor = SystemColors.ControlLightLight;
-            SelectSavegameLabel.BorderStyle = BorderStyle.FixedSingle;
-            SelectSavegameLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            SelectSavegameLabel.Location = new Point(18, 416);
+            SelectSavegameLabel.AutoSize = true;
+            SelectSavegameLabel.BackColor = SystemColors.ControlLight;
+            SelectSavegameLabel.BorderStyle = BorderStyle.Fixed3D;
+            SelectSavegameLabel.Font = new Font("Zombie", 40F);
+            SelectSavegameLabel.Location = new Point(43, 15);
             SelectSavegameLabel.Name = "SelectSavegameLabel";
-            SelectSavegameLabel.Size = new Size(523, 35);
+            SelectSavegameLabel.Size = new Size(474, 88);
             SelectSavegameLabel.TabIndex = 1;
-            SelectSavegameLabel.Text = "Select a savegame you want to backup:";
+            SelectSavegameLabel.Text = "Project Zomboid\r\nBackup Manager";
             SelectSavegameLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SelectSavegamePanel
             // 
-            SelectSavegamePanel.AutoSize = true;
+            SelectSavegamePanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             SelectSavegamePanel.BackColor = SystemColors.ControlLight;
             SelectSavegamePanel.BorderStyle = BorderStyle.FixedSingle;
+            SelectSavegamePanel.Controls.Add(SavegameHealineLabel);
+            SelectSavegamePanel.Controls.Add(SavegameListBox);
             SelectSavegamePanel.Controls.Add(SelectSavegameLabel);
             SelectSavegamePanel.Controls.Add(ThumbnailPictureBox);
-            SelectSavegamePanel.Controls.Add(SelectGamemodeLabel);
             SelectSavegamePanel.Controls.Add(GamemodeComboBox);
-            SelectSavegamePanel.Controls.Add(SavegameListBox);
             SelectSavegamePanel.Controls.Add(SavegameInfoPanel);
+            SelectSavegamePanel.Dock = DockStyle.Left;
             SelectSavegamePanel.Location = new Point(10, 10);
-            SelectSavegamePanel.Margin = new Padding(10);
             SelectSavegamePanel.Name = "SelectSavegamePanel";
-            SelectSavegamePanel.Size = new Size(560, 813);
+            SelectSavegamePanel.Size = new Size(575, 800);
             SelectSavegamePanel.TabIndex = 2;
+            // 
+            // SavegameHealineLabel
+            // 
+            SavegameHealineLabel.BackColor = SystemColors.ControlLightLight;
+            SavegameHealineLabel.BorderStyle = BorderStyle.FixedSingle;
+            SavegameHealineLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            SavegameHealineLabel.Location = new Point(20, 416);
+            SavegameHealineLabel.Name = "SavegameHealineLabel";
+            SavegameHealineLabel.Size = new Size(530, 35);
+            SavegameHealineLabel.TabIndex = 25;
+            SavegameHealineLabel.Text = "Select a Savegame:";
+            SavegameHealineLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // SavegameListBox
+            // 
+            SavegameListBox.BackColor = Color.White;
+            SavegameListBox.Font = new Font("Bahnschrift", 14.25F);
+            SavegameListBox.FormattingEnabled = true;
+            SavegameListBox.HorizontalExtent = 10;
+            SavegameListBox.Items.AddRange(new object[] { "Select a Gamemode first!" });
+            SavegameListBox.Location = new Point(20, 450);
+            SavegameListBox.Margin = new Padding(15);
+            SavegameListBox.Name = "SavegameListBox";
+            SavegameListBox.ScrollAlwaysVisible = true;
+            SavegameListBox.Size = new Size(530, 188);
+            SavegameListBox.TabIndex = 24;
+            SavegameListBox.SelectedIndexChanged += SavegameListBox_SelectedIndexChanged;
             // 
             // ThumbnailPictureBox
             // 
+            ThumbnailPictureBox.BorderStyle = BorderStyle.Fixed3D;
             ThumbnailPictureBox.Image = Resources.ThumbnailPlaceholder;
             ThumbnailPictureBox.InitialImage = Resources.ThumbnailPlaceholder;
             ThumbnailPictureBox.Location = new Point(18, 150);
+            ThumbnailPictureBox.Margin = new Padding(18, 3, 3, 3);
             ThumbnailPictureBox.Name = "ThumbnailPictureBox";
             ThumbnailPictureBox.Size = new Size(256, 256);
             ThumbnailPictureBox.TabIndex = 8;
             ThumbnailPictureBox.TabStop = false;
             // 
-            // SelectGamemodeLabel
-            // 
-            SelectGamemodeLabel.BackColor = SystemColors.Control;
-            SelectGamemodeLabel.BorderStyle = BorderStyle.Fixed3D;
-            SelectGamemodeLabel.Dock = DockStyle.Top;
-            SelectGamemodeLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SelectGamemodeLabel.Location = new Point(0, 0);
-            SelectGamemodeLabel.Margin = new Padding(10, 8, 10, 8);
-            SelectGamemodeLabel.Name = "SelectGamemodeLabel";
-            SelectGamemodeLabel.Size = new Size(558, 77);
-            SelectGamemodeLabel.TabIndex = 7;
-            SelectGamemodeLabel.Text = "1. Select the gamemode of your savegame.\r\n2. Select the savegame you want to create backups for.";
-            SelectGamemodeLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // SavegameListBox
-            // 
-            SavegameListBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SavegameListBox.FormattingEnabled = true;
-            SavegameListBox.Items.AddRange(new object[] { "No Savegames Found In Selected Gamemode... " });
-            SavegameListBox.Location = new Point(18, 450);
-            SavegameListBox.Name = "SavegameListBox";
-            SavegameListBox.ScrollAlwaysVisible = true;
-            SavegameListBox.Size = new Size(523, 194);
-            SavegameListBox.TabIndex = 2;
-            SavegameListBox.SelectedIndexChanged += SavegameListBox_SelectedIndexChanged;
-            // 
             // SavegameInfoPanel
             // 
             SavegameInfoPanel.BackColor = SystemColors.ControlLightLight;
+            SavegameInfoPanel.BorderStyle = BorderStyle.Fixed3D;
             SavegameInfoPanel.Controls.Add(BackupCountSubPanel);
             SavegameInfoPanel.Controls.Add(GamemodeInfoSubPanel);
             SavegameInfoPanel.Controls.Add(SavegameInfoSubPanel);
-            SavegameInfoPanel.Location = new Point(285, 150);
+            SavegameInfoPanel.Location = new Point(297, 150);
             SavegameInfoPanel.Name = "SavegameInfoPanel";
             SavegameInfoPanel.Size = new Size(256, 256);
             SavegameInfoPanel.TabIndex = 12;
@@ -350,27 +366,277 @@ namespace ZomboidBackupManager
             SavgameInfoTextLabel.Text = "Savegame:";
             SavgameInfoTextLabel.TextAlign = ContentAlignment.TopCenter;
             // 
+            // EditBackupsContextMenu
+            // 
+            EditBackupsContextMenu.AccessibleRole = AccessibleRole.Cursor;
+            EditBackupsContextMenu.AllowClickThrough = true;
+            EditBackupsContextMenu.BackColor = SystemColors.ControlDark;
+            EditBackupsContextMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            EditBackupsContextMenu.Items.AddRange(new ToolStripItem[] { SelectContextMenuItem, DeleteContextMenuItem, RenameContextMenuItem, StopMultiSelectMenuItem, ToolStripSeparator3, CreateZipEditBackupMenuOption });
+            EditBackupsContextMenu.Name = "EditBackupsMenuButton";
+            EditBackupsContextMenu.ShowImageMargin = false;
+            EditBackupsContextMenu.Size = new Size(176, 130);
+            EditBackupsContextMenu.Text = "Edit";
+            EditBackupsContextMenu.Opening += EditBackupsContextMenu_Opening;
+            // 
+            // SelectContextMenuItem
+            // 
+            SelectContextMenuItem.BackColor = SystemColors.ControlDarkDark;
+            SelectContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            SelectContextMenuItem.DropDownItems.AddRange(new ToolStripItem[] { SelectMultiMenuItem, SelectAllMenuItem });
+            SelectContextMenuItem.ForeColor = Color.White;
+            SelectContextMenuItem.MergeIndex = 2;
+            SelectContextMenuItem.Name = "SelectContextMenuItem";
+            SelectContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
+            SelectContextMenuItem.Size = new Size(175, 24);
+            SelectContextMenuItem.Text = "Select";
+            // 
+            // SelectMultiMenuItem
+            // 
+            SelectMultiMenuItem.BackColor = SystemColors.ControlDarkDark;
+            SelectMultiMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            SelectMultiMenuItem.ForeColor = SystemColors.Control;
+            SelectMultiMenuItem.Name = "SelectMultiMenuItem";
+            SelectMultiMenuItem.Size = new Size(163, 24);
+            SelectMultiMenuItem.Text = "Select Multi";
+            SelectMultiMenuItem.Click += SelectMultiOption_Click;
+            // 
+            // SelectAllMenuItem
+            // 
+            SelectAllMenuItem.BackColor = SystemColors.ControlDarkDark;
+            SelectAllMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            SelectAllMenuItem.ForeColor = SystemColors.Control;
+            SelectAllMenuItem.Name = "SelectAllMenuItem";
+            SelectAllMenuItem.Size = new Size(163, 24);
+            SelectAllMenuItem.Text = "Select All";
+            SelectAllMenuItem.Click += SelectAllOption_Click;
+            // 
+            // DeleteContextMenuItem
+            // 
+            DeleteContextMenuItem.BackColor = SystemColors.ControlDarkDark;
+            DeleteContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            DeleteContextMenuItem.DropDownItems.AddRange(new ToolStripItem[] { DeleteSelectedMenuOption, DeleteZipMenuOption, DeleteLooseMenuOption });
+            DeleteContextMenuItem.ForeColor = Color.White;
+            DeleteContextMenuItem.MergeIndex = 1;
+            DeleteContextMenuItem.Name = "DeleteContextMenuItem";
+            DeleteContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
+            DeleteContextMenuItem.Size = new Size(175, 24);
+            DeleteContextMenuItem.Text = "Delete";
+            // 
+            // DeleteSelectedMenuOption
+            // 
+            DeleteSelectedMenuOption.AutoSize = false;
+            DeleteSelectedMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteSelectedMenuOption.ForeColor = SystemColors.Control;
+            DeleteSelectedMenuOption.Name = "DeleteSelectedMenuOption";
+            DeleteSelectedMenuOption.Size = new Size(175, 25);
+            DeleteSelectedMenuOption.Text = "Delete";
+            DeleteSelectedMenuOption.Click += DeleteSelected_OnClick;
+            // 
+            // DeleteZipMenuOption
+            // 
+            DeleteZipMenuOption.AutoSize = false;
+            DeleteZipMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteZipMenuOption.ForeColor = SystemColors.Control;
+            DeleteZipMenuOption.Name = "DeleteZipMenuOption";
+            DeleteZipMenuOption.Size = new Size(175, 25);
+            DeleteZipMenuOption.Text = "Delete Zip";
+            // 
+            // DeleteLooseMenuOption
+            // 
+            DeleteLooseMenuOption.AutoSize = false;
+            DeleteLooseMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteLooseMenuOption.ForeColor = SystemColors.Control;
+            DeleteLooseMenuOption.Name = "DeleteLooseMenuOption";
+            DeleteLooseMenuOption.Size = new Size(175, 25);
+            DeleteLooseMenuOption.Text = "Delete Loose";
+            // 
+            // RenameContextMenuItem
+            // 
+            RenameContextMenuItem.BackColor = SystemColors.ControlDarkDark;
+            RenameContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameContextMenuItem.DropDown = RenameContextMenu;
+            RenameContextMenuItem.ForeColor = Color.White;
+            RenameContextMenuItem.MergeAction = MergeAction.Remove;
+            RenameContextMenuItem.MergeIndex = 0;
+            RenameContextMenuItem.Name = "RenameContextMenuItem";
+            RenameContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameContextMenuItem.Size = new Size(175, 24);
+            RenameContextMenuItem.Text = "Rename";
+            // 
+            // RenameContextMenu
+            // 
+            RenameContextMenu.AutoSize = false;
+            RenameContextMenu.BackColor = SystemColors.ControlDarkDark;
+            RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
+            RenameContextMenu.Name = "RenameContextMenu";
+            RenameContextMenu.OwnerItem = RenameContextMenuItem;
+            RenameContextMenu.ShowImageMargin = false;
+            RenameContextMenu.Size = new Size(280, 130);
+            // 
+            // RenameLabelTextItem
+            // 
+            RenameLabelTextItem.AutoSize = false;
+            RenameLabelTextItem.BackColor = SystemColors.ControlDark;
+            RenameLabelTextItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            RenameLabelTextItem.ForeColor = SystemColors.HighlightText;
+            RenameLabelTextItem.MaxLength = 100;
+            RenameLabelTextItem.Name = "RenameLabelTextItem";
+            RenameLabelTextItem.ReadOnly = true;
+            RenameLabelTextItem.Size = new Size(260, 26);
+            RenameLabelTextItem.Text = "Backup: ";
+            RenameLabelTextItem.TextBoxTextAlign = HorizontalAlignment.Center;
+            // 
+            // ToolStripSeparatorA
+            // 
+            ToolStripSeparatorA.Name = "ToolStripSeparatorA";
+            ToolStripSeparatorA.Size = new Size(276, 6);
+            // 
+            // RenameEnterTextOption
+            // 
+            RenameEnterTextOption.AutoSize = false;
+            RenameEnterTextOption.BackColor = SystemColors.ControlLightLight;
+            RenameEnterTextOption.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            RenameEnterTextOption.ForeColor = SystemColors.ControlText;
+            RenameEnterTextOption.Name = "RenameEnterTextOption";
+            RenameEnterTextOption.Size = new Size(260, 25);
+            RenameEnterTextOption.Text = "Enter new name";
+            RenameEnterTextOption.TextBoxTextAlign = HorizontalAlignment.Center;
+            RenameEnterTextOption.Click += RenameEnterTextOption_Click;
+            // 
+            // ToolStripSeparatorB
+            // 
+            ToolStripSeparatorB.Name = "ToolStripSeparatorB";
+            ToolStripSeparatorB.Size = new Size(276, 6);
+            // 
+            // ConfrimRenameOption
+            // 
+            ConfrimRenameOption.AutoSize = false;
+            ConfrimRenameOption.BackColor = SystemColors.Control;
+            ConfrimRenameOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            ConfrimRenameOption.ImageScaling = ToolStripItemImageScaling.None;
+            ConfrimRenameOption.Margin = new Padding(85, 0, 0, 0);
+            ConfrimRenameOption.Name = "ConfrimRenameOption";
+            ConfrimRenameOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            ConfrimRenameOption.Padding = new Padding(25, 5, 5, 5);
+            ConfrimRenameOption.Size = new Size(100, 30);
+            ConfrimRenameOption.Text = "  Rename";
+            ConfrimRenameOption.Click += ConfrimRenameOption_Click;
+            // 
+            // RenameBackupsToolbarMenuOption
+            // 
+            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
+            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
+            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
+            RenameBackupsToolbarMenuOption.MergeIndex = 0;
+            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
+            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
+            RenameBackupsToolbarMenuOption.Text = "Rename";
+            // 
+            // StopMultiSelectMenuItem
+            // 
+            StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
+            StopMultiSelectMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            StopMultiSelectMenuItem.ForeColor = SystemColors.Control;
+            StopMultiSelectMenuItem.MergeIndex = 3;
+            StopMultiSelectMenuItem.Name = "StopMultiSelectMenuItem";
+            StopMultiSelectMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
+            StopMultiSelectMenuItem.Size = new Size(175, 24);
+            StopMultiSelectMenuItem.Text = "Stop Multi Select";
+            StopMultiSelectMenuItem.Visible = false;
+            StopMultiSelectMenuItem.MouseDown += StopMultiSelectMenuItem_MouseDown;
+            // 
+            // ToolStripSeparator3
+            // 
+            ToolStripSeparator3.BackColor = SystemColors.ControlDarkDark;
+            ToolStripSeparator3.ForeColor = SystemColors.ControlDarkDark;
+            ToolStripSeparator3.Name = "ToolStripSeparator3";
+            ToolStripSeparator3.Overflow = ToolStripItemOverflow.Never;
+            ToolStripSeparator3.Size = new Size(172, 6);
+            // 
+            // CreateZipEditBackupMenuOption
+            // 
+            CreateZipEditBackupMenuOption.BackColor = SystemColors.ControlDarkDark;
+            CreateZipEditBackupMenuOption.ForeColor = SystemColors.Control;
+            CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
+            CreateZipEditBackupMenuOption.Size = new Size(175, 24);
+            CreateZipEditBackupMenuOption.Text = "Create Zip";
+            CreateZipEditBackupMenuOption.Click += CreateZipEditBackupMenuOption_Click;
+            // 
+            // ProgressbarPanel
+            // 
+            ProgressbarPanel.BackColor = SystemColors.ScrollBar;
+            ProgressbarPanel.BorderStyle = BorderStyle.Fixed3D;
+            ProgressbarPanel.Controls.Add(ProgressBarA);
+            ProgressbarPanel.Controls.Add(ProgressbarLabel);
+            ProgressbarPanel.Dock = DockStyle.Bottom;
+            ProgressbarPanel.Location = new Point(15, 730);
+            ProgressbarPanel.Name = "ProgressbarPanel";
+            ProgressbarPanel.Size = new Size(530, 60);
+            ProgressbarPanel.TabIndex = 10;
+            ProgressbarPanel.Visible = false;
+            // 
+            // ProgressBarA
+            // 
+            ProgressBarA.BackColor = Color.White;
+            ProgressBarA.Dock = DockStyle.Top;
+            ProgressBarA.ForeColor = Color.Red;
+            ProgressBarA.Location = new Point(0, 0);
+            ProgressBarA.Margin = new Padding(15, 4, 15, 4);
+            ProgressBarA.MarqueeAnimationSpeed = 10;
+            ProgressBarA.Name = "ProgressBarA";
+            ProgressBarA.Size = new Size(526, 32);
+            ProgressBarA.Step = 1;
+            ProgressBarA.Style = ProgressBarStyle.Continuous;
+            ProgressBarA.TabIndex = 8;
+            // 
+            // ProgressbarLabel
+            // 
+            ProgressbarLabel.BackColor = SystemColors.ControlLightLight;
+            ProgressbarLabel.BorderStyle = BorderStyle.Fixed3D;
+            ProgressbarLabel.Dock = DockStyle.Bottom;
+            ProgressbarLabel.Font = new Font("Bahnschrift", 10F);
+            ProgressbarLabel.Location = new Point(0, 31);
+            ProgressbarLabel.Margin = new Padding(3, 2, 3, 8);
+            ProgressbarLabel.Name = "ProgressbarLabel";
+            ProgressbarLabel.Size = new Size(526, 25);
+            ProgressbarLabel.TabIndex = 7;
+            ProgressbarLabel.Text = "-";
+            ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // ChangeBackupFolderTextbox
             // 
-            ChangeBackupFolderTextbox.BackColor = SystemColors.ControlDark;
+            ChangeBackupFolderTextbox.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            ChangeBackupFolderTextbox.BackColor = Color.DarkGray;
             ChangeBackupFolderTextbox.BorderStyle = BorderStyle.Fixed3D;
             ChangeBackupFolderTextbox.Controls.Add(BackupFolderLabel);
             ChangeBackupFolderTextbox.Controls.Add(BackupFolderPathTextbox);
-            ChangeBackupFolderTextbox.Location = new Point(16, 55);
-            ChangeBackupFolderTextbox.Margin = new Padding(10);
+            ChangeBackupFolderTextbox.Location = new Point(15, 68);
+            ChangeBackupFolderTextbox.Margin = new Padding(5);
+            ChangeBackupFolderTextbox.MaximumSize = new Size(530, 64);
+            ChangeBackupFolderTextbox.MinimumSize = new Size(530, 54);
             ChangeBackupFolderTextbox.Name = "ChangeBackupFolderTextbox";
-            ChangeBackupFolderTextbox.Size = new Size(530, 73);
+            ChangeBackupFolderTextbox.Padding = new Padding(2);
+            ChangeBackupFolderTextbox.Size = new Size(530, 54);
             ChangeBackupFolderTextbox.TabIndex = 4;
             // 
             // BackupFolderLabel
             // 
-            BackupFolderLabel.BackColor = SystemColors.ControlDark;
+            BackupFolderLabel.BackColor = SystemColors.ControlLight;
+            BackupFolderLabel.BorderStyle = BorderStyle.Fixed3D;
+            BackupFolderLabel.Dock = DockStyle.Top;
             BackupFolderLabel.Font = new Font("Bahnschrift", 10F);
-            BackupFolderLabel.ForeColor = SystemColors.Control;
-            BackupFolderLabel.Location = new Point(30, 5);
-            BackupFolderLabel.Margin = new Padding(30, 5, 30, 10);
+            BackupFolderLabel.ForeColor = SystemColors.ControlText;
+            BackupFolderLabel.Location = new Point(2, 2);
+            BackupFolderLabel.Margin = new Padding(10);
+            BackupFolderLabel.MaximumSize = new Size(520, 20);
+            BackupFolderLabel.MinimumSize = new Size(520, 18);
             BackupFolderLabel.Name = "BackupFolderLabel";
-            BackupFolderLabel.Size = new Size(468, 20);
+            BackupFolderLabel.Size = new Size(520, 18);
             BackupFolderLabel.TabIndex = 6;
             BackupFolderLabel.Text = "Backup Folder";
             BackupFolderLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -379,14 +645,17 @@ namespace ZomboidBackupManager
             // 
             BackupFolderPathTextbox.BackColor = SystemColors.ControlLightLight;
             BackupFolderPathTextbox.DetectUrls = false;
+            BackupFolderPathTextbox.Dock = DockStyle.Bottom;
             BackupFolderPathTextbox.EnableAutoDragDrop = true;
-            BackupFolderPathTextbox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            BackupFolderPathTextbox.Location = new Point(30, 30);
-            BackupFolderPathTextbox.Margin = new Padding(30, 3, 30, 3);
+            BackupFolderPathTextbox.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            BackupFolderPathTextbox.Location = new Point(2, 22);
+            BackupFolderPathTextbox.Margin = new Padding(10);
+            BackupFolderPathTextbox.MaximumSize = new Size(520, 26);
+            BackupFolderPathTextbox.MinimumSize = new Size(520, 24);
             BackupFolderPathTextbox.Multiline = false;
             BackupFolderPathTextbox.Name = "BackupFolderPathTextbox";
             BackupFolderPathTextbox.ScrollBars = RichTextBoxScrollBars.Horizontal;
-            BackupFolderPathTextbox.Size = new Size(468, 27);
+            BackupFolderPathTextbox.Size = new Size(520, 26);
             BackupFolderPathTextbox.TabIndex = 4;
             BackupFolderPathTextbox.TabStop = false;
             BackupFolderPathTextbox.Text = "";
@@ -395,43 +664,217 @@ namespace ZomboidBackupManager
             // BackgroundPanel
             // 
             BackgroundPanel.AutoSize = true;
-            BackgroundPanel.BackColor = SystemColors.ControlDark;
+            BackgroundPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackgroundPanel.BackColor = Color.Transparent;
+            BackgroundPanel.BackgroundImageLayout = ImageLayout.Center;
+            BackgroundPanel.BorderStyle = BorderStyle.FixedSingle;
             BackgroundPanel.Controls.Add(SelectBackupPanel);
             BackgroundPanel.Controls.Add(SelectSavegamePanel);
-            BackgroundPanel.Location = new Point(9, 9);
-            BackgroundPanel.Margin = new Padding(15, 0, 15, 0);
+            BackgroundPanel.Dock = DockStyle.Fill;
+            BackgroundPanel.Font = new Font("Bahnschrift", 9F);
+            BackgroundPanel.Location = new Point(5, 5);
+            BackgroundPanel.Margin = new Padding(5);
             BackgroundPanel.Name = "BackgroundPanel";
-            BackgroundPanel.Size = new Size(1158, 834);
+            BackgroundPanel.Padding = new Padding(10);
+            BackgroundPanel.Size = new Size(1170, 822);
             BackgroundPanel.TabIndex = 5;
             // 
             // SelectBackupPanel
             // 
-            SelectBackupPanel.AutoSize = true;
             SelectBackupPanel.BackColor = SystemColors.ControlLight;
+            SelectBackupPanel.Controls.Add(HalfWindowModeRadioButton);
+            SelectBackupPanel.Controls.Add(NormalWindowModeRadioButton);
+            SelectBackupPanel.Controls.Add(BackupRestoreTSPanel);
             SelectBackupPanel.Controls.Add(AutoDeleteInfoLabel);
             SelectBackupPanel.Controls.Add(ChangeBackupFolderTextbox);
             SelectBackupPanel.Controls.Add(BackupInfoPanel);
-            SelectBackupPanel.Controls.Add(SettingsPanelA);
-            SelectBackupPanel.Controls.Add(BackupButton);
             SelectBackupPanel.Controls.Add(SelectBackupLabel);
+            SelectBackupPanel.Controls.Add(ProgressbarPanel);
             SelectBackupPanel.Controls.Add(BackupsPictureBox);
             SelectBackupPanel.Controls.Add(BackupListBox);
-            SelectBackupPanel.Controls.Add(RestoreButton);
-            SelectBackupPanel.Controls.Add(ProgressbarPanel);
+            SelectBackupPanel.Controls.Add(SettingsPanelA);
+            SelectBackupPanel.Dock = DockStyle.Right;
             SelectBackupPanel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SelectBackupPanel.Location = new Point(583, 11);
-            SelectBackupPanel.Margin = new Padding(10);
+            SelectBackupPanel.Location = new Point(598, 10);
+            SelectBackupPanel.Margin = new Padding(5);
+            SelectBackupPanel.MaximumSize = new Size(560, 800);
+            SelectBackupPanel.MinimumSize = new Size(535, 795);
             SelectBackupPanel.Name = "SelectBackupPanel";
-            SelectBackupPanel.Size = new Size(560, 812);
+            SelectBackupPanel.Padding = new Padding(15, 15, 15, 10);
+            SelectBackupPanel.Size = new Size(560, 800);
             SelectBackupPanel.TabIndex = 5;
+            // 
+            // HalfWindowModeRadioButton
+            // 
+            HalfWindowModeRadioButton.AutoCheck = false;
+            HalfWindowModeRadioButton.AutoSize = true;
+            HalfWindowModeRadioButton.Enabled = false;
+            HalfWindowModeRadioButton.FlatAppearance.BorderColor = SystemColors.ControlDark;
+            HalfWindowModeRadioButton.FlatAppearance.BorderSize = 2;
+            HalfWindowModeRadioButton.Location = new Point(368, 122);
+            HalfWindowModeRadioButton.MinimumSize = new Size(58, 25);
+            HalfWindowModeRadioButton.Name = "HalfWindowModeRadioButton";
+            HalfWindowModeRadioButton.Size = new Size(58, 25);
+            HalfWindowModeRadioButton.TabIndex = 23;
+            HalfWindowModeRadioButton.TabStop = true;
+            HalfWindowModeRadioButton.Text = "- 1/2";
+            HalfWindowModeRadioButton.TextAlign = ContentAlignment.MiddleCenter;
+            MinimizeButtonToolTip.SetToolTip(HalfWindowModeRadioButton, "Hides the left side of this window.");
+            HalfWindowModeRadioButton.UseVisualStyleBackColor = false;
+            HalfWindowModeRadioButton.Click += HalfWindowModeRadioButton_Click;
+            // 
+            // NormalWindowModeRadioButton
+            // 
+            NormalWindowModeRadioButton.AutoCheck = false;
+            NormalWindowModeRadioButton.AutoSize = true;
+            NormalWindowModeRadioButton.Checked = true;
+            NormalWindowModeRadioButton.FlatAppearance.BorderColor = SystemColors.ControlDark;
+            NormalWindowModeRadioButton.FlatAppearance.BorderSize = 2;
+            NormalWindowModeRadioButton.Location = new Point(293, 122);
+            NormalWindowModeRadioButton.MinimumSize = new Size(58, 25);
+            NormalWindowModeRadioButton.Name = "NormalWindowModeRadioButton";
+            NormalWindowModeRadioButton.RightToLeft = RightToLeft.Yes;
+            NormalWindowModeRadioButton.Size = new Size(58, 25);
+            NormalWindowModeRadioButton.TabIndex = 22;
+            NormalWindowModeRadioButton.TabStop = true;
+            NormalWindowModeRadioButton.Text = "- 1";
+            NormalWindowModeRadioButton.TextAlign = ContentAlignment.MiddleCenter;
+            NormalWindowModeRadioButton.UseVisualStyleBackColor = true;
+            NormalWindowModeRadioButton.Click += NormalWindowModeRadioButton_Click;
+            // 
+            // BackupRestoreTSPanel
+            // 
+            BackupRestoreTSPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackupRestoreTSPanel.BackColor = SystemColors.ControlLight;
+            BackupRestoreTSPanel.BackgroundImageLayout = ImageLayout.Center;
+            BackupRestoreTSPanel.BorderStyle = BorderStyle.Fixed3D;
+            BackupRestoreTSPanel.Controls.Add(BackupRestoreToolStrip);
+            BackupRestoreTSPanel.Location = new Point(15, 645);
+            BackupRestoreTSPanel.Name = "BackupRestoreTSPanel";
+            BackupRestoreTSPanel.Padding = new Padding(10, 5, 10, 5);
+            BackupRestoreTSPanel.Size = new Size(530, 74);
+            BackupRestoreTSPanel.TabIndex = 21;
+            // 
+            // BackupRestoreToolStrip
+            // 
+            BackupRestoreToolStrip.AllowMerge = false;
+            BackupRestoreToolStrip.AutoSize = false;
+            BackupRestoreToolStrip.BackColor = SystemColors.ControlDark;
+            BackupRestoreToolStrip.CanOverflow = false;
+            BackupRestoreToolStrip.Dock = DockStyle.Fill;
+            BackupRestoreToolStrip.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            BackupRestoreToolStrip.GripMargin = new Padding(5);
+            BackupRestoreToolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            BackupRestoreToolStrip.ImageScalingSize = new Size(32, 32);
+            BackupRestoreToolStrip.Items.AddRange(new ToolStripItem[] { RestoreButton, TSSeparator1, SearchForUnlistedBackupsToolStripButton, BackupButton, TSSeparator2 });
+            BackupRestoreToolStrip.Location = new Point(10, 5);
+            BackupRestoreToolStrip.Name = "BackupRestoreToolStrip";
+            BackupRestoreToolStrip.Padding = new Padding(0);
+            BackupRestoreToolStrip.Size = new Size(506, 60);
+            BackupRestoreToolStrip.TabIndex = 0;
+            // 
+            // RestoreButton
+            // 
+            RestoreButton.AutoSize = false;
+            RestoreButton.BackColor = SystemColors.ControlDarkDark;
+            RestoreButton.BackgroundImageLayout = ImageLayout.None;
+            RestoreButton.Enabled = false;
+            RestoreButton.Font = new Font("Closeness", 9.749999F);
+            RestoreButton.ForeColor = Color.White;
+            RestoreButton.Image = (Image)resources.GetObject("RestoreButton.Image");
+            RestoreButton.ImageScaling = ToolStripItemImageScaling.None;
+            RestoreButton.ImageTransparentColor = Color.Magenta;
+            RestoreButton.Margin = new Padding(5, 2, 2, 2);
+            RestoreButton.MergeAction = MergeAction.MatchOnly;
+            RestoreButton.MergeIndex = 1;
+            RestoreButton.Name = "RestoreButton";
+            RestoreButton.Overflow = ToolStripItemOverflow.Never;
+            RestoreButton.Padding = new Padding(5, 1, 1, 1);
+            RestoreButton.Size = new Size(72, 58);
+            RestoreButton.Text = "Restore";
+            RestoreButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            RestoreButton.ToolTipText = resources.GetString("RestoreButton.ToolTipText");
+            RestoreButton.Click += RestoreButton_Click;
+            // 
+            // TSSeparator1
+            // 
+            TSSeparator1.AutoSize = false;
+            TSSeparator1.BackColor = Color.White;
+            TSSeparator1.ForeColor = SystemColors.AppWorkspace;
+            TSSeparator1.Margin = new Padding(5, 0, 5, 0);
+            TSSeparator1.MergeAction = MergeAction.MatchOnly;
+            TSSeparator1.Name = "TSSeparator1";
+            TSSeparator1.Overflow = ToolStripItemOverflow.Never;
+            TSSeparator1.Padding = new Padding(5, 0, 5, 0);
+            TSSeparator1.Size = new Size(25, 55);
+            // 
+            // SearchForUnlistedBackupsToolStripButton
+            // 
+            SearchForUnlistedBackupsToolStripButton.AutoSize = false;
+            SearchForUnlistedBackupsToolStripButton.BackColor = SystemColors.ControlDarkDark;
+            SearchForUnlistedBackupsToolStripButton.Font = new Font("Closeness", 9.749999F);
+            SearchForUnlistedBackupsToolStripButton.ForeColor = SystemColors.ButtonHighlight;
+            SearchForUnlistedBackupsToolStripButton.Image = (Image)resources.GetObject("SearchForUnlistedBackupsToolStripButton.Image");
+            SearchForUnlistedBackupsToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
+            SearchForUnlistedBackupsToolStripButton.ImageTransparentColor = Color.Magenta;
+            SearchForUnlistedBackupsToolStripButton.Margin = new Padding(2);
+            SearchForUnlistedBackupsToolStripButton.MergeAction = MergeAction.MatchOnly;
+            SearchForUnlistedBackupsToolStripButton.MergeIndex = 3;
+            SearchForUnlistedBackupsToolStripButton.Name = "SearchForUnlistedBackupsToolStripButton";
+            SearchForUnlistedBackupsToolStripButton.Overflow = ToolStripItemOverflow.Never;
+            SearchForUnlistedBackupsToolStripButton.Padding = new Padding(1, 1, 5, 1);
+            SearchForUnlistedBackupsToolStripButton.Size = new Size(72, 58);
+            SearchForUnlistedBackupsToolStripButton.Text = "Cleanup";
+            SearchForUnlistedBackupsToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            SearchForUnlistedBackupsToolStripButton.ToolTipText = "Cleanup Backup Directory\r\n>---[EXPERIMENTAL]---<\r\n\r\n(This page is for finding &\r\ndeleting unsused, broken &\r\ndeprecated backup data.)";
+            SearchForUnlistedBackupsToolStripButton.Click += SearchForUnlistedBackupsToolStripButton_Click;
+            // 
+            // BackupButton
+            // 
+            BackupButton.Alignment = ToolStripItemAlignment.Right;
+            BackupButton.AutoSize = false;
+            BackupButton.BackColor = SystemColors.ControlDarkDark;
+            BackupButton.Enabled = false;
+            BackupButton.Font = new Font("Closeness", 9.749999F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            BackupButton.ForeColor = Color.White;
+            BackupButton.Image = (Image)resources.GetObject("BackupButton.Image");
+            BackupButton.ImageScaling = ToolStripItemImageScaling.None;
+            BackupButton.ImageTransparentColor = Color.Magenta;
+            BackupButton.Margin = new Padding(5, 2, 2, 2);
+            BackupButton.MergeAction = MergeAction.MatchOnly;
+            BackupButton.MergeIndex = 3;
+            BackupButton.Name = "BackupButton";
+            BackupButton.Overflow = ToolStripItemOverflow.Never;
+            BackupButton.Padding = new Padding(1, 1, 5, 1);
+            BackupButton.RightToLeft = RightToLeft.Yes;
+            BackupButton.Size = new Size(72, 58);
+            BackupButton.Text = "Backup";
+            BackupButton.TextAlign = ContentAlignment.BottomLeft;
+            BackupButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            BackupButton.ToolTipText = "Create New Backup\r\n\r\nCreate a new Backup from thes savegame,\r\nselected on the left side. \r\n(Should be obviously the savegame,\r\nyou are currently playing)";
+            BackupButton.Click += BackupButton_Click;
+            // 
+            // TSSeparator2
+            // 
+            TSSeparator2.Alignment = ToolStripItemAlignment.Right;
+            TSSeparator2.AutoSize = false;
+            TSSeparator2.BackColor = Color.DarkGray;
+            TSSeparator2.ForeColor = Color.Black;
+            TSSeparator2.Margin = new Padding(5, 0, 5, 0);
+            TSSeparator2.MergeAction = MergeAction.MatchOnly;
+            TSSeparator2.Name = "TSSeparator2";
+            TSSeparator2.Overflow = ToolStripItemOverflow.Never;
+            TSSeparator2.Padding = new Padding(5, 0, 5, 0);
+            TSSeparator2.Size = new Size(25, 55);
             // 
             // AutoDeleteInfoLabel
             // 
-            AutoDeleteInfoLabel.AutoSize = true;
+            AutoDeleteInfoLabel.BackColor = SystemColors.ControlLight;
             AutoDeleteInfoLabel.BorderStyle = BorderStyle.Fixed3D;
-            AutoDeleteInfoLabel.Location = new Point(179, 664);
+            AutoDeleteInfoLabel.Location = new Point(15, 127);
+            AutoDeleteInfoLabel.Margin = new Padding(1);
             AutoDeleteInfoLabel.Name = "AutoDeleteInfoLabel";
-            AutoDeleteInfoLabel.Size = new Size(205, 21);
+            AutoDeleteInfoLabel.Size = new Size(256, 21);
             AutoDeleteInfoLabel.TabIndex = 20;
             AutoDeleteInfoLabel.Text = "Autodelete: [0 / 0] Backups";
             AutoDeleteInfoLabel.TextAlign = ContentAlignment.TopCenter;
@@ -439,6 +882,7 @@ namespace ZomboidBackupManager
             // BackupInfoPanel
             // 
             BackupInfoPanel.BackColor = SystemColors.ControlText;
+            BackupInfoPanel.BorderStyle = BorderStyle.Fixed3D;
             BackupInfoPanel.Controls.Add(BackupDataInfoPanel);
             BackupInfoPanel.Location = new Point(289, 150);
             BackupInfoPanel.Name = "BackupInfoPanel";
@@ -664,31 +1108,80 @@ namespace ZomboidBackupManager
             BackupNameValueLabel.Text = "-";
             BackupNameValueLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // SelectBackupLabel
+            // 
+            SelectBackupLabel.BackColor = SystemColors.ControlLightLight;
+            SelectBackupLabel.BorderStyle = BorderStyle.FixedSingle;
+            SelectBackupLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            SelectBackupLabel.Location = new Point(15, 416);
+            SelectBackupLabel.Name = "SelectBackupLabel";
+            SelectBackupLabel.Size = new Size(530, 35);
+            SelectBackupLabel.TabIndex = 4;
+            SelectBackupLabel.Text = "Select a backup you want to restore:";
+            SelectBackupLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // BackupsPictureBox
+            // 
+            BackupsPictureBox.BorderStyle = BorderStyle.Fixed3D;
+            BackupsPictureBox.Image = Resources.ThumbnailPlaceholder;
+            BackupsPictureBox.Location = new Point(15, 150);
+            BackupsPictureBox.Margin = new Padding(129, 3, 3, 3);
+            BackupsPictureBox.Name = "BackupsPictureBox";
+            BackupsPictureBox.Size = new Size(256, 256);
+            BackupsPictureBox.TabIndex = 3;
+            BackupsPictureBox.TabStop = false;
+            // 
+            // BackupListBox
+            // 
+            BackupListBox.BackColor = Color.White;
+            BackupListBox.ContextMenuStrip = EditBackupsContextMenu;
+            BackupListBox.Font = new Font("Bahnschrift", 12F);
+            BackupListBox.FormattingEnabled = true;
+            BackupListBox.HorizontalExtent = 10;
+            BackupListBox.Items.AddRange(new object[] { "Select a savegame first." });
+            BackupListBox.Location = new Point(15, 450);
+            BackupListBox.Margin = new Padding(15);
+            BackupListBox.Name = "BackupListBox";
+            BackupListBox.ScrollAlwaysVisible = true;
+            BackupListBox.Size = new Size(530, 194);
+            BackupListBox.TabIndex = 1;
+            BackupListBox.SelectedIndexChanged += BackupListBox_SelectedIndexChanged;
+            BackupListBox.MouseDoubleClick += BackupListBox_MouseDoubleClick;
+            BackupListBox.MouseDown += BackupListBox_MouseDown;
+            BackupListBox.MouseUp += BackupListBox_MouseUp;
+            // 
             // SettingsPanelA
             // 
+            SettingsPanelA.AutoScroll = true;
+            SettingsPanelA.AutoSize = true;
+            SettingsPanelA.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             SettingsPanelA.BackColor = SystemColors.ControlDark;
             SettingsPanelA.BorderStyle = BorderStyle.Fixed3D;
             SettingsPanelA.Controls.Add(Toolstrip1);
             SettingsPanelA.Dock = DockStyle.Top;
-            SettingsPanelA.Location = new Point(0, 0);
+            SettingsPanelA.Location = new Point(15, 15);
+            SettingsPanelA.Margin = new Padding(6);
+            SettingsPanelA.MaximumSize = new Size(530, 48);
             SettingsPanelA.Name = "SettingsPanelA";
-            SettingsPanelA.Size = new Size(560, 42);
+            SettingsPanelA.Padding = new Padding(4);
+            SettingsPanelA.Size = new Size(530, 48);
             SettingsPanelA.TabIndex = 9;
             // 
             // Toolstrip1
             // 
+            Toolstrip1.AllowMerge = false;
             Toolstrip1.BackColor = SystemColors.MenuBar;
-            Toolstrip1.Dock = DockStyle.Fill;
+            Toolstrip1.BackgroundImageLayout = ImageLayout.Center;
+            Toolstrip1.CanOverflow = false;
             Toolstrip1.Font = new Font("Bahnschrift", 12F);
-            Toolstrip1.GripMargin = new Padding(0);
             Toolstrip1.GripStyle = ToolStripGripStyle.Hidden;
             Toolstrip1.ImageScalingSize = new Size(32, 32);
             Toolstrip1.Items.AddRange(new ToolStripItem[] { SettingsDropDownButton, EditSettingsDropDownButton, ToolStripSeparator1, DeleteSelectedToolStripButton, StopMultiSelectToolTipButton, StartMultiSelectToolTipButton, ToolStripSeparator2, ListenToPZToolStripButton });
-            Toolstrip1.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            Toolstrip1.Location = new Point(0, 0);
+            Toolstrip1.Location = new Point(4, 4);
+            Toolstrip1.MinimumSize = new Size(240, 40);
             Toolstrip1.Name = "Toolstrip1";
-            Toolstrip1.Padding = new Padding(0);
-            Toolstrip1.Size = new Size(556, 38);
+            Toolstrip1.Padding = new Padding(1);
+            Toolstrip1.Size = new Size(518, 40);
             Toolstrip1.Stretch = true;
             Toolstrip1.TabIndex = 12;
             // 
@@ -841,6 +1334,7 @@ namespace ZomboidBackupManager
             EditBackupsToolbarMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             EditBackupsToolbarMenu.Items.AddRange(new ToolStripItem[] { SelectBackupsToolbarMenuOption, DeleteBackupsToolbarMenuOption, RenameBackupsToolbarMenuOption, StopMultiSelBackupsToolbarMenuOption, EditBackupsToolbarSeparator, CreateZipToolbarMenuOption });
             EditBackupsToolbarMenu.Name = "EditBackupsMenuButton";
+            EditBackupsToolbarMenu.OwnerItem = EditSettingsDropDownButton;
             EditBackupsToolbarMenu.ShowImageMargin = false;
             EditBackupsToolbarMenu.Size = new Size(176, 130);
             // 
@@ -917,92 +1411,6 @@ namespace ZomboidBackupManager
             DeleteLooseToolbarOption.Size = new Size(175, 25);
             DeleteLooseToolbarOption.Text = "Delete Loose";
             // 
-            // RenameBackupsToolbarMenuOption
-            // 
-            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
-            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
-            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
-            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
-            RenameBackupsToolbarMenuOption.MergeIndex = 0;
-            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
-            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
-            RenameBackupsToolbarMenuOption.Text = "Rename";
-            // 
-            // RenameContextMenu
-            // 
-            RenameContextMenu.AutoSize = false;
-            RenameContextMenu.BackColor = SystemColors.ControlDarkDark;
-            RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
-            RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
-            RenameContextMenu.ShowImageMargin = false;
-            RenameContextMenu.Size = new Size(280, 130);
-            // 
-            // RenameLabelTextItem
-            // 
-            RenameLabelTextItem.AutoSize = false;
-            RenameLabelTextItem.BackColor = SystemColors.ControlDark;
-            RenameLabelTextItem.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            RenameLabelTextItem.ForeColor = SystemColors.HighlightText;
-            RenameLabelTextItem.MaxLength = 100;
-            RenameLabelTextItem.Name = "RenameLabelTextItem";
-            RenameLabelTextItem.ReadOnly = true;
-            RenameLabelTextItem.Size = new Size(260, 26);
-            RenameLabelTextItem.Text = "Backup: ";
-            RenameLabelTextItem.TextBoxTextAlign = HorizontalAlignment.Center;
-            // 
-            // ToolStripSeparatorA
-            // 
-            ToolStripSeparatorA.Name = "ToolStripSeparatorA";
-            ToolStripSeparatorA.Size = new Size(276, 6);
-            // 
-            // RenameEnterTextOption
-            // 
-            RenameEnterTextOption.AutoSize = false;
-            RenameEnterTextOption.BackColor = SystemColors.ControlLightLight;
-            RenameEnterTextOption.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            RenameEnterTextOption.ForeColor = SystemColors.ControlText;
-            RenameEnterTextOption.Name = "RenameEnterTextOption";
-            RenameEnterTextOption.Size = new Size(260, 25);
-            RenameEnterTextOption.Text = "Enter new name";
-            RenameEnterTextOption.TextBoxTextAlign = HorizontalAlignment.Center;
-            RenameEnterTextOption.Click += RenameEnterTextOption_Click;
-            // 
-            // ToolStripSeparatorB
-            // 
-            ToolStripSeparatorB.Name = "ToolStripSeparatorB";
-            ToolStripSeparatorB.Size = new Size(276, 6);
-            // 
-            // ConfrimRenameOption
-            // 
-            ConfrimRenameOption.AutoSize = false;
-            ConfrimRenameOption.BackColor = SystemColors.Control;
-            ConfrimRenameOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ConfrimRenameOption.ImageScaling = ToolStripItemImageScaling.None;
-            ConfrimRenameOption.Margin = new Padding(85, 0, 0, 0);
-            ConfrimRenameOption.Name = "ConfrimRenameOption";
-            ConfrimRenameOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            ConfrimRenameOption.Padding = new Padding(25, 5, 5, 5);
-            ConfrimRenameOption.Size = new Size(100, 30);
-            ConfrimRenameOption.Text = "  Rename";
-            ConfrimRenameOption.Click += ConfrimRenameOption_Click;
-            // 
-            // RenameContextMenuItem
-            // 
-            RenameContextMenuItem.BackColor = SystemColors.ControlDarkDark;
-            RenameContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameContextMenuItem.DropDown = RenameContextMenu;
-            RenameContextMenuItem.ForeColor = Color.White;
-            RenameContextMenuItem.MergeAction = MergeAction.Remove;
-            RenameContextMenuItem.MergeIndex = 0;
-            RenameContextMenuItem.Name = "RenameContextMenuItem";
-            RenameContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameContextMenuItem.Size = new Size(175, 24);
-            RenameContextMenuItem.Text = "Rename";
-            // 
             // StopMultiSelBackupsToolbarMenuOption
             // 
             StopMultiSelBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
@@ -1037,6 +1445,7 @@ namespace ZomboidBackupManager
             ToolStripSeparator1.AutoSize = false;
             ToolStripSeparator1.BackColor = SystemColors.HighlightText;
             ToolStripSeparator1.ForeColor = SystemColors.ControlDarkDark;
+            ToolStripSeparator1.MergeAction = MergeAction.MatchOnly;
             ToolStripSeparator1.Name = "ToolStripSeparator1";
             ToolStripSeparator1.Overflow = ToolStripItemOverflow.Never;
             ToolStripSeparator1.Size = new Size(60, 36);
@@ -1105,7 +1514,7 @@ namespace ZomboidBackupManager
             ListenToPZToolStripButton.BackColor = SystemColors.Control;
             ListenToPZToolStripButton.Font = new Font("Bahnschrift Condensed", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             ListenToPZToolStripButton.ForeColor = SystemColors.ControlText;
-            ListenToPZToolStripButton.Image = Resources.RadiowaveIconImage;
+            ListenToPZToolStripButton.Image = (Image)resources.GetObject("ListenToPZToolStripButton.Image");
             ListenToPZToolStripButton.ImageAlign = ContentAlignment.MiddleLeft;
             ListenToPZToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
             ListenToPZToolStripButton.ImageTransparentColor = Color.Transparent;
@@ -1119,258 +1528,53 @@ namespace ZomboidBackupManager
             ListenToPZToolStripButton.ToolTipText = "Connect this app with Project Zomboid\r\n(PZBackupManager mod from workshop required!)";
             ListenToPZToolStripButton.Click += ListenToPZToolStripButton_Click;
             // 
-            // BackupButton
-            // 
-            BackupButton.BackColor = SystemColors.Control;
-            BackupButton.Enabled = false;
-            BackupButton.Location = new Point(405, 656);
-            BackupButton.Name = "BackupButton";
-            BackupButton.Size = new Size(140, 35);
-            BackupButton.TabIndex = 5;
-            BackupButton.Text = "Backup";
-            BackupButton.UseVisualStyleBackColor = false;
-            BackupButton.Click += BackupButton_Click;
-            // 
-            // SelectBackupLabel
-            // 
-            SelectBackupLabel.BackColor = SystemColors.ControlLightLight;
-            SelectBackupLabel.BorderStyle = BorderStyle.FixedSingle;
-            SelectBackupLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            SelectBackupLabel.Location = new Point(15, 416);
-            SelectBackupLabel.Name = "SelectBackupLabel";
-            SelectBackupLabel.Size = new Size(530, 35);
-            SelectBackupLabel.TabIndex = 4;
-            SelectBackupLabel.Text = "Select a backup you want to restore:";
-            SelectBackupLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // BackupsPictureBox
-            // 
-            BackupsPictureBox.Image = Resources.ThumbnailPlaceholder;
-            BackupsPictureBox.Location = new Point(15, 150);
-            BackupsPictureBox.Margin = new Padding(129, 3, 3, 3);
-            BackupsPictureBox.Name = "BackupsPictureBox";
-            BackupsPictureBox.Size = new Size(256, 256);
-            BackupsPictureBox.TabIndex = 3;
-            BackupsPictureBox.TabStop = false;
-            // 
-            // BackupListBox
-            // 
-            BackupListBox.ContextMenuStrip = EditBackupsContextMenu;
-            BackupListBox.FormattingEnabled = true;
-            BackupListBox.HorizontalExtent = 10;
-            BackupListBox.Items.AddRange(new object[] { "Select a savegame first." });
-            BackupListBox.Location = new Point(15, 450);
-            BackupListBox.Margin = new Padding(15);
-            BackupListBox.Name = "BackupListBox";
-            BackupListBox.ScrollAlwaysVisible = true;
-            BackupListBox.Size = new Size(530, 194);
-            BackupListBox.TabIndex = 1;
-            BackupListBox.SelectedIndexChanged += BackupListBox_SelectedIndexChanged;
-            BackupListBox.MouseDoubleClick += BackupListBox_MouseDoubleClick;
-            BackupListBox.MouseDown += BackupListBox_MouseDown;
-            BackupListBox.MouseUp += BackupListBox_MouseUp;
-            // 
-            // EditBackupsContextMenu
-            // 
-            EditBackupsContextMenu.AccessibleRole = AccessibleRole.Cursor;
-            EditBackupsContextMenu.AllowClickThrough = true;
-            EditBackupsContextMenu.BackColor = SystemColors.ControlDark;
-            EditBackupsContextMenu.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            EditBackupsContextMenu.Items.AddRange(new ToolStripItem[] { SelectContextMenuItem, DeleteContextMenuItem, RenameContextMenuItem, StopMultiSelectMenuItem, ToolStripSeparator3, CreateZipEditBackupMenuOption });
-            EditBackupsContextMenu.Name = "EditBackupsMenuButton";
-            EditBackupsContextMenu.ShowImageMargin = false;
-            EditBackupsContextMenu.Size = new Size(176, 130);
-            EditBackupsContextMenu.Text = "Edit";
-            EditBackupsContextMenu.Opening += EditBackupsContextMenu_Opening;
-            // 
-            // SelectContextMenuItem
-            // 
-            SelectContextMenuItem.BackColor = SystemColors.ControlDarkDark;
-            SelectContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            SelectContextMenuItem.DropDownItems.AddRange(new ToolStripItem[] { SelectMultiMenuItem, SelectAllMenuItem });
-            SelectContextMenuItem.ForeColor = Color.White;
-            SelectContextMenuItem.MergeIndex = 2;
-            SelectContextMenuItem.Name = "SelectContextMenuItem";
-            SelectContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
-            SelectContextMenuItem.Size = new Size(175, 24);
-            SelectContextMenuItem.Text = "Select";
-            // 
-            // SelectMultiMenuItem
-            // 
-            SelectMultiMenuItem.BackColor = SystemColors.ControlDarkDark;
-            SelectMultiMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            SelectMultiMenuItem.ForeColor = SystemColors.Control;
-            SelectMultiMenuItem.Name = "SelectMultiMenuItem";
-            SelectMultiMenuItem.Size = new Size(163, 24);
-            SelectMultiMenuItem.Text = "Select Multi";
-            SelectMultiMenuItem.Click += SelectMultiOption_Click;
-            // 
-            // SelectAllMenuItem
-            // 
-            SelectAllMenuItem.BackColor = SystemColors.ControlDarkDark;
-            SelectAllMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            SelectAllMenuItem.ForeColor = SystemColors.Control;
-            SelectAllMenuItem.Name = "SelectAllMenuItem";
-            SelectAllMenuItem.Size = new Size(163, 24);
-            SelectAllMenuItem.Text = "Select All";
-            SelectAllMenuItem.Click += SelectAllOption_Click;
-            // 
-            // DeleteContextMenuItem
-            // 
-            DeleteContextMenuItem.BackColor = SystemColors.ControlDarkDark;
-            DeleteContextMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            DeleteContextMenuItem.DropDownItems.AddRange(new ToolStripItem[] { DeleteSelectedMenuOption, DeleteZipMenuOption, DeleteLooseMenuOption });
-            DeleteContextMenuItem.ForeColor = Color.White;
-            DeleteContextMenuItem.MergeIndex = 1;
-            DeleteContextMenuItem.Name = "DeleteContextMenuItem";
-            DeleteContextMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
-            DeleteContextMenuItem.Size = new Size(175, 24);
-            DeleteContextMenuItem.Text = "Delete";
-            // 
-            // DeleteSelectedMenuOption
-            // 
-            DeleteSelectedMenuOption.AutoSize = false;
-            DeleteSelectedMenuOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteSelectedMenuOption.ForeColor = SystemColors.Control;
-            DeleteSelectedMenuOption.Name = "DeleteSelectedMenuOption";
-            DeleteSelectedMenuOption.Size = new Size(175, 25);
-            DeleteSelectedMenuOption.Text = "Delete";
-            DeleteSelectedMenuOption.Click += DeleteSelected_OnClick;
-            // 
-            // DeleteZipMenuOption
-            // 
-            DeleteZipMenuOption.AutoSize = false;
-            DeleteZipMenuOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteZipMenuOption.ForeColor = SystemColors.Control;
-            DeleteZipMenuOption.Name = "DeleteZipMenuOption";
-            DeleteZipMenuOption.Size = new Size(175, 25);
-            DeleteZipMenuOption.Text = "Delete Zip";
-            // 
-            // DeleteLooseMenuOption
-            // 
-            DeleteLooseMenuOption.AutoSize = false;
-            DeleteLooseMenuOption.BackColor = SystemColors.ControlDarkDark;
-            DeleteLooseMenuOption.ForeColor = SystemColors.Control;
-            DeleteLooseMenuOption.Name = "DeleteLooseMenuOption";
-            DeleteLooseMenuOption.Size = new Size(175, 25);
-            DeleteLooseMenuOption.Text = "Delete Loose";
-            // 
-            // StopMultiSelectMenuItem
-            // 
-            StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
-            StopMultiSelectMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            StopMultiSelectMenuItem.ForeColor = SystemColors.Control;
-            StopMultiSelectMenuItem.MergeIndex = 3;
-            StopMultiSelectMenuItem.Name = "StopMultiSelectMenuItem";
-            StopMultiSelectMenuItem.Overflow = ToolStripItemOverflow.AsNeeded;
-            StopMultiSelectMenuItem.Size = new Size(175, 24);
-            StopMultiSelectMenuItem.Text = "Stop Multi Select";
-            StopMultiSelectMenuItem.Visible = false;
-            StopMultiSelectMenuItem.MouseDown += StopMultiSelectMenuItem_MouseDown;
-            // 
-            // ToolStripSeparator3
-            // 
-            ToolStripSeparator3.BackColor = SystemColors.ControlDarkDark;
-            ToolStripSeparator3.ForeColor = SystemColors.ControlDarkDark;
-            ToolStripSeparator3.Name = "ToolStripSeparator3";
-            ToolStripSeparator3.Overflow = ToolStripItemOverflow.Never;
-            ToolStripSeparator3.Size = new Size(172, 6);
-            // 
-            // CreateZipEditBackupMenuOption
-            // 
-            CreateZipEditBackupMenuOption.BackColor = SystemColors.ControlDarkDark;
-            CreateZipEditBackupMenuOption.ForeColor = SystemColors.Control;
-            CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
-            CreateZipEditBackupMenuOption.Size = new Size(175, 24);
-            CreateZipEditBackupMenuOption.Text = "Create Zip";
-            CreateZipEditBackupMenuOption.Click += CreateZipEditBackupMenuOption_Click;
-            // 
-            // RestoreButton
-            // 
-            RestoreButton.BackColor = SystemColors.Control;
-            RestoreButton.Enabled = false;
-            RestoreButton.Location = new Point(15, 656);
-            RestoreButton.Name = "RestoreButton";
-            RestoreButton.Size = new Size(140, 35);
-            RestoreButton.TabIndex = 0;
-            RestoreButton.Text = "Restore";
-            RestoreButton.UseVisualStyleBackColor = false;
-            RestoreButton.Click += RestoreButton_Click;
-            // 
-            // ProgressbarPanel
-            // 
-            ProgressbarPanel.BackColor = SystemColors.ControlLightLight;
-            ProgressbarPanel.BorderStyle = BorderStyle.FixedSingle;
-            ProgressbarPanel.Controls.Add(ProgressBarA);
-            ProgressbarPanel.Controls.Add(ProgressbarLabel);
-            ProgressbarPanel.Dock = DockStyle.Bottom;
-            ProgressbarPanel.Location = new Point(0, 702);
-            ProgressbarPanel.Name = "ProgressbarPanel";
-            ProgressbarPanel.Size = new Size(560, 110);
-            ProgressbarPanel.TabIndex = 10;
-            ProgressbarPanel.Visible = false;
-            // 
-            // ProgressBarA
-            // 
-            ProgressBarA.BackColor = SystemColors.Control;
-            ProgressBarA.Location = new Point(15, 22);
-            ProgressBarA.MarqueeAnimationSpeed = 5;
-            ProgressBarA.Name = "ProgressBarA";
-            ProgressBarA.Size = new Size(530, 36);
-            ProgressBarA.Step = 15;
-            ProgressBarA.Style = ProgressBarStyle.Continuous;
-            ProgressBarA.TabIndex = 6;
-            // 
-            // ProgressbarLabel
-            // 
-            ProgressbarLabel.BackColor = SystemColors.Control;
-            ProgressbarLabel.BorderStyle = BorderStyle.Fixed3D;
-            ProgressbarLabel.Font = new Font("Bahnschrift", 10F);
-            ProgressbarLabel.Location = new Point(14, 66);
-            ProgressbarLabel.Name = "ProgressbarLabel";
-            ProgressbarLabel.Size = new Size(250, 25);
-            ProgressbarLabel.TabIndex = 7;
-            ProgressbarLabel.Text = "-";
-            ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = true;
-            ClientSize = new Size(1180, 850);
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(1180, 832);
             Controls.Add(BackgroundPanel);
+            FormBorderStyle = FormBorderStyle.Fixed3D;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "MainWindow";
+            Padding = new Padding(5);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Zomboid Backup Manager";
+            MinimizeButtonToolTip.SetToolTip(this, resources.GetString("$this.ToolTip"));
             Load += MainWindow_Load;
             SelectSavegamePanel.ResumeLayout(false);
+            SelectSavegamePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).EndInit();
             SavegameInfoPanel.ResumeLayout(false);
             BackupCountSubPanel.ResumeLayout(false);
             GamemodeInfoSubPanel.ResumeLayout(false);
             SavegameInfoSubPanel.ResumeLayout(false);
+            EditBackupsContextMenu.ResumeLayout(false);
+            RenameContextMenu.ResumeLayout(false);
+            RenameContextMenu.PerformLayout();
+            ProgressbarPanel.ResumeLayout(false);
             ChangeBackupFolderTextbox.ResumeLayout(false);
             BackgroundPanel.ResumeLayout(false);
-            BackgroundPanel.PerformLayout();
             SelectBackupPanel.ResumeLayout(false);
             SelectBackupPanel.PerformLayout();
+            BackupRestoreTSPanel.ResumeLayout(false);
+            BackupRestoreToolStrip.ResumeLayout(false);
+            BackupRestoreToolStrip.PerformLayout();
             BackupInfoPanel.ResumeLayout(false);
             BackupDataInfoPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)HasLooseValuePictureBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)HasZipValuePictureBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)BackupsPictureBox).EndInit();
             SettingsPanelA.ResumeLayout(false);
             SettingsPanelA.PerformLayout();
             Toolstrip1.ResumeLayout(false);
             Toolstrip1.PerformLayout();
             GeneralSettingsContextMenuStrip.ResumeLayout(false);
             EditBackupsToolbarMenu.ResumeLayout(false);
-            RenameContextMenu.ResumeLayout(false);
-            RenameContextMenu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)BackupsPictureBox).EndInit();
-            EditBackupsContextMenu.ResumeLayout(false);
-            ProgressbarPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1379,21 +1583,16 @@ namespace ZomboidBackupManager
         private ComboBox GamemodeComboBox;
         private Label SelectSavegameLabel;
         private Panel SelectSavegamePanel;
-        private ListBox SavegameListBox;
         private Panel ChangeBackupFolderTextbox;
         private RichTextBox BackupFolderPathTextbox;
         internal Label BackupFolderLabel;
-        internal Label SelectGamemodeLabel;
         private Panel BackgroundPanel;
         private PictureBox ThumbnailPictureBox;
         private Panel SelectBackupPanel;
-        private Button RestoreButton;
         private ListBox BackupListBox;
         private PictureBox BackupsPictureBox;
         private Label SelectBackupLabel;
-        private Button BackupButton;
         private Label ProgressbarLabel;
-        private ProgressBar ProgressBarA;
         private Panel SettingsPanelA;
         private Label SavgameInfoTextLabel;
         private Panel SavegameInfoPanel;
@@ -1475,5 +1674,17 @@ namespace ZomboidBackupManager
         private ToolStripMenuItem DeleteZipMenuOption;
         private ToolStripMenuItem DeleteLooseMenuOption;
         private ToolStripMenuItem ChangeDirectoryMenuOption;
+        private Panel BackupRestoreTSPanel;
+        private ToolStrip BackupRestoreToolStrip;
+        private ToolStripButton RestoreButton;
+        private ToolStripButton BackupButton;
+        private ToolStripSeparator TSSeparator1;
+        private ToolStripSeparator TSSeparator2;
+        private ProgressBar ProgressBarA;
+        private RadioButton HalfWindowModeRadioButton;
+        private RadioButton NormalWindowModeRadioButton;
+        private Label SavegameHealineLabel;
+        private ListBox SavegameListBox;
+        private ToolStripButton SearchForUnlistedBackupsToolStripButton;
     }
 }

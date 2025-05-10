@@ -96,6 +96,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "DeleteMulti";
+            Opacity = 0.9D;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Process Active";
             ResumeLayout(false);

@@ -61,9 +61,18 @@ namespace ZomboidBackupManager
             return AddBackup(jsonData, backupData);
         }
 
-        public static JsonData? ReadJsonDataFromJson()
+        public static JsonData? ReadJsonDataFromJson(string? path = null)
         {
-            string jsonDataFilePath = GetJsonDataFilePath();
+            string jsonDataFilePath = string.Empty;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                jsonDataFilePath = GetJsonDataFilePath();
+            }
+            else
+            {
+                jsonDataFilePath = path;
+            }
+
             if (string.IsNullOrWhiteSpace(jsonDataFilePath))
             {
                 return null;

@@ -55,5 +55,10 @@ namespace ZomboidBackupManager
             startInfo.UseShellExecute = true;
             Process.Start(startInfo);
         }
+
+        private void PZBackupManagerLogoPictureBox_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

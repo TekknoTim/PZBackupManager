@@ -247,8 +247,10 @@
             Controls.Add(SaveButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ZipArchiveSetup";
+            Opacity = 0.9D;
             StartPosition = FormStartPosition.CenterParent;
             Text = "ZipArchiveSetup";
+            TopMost = true;
             CheckboxPanel.ResumeLayout(false);
             ExternalArchiverPanel.ResumeLayout(false);
             SelectExePanel.ResumeLayout(false);

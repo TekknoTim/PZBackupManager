@@ -1,17 +1,26 @@
 PZ Backup Manager Changelog:
 
-[v0.0.4] - [22.04.2025] - [ScriptHook overhaul, Versioning & More]
+[v0.0.5] - [04.05.2025] - [CleanUp Tools & Basic StatusLog Overhaul]
+
+ 1. - Added: A new form, which can be opened, by pressing the "CLEANUP" button on the MainWindow.
+ 2. - Added: A function to search the backup directory for unlisted backup directories.
+ 3. - Added: A function to search the backup directory for broken or missing json data files.
+ 4. - Added: A function to automatically search the backup directory for unlisted folders, broken or missing json data files & deleting them afterwards.
+
+[v0.0.4] - [23.04.2025] - [ScriptHook overhaul, Versioning & More]
 
 [IMPORTANT] - [For the newest workshop mod to work, this version is from now on the minimum requirement!] - [IMPORTANT]
  1. - Changed: They way, the script hook is communicating with the workshop mod. 
- 2. - Added: A version file, for both programs to notice the user about updates. 
- 3. - Added: Savegame validation. Can be enabled in the mods option menu.
+ 2. - Changed: Autodeletion will now adjust to the number of already existing backups, if the user
+			 don't want to delete the extant.
+ 3. - Added: A version file, for both programs to notice the user about updates. 
+ 4. - Added: Savegame validation. Can be enabled in the mods option menu.
 			 Checks if the correct savegame is selected when doing an update via the workshop mod
- 4. - Added: Automatic savegame selection. If the wrong savegame is selected,
+ 5. - Added: Automatic savegame selection. If the wrong savegame is selected,
 			 you can switch to the correct one by pressing a UI button ingame.
- 5. - Added: The changelog will be shown after an update or fresh installation once.
- 6. - Fixed: The app verion. Last updates version were wrong & will be adjusted to the right one with this update.
- 7. - Fixed: Some "File not exist" issues.
+ 6. - Added: The changelog will be shown after an update or fresh installation once.
+ 7. - Fixed: The app verion. Last updates version were wrong & will be adjusted to the right one with this update.
+ 8. - Fixed: Some "File not exist" issues.
 
 [v0.0.3] - [09.04.2025] - [More UI Cleanup & Autodelete Update]
 

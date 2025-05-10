@@ -198,6 +198,11 @@ namespace ZomboidBackupManager
                 FileStream stream = System.IO.File.Create(absoluteModVersionFilePATH);
                 stream.Close();
             }
+            if (!File.Exists(absoluteHookStatsFilePATH))
+            {
+                FileStream stream = System.IO.File.Create(absoluteHookStatsFilePATH);
+                stream.Close();
+            }
             string[] data = new string[2];
             string[] lines = File.ReadAllLines(absoluteModVersionFilePATH);
             if (lines.Length < 1 || string.IsNullOrWhiteSpace(lines[0]))
@@ -214,8 +219,8 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2504.21f;
-        public static readonly string appVersion = "v0.0.4";
+        private static readonly float version = 2505.04f;
+        public static readonly string appVersion = "v0.0.5";
         public static bool initRunning = false;
 
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
@@ -230,7 +235,7 @@ namespace ZomboidBackupManager
 
         //Private Path Properties:
         private static readonly string relativeHookFilePATH = @"\Zomboid\lua\PZBaManagerHook.ini";
-        //private static readonly string relativeHookStatsFilePATH = @"\Zomboid\lua\PZBaManStatsHook.ini";
+        private static readonly string relativeHookStatsFilePATH = @"\Zomboid\lua\PZBackupManager\PZBaManagerStatusData.txt";
         private static readonly string relativeModVersionFilePATH = @"\Zomboid\lua\PZBackupManager\version.txt";
         private static readonly string relativeSavegamePATH = @"\Zomboid\Saves\";
         private static readonly string baseBackupFolderPATH = Application.StartupPath + @"Backups";
@@ -245,7 +250,7 @@ namespace ZomboidBackupManager
         public static string userProfilePATH = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         public static string absoluteSavegamePATH = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + relativeSavegamePATH;
         public static string absoluteHookFilePATH = userProfilePATH + relativeHookFilePATH;
-        //public static string absoluteHookStatsFilePATH = userProfilePATH + relativeHookStatsFilePATH;
+        public static string absoluteHookStatsFilePATH = userProfilePATH + relativeHookStatsFilePATH;
         public static string absoluteModVersionFilePATH = userProfilePATH + relativeModVersionFilePATH;
         public static string currentBaseBackupFolderPATH = Application.StartupPath + @"Backups";
 
@@ -262,7 +267,8 @@ namespace ZomboidBackupManager
         public static bool expFeaturesEnabled = false;
 
         public static int autoDeleteKeepBackupsCount = 5;
-        public static readonly int autoDeleteKeepBackupsMax = 25;
+        public static int autoDelBackupCountUserSet = 5;
+        public static readonly int autoDeleteKeepBackupsMax = 40;
 
         public static int usedZipArchiver = 0; // 0 = intern (slowest) ; 1 = WinRar (faster) ; 1 = 7Zip (fastest)
         public static string zipArchiverExePath = string.Empty;

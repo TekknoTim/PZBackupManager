@@ -75,13 +75,13 @@
             // 
             // txtLog
             // 
-            txtLog.Font = new Font("Bahnschrift", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtLog.Font = new Font("Ubuntu Mono", 10F);
             txtLog.FormattingEnabled = true;
             txtLog.Items.AddRange(new object[] { " " });
             txtLog.Location = new Point(12, 199);
             txtLog.Name = "txtLog";
             txtLog.SelectionMode = SelectionMode.None;
-            txtLog.Size = new Size(360, 132);
+            txtLog.Size = new Size(360, 116);
             txtLog.TabIndex = 1;
             // 
             // LoadedSavegameInfoPanel

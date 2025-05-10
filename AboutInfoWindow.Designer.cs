@@ -148,11 +148,11 @@
             // 
             WindowTitleLabel.AutoSize = true;
             WindowTitleLabel.BackColor = SystemColors.ControlDarkDark;
-            WindowTitleLabel.Font = new Font("a dripping marker", 27.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            WindowTitleLabel.Font = new Font("Microsoft Sans Serif", 20F, FontStyle.Bold);
             WindowTitleLabel.ForeColor = SystemColors.Info;
             WindowTitleLabel.Location = new Point(183, 15);
             WindowTitleLabel.Name = "WindowTitleLabel";
-            WindowTitleLabel.Size = new Size(231, 94);
+            WindowTitleLabel.Size = new Size(240, 62);
             WindowTitleLabel.TabIndex = 2;
             WindowTitleLabel.Text = "Project Zomboid\r\nBackup  Manager";
             WindowTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -171,8 +171,7 @@
             // PZBackupManagerLogoPictureBox
             // 
             PZBackupManagerLogoPictureBox.BackColor = SystemColors.Info;
-            PZBackupManagerLogoPictureBox.BackgroundImageLayout = ImageLayout.Center;
-            PZBackupManagerLogoPictureBox.Image = Properties.Resources.PZBackupManagerLogo;
+            PZBackupManagerLogoPictureBox.Image = (Image)resources.GetObject("PZBackupManagerLogoPictureBox.Image");
             PZBackupManagerLogoPictureBox.Location = new Point(11, 11);
             PZBackupManagerLogoPictureBox.Margin = new Padding(11);
             PZBackupManagerLogoPictureBox.Name = "PZBackupManagerLogoPictureBox";
@@ -180,6 +179,7 @@
             PZBackupManagerLogoPictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
             PZBackupManagerLogoPictureBox.TabIndex = 0;
             PZBackupManagerLogoPictureBox.TabStop = false;
+            PZBackupManagerLogoPictureBox.Click += PZBackupManagerLogoPictureBox_Click;
             // 
             // GitHubPanel
             // 

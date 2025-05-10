@@ -20,10 +20,10 @@ namespace ZomboidBackupManager
         {
             InitializeComponent();
             AutoDeleteEnabledCheckBox.Checked = autoDeleteEnabled;
-            AutoDeleteCountValueLabel.Text = autoDeleteKeepBackupsCount.ToString();
+            AutoDeleteCountValueLabel.Text = autoDelBackupCountUserSet.ToString();
             AutoDeleteCountTrackBar.Minimum = 1;
             AutoDeleteCountTrackBar.Maximum = autoDeleteKeepBackupsMax;
-            AutoDeleteCountTrackBar.Value = autoDeleteKeepBackupsCount;
+            AutoDeleteCountTrackBar.Value = autoDelBackupCountUserSet;
         }
 
         private void AutoDeleteSetupWindow_Shown(object sender, EventArgs e)

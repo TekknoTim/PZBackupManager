@@ -17,6 +17,199 @@ namespace ZomboidBackupManager
     public static class FunctionLibrary
     {
 
+
+
+        public static string AddSideSeparators(string str, char sideChar = '║', bool addStart = true, bool addEnd = true)
+        {
+            if (addStart)
+            {
+                str = str.Remove(0, 1);
+                str = sideChar.ToString() + str;
+            }
+            if (addEnd)
+            {
+                str = str.Remove(str.Length - 2, 1);
+                str = str + sideChar.ToString();
+            }
+            return str;
+        }
+
+        public static string CenterText(string text, int totalLength, char fillChar = '*', bool lineNumeration = false)
+        {
+            if (text.Length >= totalLength)
+            {
+                return text.Substring(0, totalLength);
+            }
+            int paddingTotal = totalLength - text.Length;
+            int padLeft = paddingTotal / 2;
+            if (lineNumeration) { padLeft += GetNumStringLength() / 2; }
+            int padRight = paddingTotal - padLeft;
+
+            return new string(fillChar, padLeft) + text + new string(fillChar, padRight);
+        }
+
+        public static string GetFullNumString(string num = "XXX")
+        {
+            return $"[{num}] - ";
+        }
+
+        public static int GetNumStringLength()
+        {
+            return GetFullNumString().Length;
+        }
+
+        //===========================================================================================================================================
+        //=========================-----------------------[ Start Loose & Depricated Backup Functions ]-------------------------=====================
+        //===========================================================================================================================================
+        public static List<string> GetUnlistedSavegames()
+        {
+            List<string> unlisted = new List<string>();
+            string[] backups = GetAllBackupFolders();
+            string[] savegames = GetAllSavegamesInAllGamemodes().ToArray();
+
+            foreach (string backup in backups)
+            {
+                if (!savegames.Contains(backup) && (backup != @"None"))
+                {
+                    unlisted.Add(backup);
+                }
+            }
+            return unlisted;
+        }
+
+        public static List<string> GetUnlistedSavegamePaths()
+        {
+            List<string> paths = new List<string>();
+            List<string> unlisted = GetUnlistedSavegames();
+            foreach (string name in unlisted)
+            {
+                paths.Add(currentBaseBackupFolderPATH + @"\" + name);
+            }
+            return paths;
+        }
+
+        public static List<string> GetBackupsInUnlistedSavegameFromJson()
+        {
+            List<string> unlisted = new List<string>();
+            string[] backups = GetAllBackupFolders();
+            string[] savegames = GetAllSavegamesInAllGamemodes().ToArray();
+
+            foreach (string backup in backups)
+            {
+                if (!savegames.Contains(backup) && (backup != @"None"))
+                {
+                    unlisted.Add(backup);
+                }
+            }
+            return unlisted;
+        }
+
+        public static string GetUnlistedFolderPathFromJson(int index, string savegame)
+        {
+            BackupData? data = GetUnlistedDataFromJson(index , savegame);
+            if (data == null)
+            {
+                return currentLoadedBackupFolderPATH + GetDefaultBackupFolderName(index);
+            }
+            string? fullPath = data.Path;
+            if (string.IsNullOrEmpty(fullPath))
+            {
+                return currentLoadedBackupFolderPATH + GetDefaultBackupFolderName(index);
+            }
+            return fullPath;
+        }
+
+        public static BackupData? GetUnlistedDataFromJson(int index, string savegame)
+        {
+            List<BackupData>? dataList = GetÚnlistedDataListFromJson(savegame);
+            int lastIndex = GetLastBackupIndexFromJson(dataList);
+            if (dataList == null || dataList.Count <= 0)
+            {
+                return null;
+            }
+            BackupData? bData = dataList.Find(x => x.Index == index);
+            return bData;
+        }
+
+        public static List<BackupData>? GetÚnlistedDataListFromJson(string? savegame = null , string? path = null)
+        {
+            string p = string.Empty;
+            if (savegame != null)
+            {
+                p = GetUnlistedJsonDataFilePath(savegame);
+            }
+            else if (path != null)
+            {
+                p = path;
+            }
+            JsonData? jsonData = ReadJsonDataFromJson(p);
+            if (jsonData == null)
+            {
+                return null;
+            }
+            return jsonData.Backups;
+        }
+
+        public static string[] GetAllUnlistedBackupNamesNamesFromJson(string savegame)
+        {
+            List<BackupData>? backupDataList = GetÚnlistedDataListFromJson(savegame);
+            if (backupDataList == null || backupDataList.Count <= 0)
+            {
+                return Array.Empty<string>();
+            }
+            List<string> outputList = new List<string>();
+            foreach (var item in backupDataList)
+            {
+                string? name = item.Name;
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = @"ERROR - Name Not Found!";
+                }
+                outputList.Add(name);
+            }
+            return outputList.ToArray();
+        }
+
+        public static bool DirectoryHasJsonFile(string savegame)
+        {
+            string path = GetUnlistedJsonDataFilePath(savegame);
+            return File.Exists(path);
+        }
+
+        public static bool DirectoryHasValidJsonFile(string savegame)
+        {
+            if(DirectoryHasJsonFile(savegame))
+            {
+                List<BackupData>? backupData = GetÚnlistedDataListFromJson(savegame);
+                if (backupData != null && backupData.Count > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static List<BackupData>? TryToGetBackupDataListFromJson(string path)
+        {
+            string filePath = path + @"\" + @"data.json";
+            if (File.Exists(filePath))
+            {
+                List<BackupData>? backupData = GetÚnlistedDataListFromJson(null, filePath);
+                if (backupData != null && backupData.Count > 0)
+                {
+                    return backupData;
+                }
+            }
+            return null;
+        }
+
+
+        //===========================================================================================================================================
+        //=========================------------------------[ End Loose & Depricated Backup Functions ]--------------------------=====================
+        //===========================================================================================================================================
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------
+
         //===========================================================================================================================================
         //=========================--------------------------------[ Start Zip Archive Functions ]--------------------------------===================
         //===========================================================================================================================================
@@ -55,15 +248,6 @@ namespace ZomboidBackupManager
             }
             return dataList[index].ZipPath;
         }
-
-
-
-
-
-
-
-
-
 
 
         //===========================================================================================================================================
@@ -249,7 +433,12 @@ namespace ZomboidBackupManager
 
         public static string GetGamemodeByIndex(int index)
         {
+            
             List<string> gamemodes = GetGamemodes();
+            if (index < 0 && index >= gamemodes.Count)
+            {
+                return string.Empty;
+            }
             return gamemodes[index];
         }
 
@@ -386,20 +575,87 @@ namespace ZomboidBackupManager
             return backupFolders.Length;
         }
 
-        public static string[] GetBackups()
+        public static string[] GetBackups(string? path = null)
         {
-            string[] fullPathList = Directory.GetDirectories(currentLoadedBackupFolderPATH);
+            string p = string.Empty;
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                p = currentLoadedBackupFolderPATH;
+            }
+            else
+            {
+                p = path;
+            }
+            string[] fullPathList = Directory.GetDirectories(p);
 
             List<string> outputList = new List<string>();
             int i = 1;
             foreach (var item in fullPathList)
             {
-                DirectoryInfo dirInfo = new DirectoryInfo(currentLoadedBackupFolderPATH + item);
+                DirectoryInfo dirInfo = new DirectoryInfo(p + item);
                 outputList.Add(dirInfo.Name);
                 i++;
             }
             return outputList.ToArray();
         }
+
+        public static string[] GetAllBackupFolders()
+        {
+            string[] fullPathList = Directory.GetDirectories(currentBaseBackupFolderPATH);
+
+            List<string> outputList = new List<string>();
+            int i = 1;
+            foreach (var item in fullPathList)
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(currentBaseBackupFolderPATH + item);
+                outputList.Add(dirInfo.Name);
+                i++;
+            }
+            return outputList.ToArray();
+        }
+
+        public static List<string> GetAllFolderPathsInBackupDir()
+        {
+            string[] paths = Directory.GetDirectories(currentBaseBackupFolderPATH);
+
+            List<string> outputList = new List<string>();
+            foreach (var path in paths)
+            {
+                outputList.Add(path);
+            }
+            return outputList;
+        }
+
+        public static List<string> GetAllBackupFolderPathsContainingBackupFiles()
+        {
+            List<string> outputList = new List<string>();
+            List<string> paths = GetAllFolderPathsInBackupDir();
+
+            foreach (string path in paths)
+            {
+                int dirCount = Directory.GetDirectories(path).Length;
+                if (dirCount > 0)
+                {
+                    PrintDebug($"[FunctionLibrary.cs] - [GetAllBackupFolderPathsContainingBackupFiles] - [Found dir containing {dirCount} folders] - [path = {path}]");
+                    outputList.Add(path);
+                }
+            }
+            return outputList;
+        }
+
+        public static List<string> GetFolderNamesFromDirectoryPaths(List<string> paths)
+        {
+            List<string> outputList = new List<string>();
+
+            foreach (string path in paths)
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(currentBaseBackupFolderPATH + path);
+                outputList.Add(dirInfo.Name);
+            }
+            return outputList;
+        }
+
+
 
         //==========================================================================================================
         //-----------------------------------------[ General Functions ]--------------------------------------------
@@ -449,6 +705,11 @@ namespace ZomboidBackupManager
         public static double ConvertBytesToMB(long bytes)
         {
             return ConvertBytesToKB(bytes) / 1024f;
+        }
+
+        public static string GetUnlistedJsonDataFilePath(string savegame)
+        {
+            return currentBaseBackupFolderPATH + @"\" + savegame + @"\data.json";
         }
 
         public static string GetJsonDataFilePath()

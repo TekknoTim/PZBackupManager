@@ -27,7 +27,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\UbuntuMono-B.ttf" />
+    <None Remove="Fonts\UbuntuMono-BI.ttf" />
+    <None Remove="Fonts\UbuntuMono-Bolt.ttf" />
+    <None Remove="Fonts\UbuntuMono-R.ttf" />
+    <None Remove="Fonts\UbuntuMono-Regular.ttf" />
+    <None Remove="Fonts\UbuntuMono-RI.ttf" />
+    <None Remove="Fonts\ZOMBIE.TTF" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\PZBackupManagerIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\UbuntuMono-Bolt.ttf" />
+    <EmbeddedResource Include="Fonts\UbuntuMono-Regular.ttf" />
+    <EmbeddedResource Include="Fonts\ZOMBIE.TTF" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,8 +56,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AutoCleanupHelp.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AutoCleanupHelp.pdf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="AutoCleanupHelp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Changelog.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\read_this.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\UbuntuFont_LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\UFL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\ZOMBIEFont_LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

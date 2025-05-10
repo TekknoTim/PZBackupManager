@@ -66,8 +66,10 @@
             // 
             // UpdateInfoWindow
             // 
+            AcceptButton = OkButton;
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(784, 591);
             Controls.Add(GeneralInfoLabel);
             Controls.Add(ChangeLogTextBox);
@@ -75,7 +77,11 @@
             Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "UpdateInfoWindow";
+            Opacity = 0.9D;
+            SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Update Information";
             TopMost = true;
