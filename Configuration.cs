@@ -142,14 +142,6 @@ namespace ZomboidBackupManager
                     await WriteCfgToJson();
 
                 }
-                else if (cfg.ConfigVersion == 2505.08f)
-                {
-                    PrintDebug($"[Configuration] - [ReadCfgFromJson] - [Config file outdated!] - [cfg.ConfigVersion = {cfg.ConfigVersion}] - [version = {version}] Writing values..");
-                    DoUpdate(cfg.ConfigVersion);
-
-                    await WriteCfgToJson();
-
-                }
                 else if (string.IsNullOrEmpty(cfg.AbsoluteSavegamePATH) || string.IsNullOrEmpty(cfg.BaseBackupFolderPATH))
                 {
                     PrintDebug("ReadCfgFromJson --> Deserialized Config has null values! Writing values..");
@@ -219,8 +211,8 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2505.04f;
-        public static readonly string appVersion = "v0.0.5";
+        private static readonly float version = 2505.10f;
+        public static readonly string appVersion = "v0.0.6";
         public static bool initRunning = false;
 
         private static readonly string appConfig = Application.StartupPath + @"\config.json";

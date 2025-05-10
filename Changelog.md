@@ -1,13 +1,17 @@
 PZ Backup Manager Changelog:
 
-[v0.0.5] - [04.05.2025] - [CleanUp Tools & Basic StatusLog Overhaul]
+
+
+[v0.0.5] - [10.05.2025] - [CleanUp Tools & Basic StatusLog Overhaul]
 
  1. - Added: A new form, which can be opened, by pressing the "CLEANUP" button on the MainWindow.
  2. - Added: A function to search the backup directory for unlisted backup directories.
  3. - Added: A function to search the backup directory for broken or missing json data files.
  4. - Added: A function to automatically search the backup directory for unlisted folders, broken or missing json data files & deleting them afterwards.
+ 5. - Changed: The font type of the listboxes to a monospace font, to make the text appiering more pretty.
+ 6. - Added: AutoCleanUpHelper file, to explain, how the backup manager works & what it is even for.
 
-[v0.0.4] - [23.04.2025] - [ScriptHook overhaul, Versioning & More]
+[v0.0.4] - [23.04.2025] - [ScriptHook overhaul, Versioning & More] - [Unpublished/Skipped]
 
 [IMPORTANT] - [For the newest workshop mod to work, this version is from now on the minimum requirement!] - [IMPORTANT]
  1. - Changed: They way, the script hook is communicating with the workshop mod. 
