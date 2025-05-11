@@ -42,7 +42,7 @@ namespace ZomboidBackupManager
         {
             InitializeComponent();
 
-            
+
             logWriter = new StatusLogWriter(txtLog, false, 9f);
             logWriter.OnStatusChanged += StatusLogWriter_OnStatusChanged;
 
@@ -188,9 +188,9 @@ namespace ZomboidBackupManager
             SavegameComboBox.Enabled = false;
             ResetHookCommandInFile();
             BeginPolling();
-            PrintDebug("[PZScriptHook] - [Tracking started]");
+            PrintDebug("[PZScriptHook.cs] - [Tracking started]");
             PrintStatusLog("[Tracking started]");
-            StartStopButton.Text = "Stop";
+            StartStopButton.Text = "Stop Tracking";
         }
 
         private void StopTracking()
@@ -202,9 +202,9 @@ namespace ZomboidBackupManager
             {
                 EndPolling();
             }
-            PrintDebug("[PZScriptHook] - [Tracking stopped]");
+            PrintDebug("[PZScriptHook.cs] - [Tracking stopped]");
             PrintStatusLog("[Tracking stopped]");
-            StartStopButton.Text = "Start";
+            StartStopButton.Text = "Start Tracking";
         }
 
         private void ResetHookCommandInFile()
@@ -358,7 +358,7 @@ namespace ZomboidBackupManager
             string sProcess = iProcess.ToString();
             PrintStatusLog("Sending [Process] command...");
             lastContent[0] = emptyCommand + sProcess;
-            File.WriteAllLines(Configuration.absoluteHookFilePATH,lastContent);
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
         }
 
         private string GetSavegameNameFromFile()
@@ -383,7 +383,7 @@ namespace ZomboidBackupManager
             List<string> savegames = GetSavegamesInLoadedGamemode();
             int index = 0;
             PrintStatusLog($"Does Savegame exist = [{savegameName}] ");
-            foreach (string savegame in  savegames)
+            foreach (string savegame in savegames)
             {
                 if (savegame == savegameName)
                 {
@@ -701,6 +701,11 @@ namespace ZomboidBackupManager
         {
             wasRunning = true;
             checkTimer.Stop();
+        }
+
+        private void CloseScriptHookButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

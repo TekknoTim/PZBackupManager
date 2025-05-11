@@ -56,6 +56,7 @@
             maximizeToolStripMenuItem = new ToolStripMenuItem();
             closeToolStripMenuItem = new ToolStripMenuItem();
             PZScriptHookTooltip = new ToolTip(components);
+            CloseScriptHookButton = new Button();
             LoadedSavegameInfoPanel.SuspendLayout();
             TaskbarIconMenuStrip.SuspendLayout();
             TaskbarStatusMenu.SuspendLayout();
@@ -65,11 +66,12 @@
             // StartStopButton
             // 
             StartStopButton.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            StartStopButton.Location = new Point(12, 343);
+            StartStopButton.Location = new Point(427, 510);
+            StartStopButton.Margin = new Padding(5);
             StartStopButton.Name = "StartStopButton";
-            StartStopButton.Size = new Size(360, 47);
+            StartStopButton.Size = new Size(139, 33);
             StartStopButton.TabIndex = 0;
-            StartStopButton.Text = "Listen to Project Zomboid";
+            StartStopButton.Text = "Start Tracker";
             StartStopButton.UseVisualStyleBackColor = true;
             StartStopButton.Click += StartStopButton_Click;
             // 
@@ -78,10 +80,11 @@
             txtLog.Font = new Font("Ubuntu Mono", 10F);
             txtLog.FormattingEnabled = true;
             txtLog.Items.AddRange(new object[] { " " });
-            txtLog.Location = new Point(12, 199);
+            txtLog.Location = new Point(14, 268);
+            txtLog.Margin = new Padding(5);
             txtLog.Name = "txtLog";
             txtLog.SelectionMode = SelectionMode.None;
-            txtLog.Size = new Size(360, 116);
+            txtLog.Size = new Size(552, 228);
             txtLog.TabIndex = 1;
             // 
             // LoadedSavegameInfoPanel
@@ -96,16 +99,16 @@
             LoadedSavegameInfoPanel.Controls.Add(LoadedSavegameInfoLabel);
             LoadedSavegameInfoPanel.Controls.Add(SavegameNameTextLabel);
             LoadedSavegameInfoPanel.Controls.Add(SavegameNameValueLabel);
-            LoadedSavegameInfoPanel.Location = new Point(12, 11);
+            LoadedSavegameInfoPanel.Location = new Point(14, 12);
             LoadedSavegameInfoPanel.Name = "LoadedSavegameInfoPanel";
-            LoadedSavegameInfoPanel.Size = new Size(360, 182);
+            LoadedSavegameInfoPanel.Size = new Size(552, 248);
             LoadedSavegameInfoPanel.TabIndex = 13;
             // 
             // AutoDeleteCheckbox
             // 
             AutoDeleteCheckbox.Font = new Font("Bahnschrift", 12F);
             AutoDeleteCheckbox.ForeColor = SystemColors.ControlLightLight;
-            AutoDeleteCheckbox.Location = new Point(220, 155);
+            AutoDeleteCheckbox.Location = new Point(412, 209);
             AutoDeleteCheckbox.Margin = new Padding(5, 5, 5, 2);
             AutoDeleteCheckbox.Name = "AutoDeleteCheckbox";
             AutoDeleteCheckbox.RightToLeft = RightToLeft.Yes;
@@ -123,7 +126,7 @@
             AddToTaskBarCheckbox.CheckState = CheckState.Checked;
             AddToTaskBarCheckbox.Font = new Font("Bahnschrift", 12F);
             AddToTaskBarCheckbox.ForeColor = SystemColors.Control;
-            AddToTaskBarCheckbox.Location = new Point(11, 135);
+            AddToTaskBarCheckbox.Location = new Point(10, 179);
             AddToTaskBarCheckbox.Margin = new Padding(5, 5, 5, 2);
             AddToTaskBarCheckbox.Name = "AddToTaskBarCheckbox";
             AddToTaskBarCheckbox.Size = new Size(150, 23);
@@ -139,7 +142,8 @@
             ChangeSelectionLabelText.AutoSize = true;
             ChangeSelectionLabelText.Font = new Font("Bahnschrift", 12F);
             ChangeSelectionLabelText.ForeColor = SystemColors.Control;
-            ChangeSelectionLabelText.Location = new Point(5, 7);
+            ChangeSelectionLabelText.Location = new Point(10, 9);
+            ChangeSelectionLabelText.Margin = new Padding(10, 5, 10, 5);
             ChangeSelectionLabelText.Name = "ChangeSelectionLabelText";
             ChangeSelectionLabelText.Size = new Size(149, 19);
             ChangeSelectionLabelText.TabIndex = 16;
@@ -150,9 +154,9 @@
             // 
             SavegameComboBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SavegameComboBox.FormattingEnabled = true;
-            SavegameComboBox.Location = new Point(5, 58);
+            SavegameComboBox.Location = new Point(10, 69);
             SavegameComboBox.Name = "SavegameComboBox";
-            SavegameComboBox.Size = new Size(352, 27);
+            SavegameComboBox.Size = new Size(532, 27);
             SavegameComboBox.TabIndex = 15;
             SavegameComboBox.SelectedIndexChanged += SavegameComboBox_SelectedIndexChanged;
             // 
@@ -160,9 +164,10 @@
             // 
             GamemodesComboBox.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             GamemodesComboBox.FormattingEnabled = true;
-            GamemodesComboBox.Location = new Point(5, 27);
+            GamemodesComboBox.Location = new Point(10, 34);
+            GamemodesComboBox.Margin = new Padding(10, 5, 10, 5);
             GamemodesComboBox.Name = "GamemodesComboBox";
-            GamemodesComboBox.Size = new Size(352, 27);
+            GamemodesComboBox.Size = new Size(532, 27);
             GamemodesComboBox.TabIndex = 14;
             GamemodesComboBox.SelectedIndexChanged += GamemodesComboBox_SelectedIndexChanged;
             // 
@@ -170,7 +175,7 @@
             // 
             AlwaysOnTopCheckbox.Font = new Font("Bahnschrift", 12F);
             AlwaysOnTopCheckbox.ForeColor = SystemColors.ControlLight;
-            AlwaysOnTopCheckbox.Location = new Point(11, 155);
+            AlwaysOnTopCheckbox.Location = new Point(10, 209);
             AlwaysOnTopCheckbox.Margin = new Padding(5, 5, 5, 2);
             AlwaysOnTopCheckbox.Name = "AlwaysOnTopCheckbox";
             AlwaysOnTopCheckbox.Size = new Size(130, 23);
@@ -185,7 +190,7 @@
             LoadedSavegameInfoLabel.AutoSize = true;
             LoadedSavegameInfoLabel.Font = new Font("Bahnschrift", 12F);
             LoadedSavegameInfoLabel.ForeColor = SystemColors.Control;
-            LoadedSavegameInfoLabel.Location = new Point(5, 83);
+            LoadedSavegameInfoLabel.Location = new Point(10, 99);
             LoadedSavegameInfoLabel.Name = "LoadedSavegameInfoLabel";
             LoadedSavegameInfoLabel.Size = new Size(140, 19);
             LoadedSavegameInfoLabel.TabIndex = 12;
@@ -197,7 +202,8 @@
             SavegameNameTextLabel.BackColor = SystemColors.Control;
             SavegameNameTextLabel.BorderStyle = BorderStyle.FixedSingle;
             SavegameNameTextLabel.Font = new Font("Bahnschrift", 10F);
-            SavegameNameTextLabel.Location = new Point(5, 101);
+            SavegameNameTextLabel.Location = new Point(10, 123);
+            SavegameNameTextLabel.Margin = new Padding(10, 5, 10, 5);
             SavegameNameTextLabel.Name = "SavegameNameTextLabel";
             SavegameNameTextLabel.Size = new Size(86, 28);
             SavegameNameTextLabel.TabIndex = 10;
@@ -209,9 +215,10 @@
             SavegameNameValueLabel.BackColor = SystemColors.Control;
             SavegameNameValueLabel.BorderStyle = BorderStyle.FixedSingle;
             SavegameNameValueLabel.Font = new Font("Bahnschrift", 10F);
-            SavegameNameValueLabel.Location = new Point(90, 101);
+            SavegameNameValueLabel.Location = new Point(95, 123);
+            SavegameNameValueLabel.Margin = new Padding(10, 5, 10, 5);
             SavegameNameValueLabel.Name = "SavegameNameValueLabel";
-            SavegameNameValueLabel.Size = new Size(267, 28);
+            SavegameNameValueLabel.Size = new Size(447, 28);
             SavegameNameValueLabel.TabIndex = 11;
             SavegameNameValueLabel.Text = "-";
             SavegameNameValueLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -350,11 +357,24 @@
             closeToolStripMenuItem.Text = "Close";
             closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
+            // CloseScriptHookButton
+            // 
+            CloseScriptHookButton.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CloseScriptHookButton.Location = new Point(14, 510);
+            CloseScriptHookButton.Margin = new Padding(5);
+            CloseScriptHookButton.Name = "CloseScriptHookButton";
+            CloseScriptHookButton.Size = new Size(139, 33);
+            CloseScriptHookButton.TabIndex = 14;
+            CloseScriptHookButton.Text = "Close";
+            CloseScriptHookButton.UseVisualStyleBackColor = true;
+            CloseScriptHookButton.Click += CloseScriptHookButton_Click;
+            // 
             // PZScriptHook
             // 
             AutoScaleDimensions = new SizeF(7F, 14F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 400);
+            ClientSize = new Size(580, 557);
+            Controls.Add(CloseScriptHookButton);
             Controls.Add(txtLog);
             Controls.Add(StartStopButton);
             Controls.Add(LoadedSavegameInfoPanel);
@@ -405,5 +425,6 @@
         private ToolStripTextBox ToolStripGamemodeTextBox;
         private ToolStripTextBox ToolStripSavegameTextBox;
         private CheckBox AutoDeleteCheckbox;
+        private Button CloseScriptHookButton;
     }
 }
