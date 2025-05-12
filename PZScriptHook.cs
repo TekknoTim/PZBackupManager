@@ -305,6 +305,7 @@ namespace ZomboidBackupManager
         private void ExecuteMismatchCommand()
         {
             PrintStatusLog("Sending [Mismatch] command...");
+            if (lastContent.Length <= 1) { lastContent = new string[2]; }
             lastContent[0] = emptyCommand + @"m";
             lastContent[1] = @"savegame=" + Configuration.currentLoadedSavegame;
             File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);

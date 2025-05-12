@@ -1,8 +1,12 @@
 PZ Backup Manager Changelog:
 
+[v0.0.6] - [12.05.2025] - [BugFixing & Cosmetic Adjustments] - [LATEST]
+ 1. - Fixed: If the PZBaMaScriptHook.ini contains just a single line, updating with savegame validation fails.
+ 2. - Added: A fontloader class, to load embedded fonts, to make loading them possible on all windows systems.
+ 3. - Added: Licenses for the fonts & this application as well. (License added: MIT_License -> "LICENSE.md")
+ 4. - Fixed: The MainWindow and Cleanup Window headlines font should now load on systems, that don't have them installed.
 
-
-[v0.0.5] - [10.05.2025] - [CleanUp Tools & Basic StatusLog Overhaul]
+[v0.0.5] - [10.05.2025] - [CleanUp Tools & Basic StatusLog Overhaul] - [Unpublished/Skipped]
 
  1. - Added: A new form, which can be opened, by pressing the "CLEANUP" button on the MainWindow.
  2. - Added: A function to search the backup directory for unlisted backup directories.
@@ -26,7 +30,7 @@ PZ Backup Manager Changelog:
  7. - Fixed: The app verion. Last updates version were wrong & will be adjusted to the right one with this update.
  8. - Fixed: Some "File not exist" issues.
 
-[v0.0.3] - [09.04.2025] - [More UI Cleanup & Autodelete Update]
+[v0.0.3] - [09.04.2025] - [More UI Cleanup & Autodelete Update] - [LAST RELEASE]
 
  1. - Added: Toolbar menu at the top of the main window.
  2. - Changed : Removed the both checkboxes and moved them into the "General" toolbar tab, which can be found under "Settings".
