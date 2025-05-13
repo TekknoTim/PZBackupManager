@@ -28,16 +28,12 @@ namespace ZomboidBackupManager
 
         public List<ZipData> ZipDataCache = new List<ZipData>();
 
-        private string ZombieFont = "ZomboidBackupManager.Fonts.ZOMBIE.TTF";
-        //private string UbuntuFontRegular = "ZomboidBackupManager.Fonts.UbuntuMono-Regular.ttf";
-        private string UbuntuFontBolt = "ZomboidBackupManager.Fonts.UbuntuMono-Bolt.ttf";
-
         public MainWindow()
         {
             InitializeComponent();
-            SelectSavegameLabel.Font = FontLoader.LoadEmbeddedFont(ZombieFont, 40f);
-            SavegameListBox.Font = FontLoader.LoadEmbeddedFont(UbuntuFontBolt, 12f);
-            BackupListBox.Font = FontLoader.LoadEmbeddedFont(UbuntuFontBolt, 12f);
+            SelectSavegameLabel.Font = FontLoader.GetStyleFont(40f);
+            SavegameListBox.Font = FontLoader.GetUbuntuMonoFont(12f, true);
+            BackupListBox.Font = FontLoader.GetUbuntuMonoFont(12f, true);
             this.OnSkip += OnSkipCompressToZip;
         }
 
@@ -1440,7 +1436,7 @@ namespace ZomboidBackupManager
         {
             this.Visible = false;
             //this.Opacity = 0.6;
-            UnlistedBackupsWindow unlistedBackupsWin = new UnlistedBackupsWindow();
+            BackupDataCleanerWindow unlistedBackupsWin = new BackupDataCleanerWindow();
             unlistedBackupsWin.ShowDialog();
             this.Visible = true;
             //this.Opacity = 1.0;

@@ -214,8 +214,9 @@ namespace ZomboidBackupManager
         private static readonly float version = 2505.12f;
         public static readonly string appVersion = "v0.0.6";
         public static bool initRunning = false;
-
+        
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
+        public static readonly string cleanUpHelperFile = Application.StartupPath + @"\AutoCleanupHelp.txt";
         public static readonly string placeholderThumbnail = Application.StartupPath + @"\placeholder.png";
 
         //Debug Properties:

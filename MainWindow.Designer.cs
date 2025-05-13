@@ -37,7 +37,7 @@ namespace ZomboidBackupManager
             GamemodeComboBox = new ComboBox();
             SelectSavegameLabel = new Label();
             SelectSavegamePanel = new Panel();
-            SavegameHealineLabel = new Label();
+            SavegameHeadlineLabel = new Label();
             SavegameListBox = new ListBox();
             ThumbnailPictureBox = new PictureBox();
             SavegameInfoPanel = new Panel();
@@ -65,10 +65,10 @@ namespace ZomboidBackupManager
             RenameEnterTextOption = new ToolStripTextBox();
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
-            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
             CreateZipEditBackupMenuOption = new ToolStripMenuItem();
+            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             ProgressbarPanel = new Panel();
             ProgressBarA = new ProgressBar();
             ProgressbarLabel = new Label();
@@ -195,7 +195,7 @@ namespace ZomboidBackupManager
             SelectSavegamePanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             SelectSavegamePanel.BackColor = SystemColors.ControlLight;
             SelectSavegamePanel.BorderStyle = BorderStyle.FixedSingle;
-            SelectSavegamePanel.Controls.Add(SavegameHealineLabel);
+            SelectSavegamePanel.Controls.Add(SavegameHeadlineLabel);
             SelectSavegamePanel.Controls.Add(SavegameListBox);
             SelectSavegamePanel.Controls.Add(SelectSavegameLabel);
             SelectSavegamePanel.Controls.Add(ThumbnailPictureBox);
@@ -207,17 +207,17 @@ namespace ZomboidBackupManager
             SelectSavegamePanel.Size = new Size(575, 800);
             SelectSavegamePanel.TabIndex = 2;
             // 
-            // SavegameHealineLabel
+            // SavegameHeadlineLabel
             // 
-            SavegameHealineLabel.BackColor = SystemColors.ControlLightLight;
-            SavegameHealineLabel.BorderStyle = BorderStyle.FixedSingle;
-            SavegameHealineLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            SavegameHealineLabel.Location = new Point(20, 416);
-            SavegameHealineLabel.Name = "SavegameHealineLabel";
-            SavegameHealineLabel.Size = new Size(530, 35);
-            SavegameHealineLabel.TabIndex = 25;
-            SavegameHealineLabel.Text = "Select a Savegame:";
-            SavegameHealineLabel.TextAlign = ContentAlignment.MiddleCenter;
+            SavegameHeadlineLabel.BackColor = SystemColors.ControlLightLight;
+            SavegameHeadlineLabel.BorderStyle = BorderStyle.FixedSingle;
+            SavegameHeadlineLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            SavegameHeadlineLabel.Location = new Point(20, 416);
+            SavegameHeadlineLabel.Name = "SavegameHeadlineLabel";
+            SavegameHeadlineLabel.Size = new Size(530, 35);
+            SavegameHeadlineLabel.TabIndex = 25;
+            SavegameHeadlineLabel.Text = "Select a Savegame:";
+            SavegameHeadlineLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SavegameListBox
             // 
@@ -471,7 +471,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameContextMenuItem;
+            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -524,19 +524,6 @@ namespace ZomboidBackupManager
             ConfrimRenameOption.Text = "  Rename";
             ConfrimRenameOption.Click += ConfrimRenameOption_Click;
             // 
-            // RenameBackupsToolbarMenuOption
-            // 
-            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
-            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
-            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
-            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
-            RenameBackupsToolbarMenuOption.MergeIndex = 0;
-            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
-            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
-            RenameBackupsToolbarMenuOption.Text = "Rename";
-            // 
             // StopMultiSelectMenuItem
             // 
             StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
@@ -566,6 +553,19 @@ namespace ZomboidBackupManager
             CreateZipEditBackupMenuOption.Size = new Size(175, 24);
             CreateZipEditBackupMenuOption.Text = "Create Zip";
             CreateZipEditBackupMenuOption.Click += CreateZipEditBackupMenuOption_Click;
+            // 
+            // RenameBackupsToolbarMenuOption
+            // 
+            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
+            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
+            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
+            RenameBackupsToolbarMenuOption.MergeIndex = 0;
+            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
+            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
+            RenameBackupsToolbarMenuOption.Text = "Rename";
             // 
             // ProgressbarPanel
             // 
@@ -1683,7 +1683,7 @@ namespace ZomboidBackupManager
         private ProgressBar ProgressBarA;
         private RadioButton HalfWindowModeRadioButton;
         private RadioButton NormalWindowModeRadioButton;
-        private Label SavegameHealineLabel;
+        private Label SavegameHeadlineLabel;
         private ListBox SavegameListBox;
         private ToolStripButton SearchForUnlistedBackupsToolStripButton;
     }

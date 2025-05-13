@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using SharpCompress.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
@@ -22,7 +25,7 @@ using static ZomboidBackupManager.JsonData;
 
 namespace ZomboidBackupManager
 {
-    public partial class UnlistedBackupsWindow : Form
+    public partial class BackupDataCleanerWindow : Form
     {
 
         StatusLogWriter logWriter;
@@ -37,20 +40,22 @@ namespace ZomboidBackupManager
         private List<string> cleanupBadJsonsCache = new List<string>();
         private List<string> cleanupUnlistedCache = new List<string>();
 
-        public UnlistedBackupsWindow()
+        public BackupDataCleanerWindow()
         {
             InitializeComponent();
             OnAutoClean += OnAutoCleanDone;
             OnScanUnlisted += OnScanDone;
             OnScanBadJsonData += OnJsonDataScanDone;
-            HeadlineFont = FontLoader.LoadEmbeddedFont("ZomboidBackupManager.Fonts.ZOMBIE.TTF", 40f);
-            logWriter = new StatusLogWriter(StatusLog, LogToggleNumCMStrip.Checked);
-            logWriter.OnStatusChanged += StatusLogWriter_OnStatusChanged;
+            
+
+            HeadlineFont = FontLoader.GetStyleFont(40f);
+            logWriter = new StatusLogWriter(StatusLog, LogToggleNumCMStrip.Checked, 11f, 999, 3, 1);
+            logWriter.OnStatusChanged += LogWriter_OnStatusChanged;
             CleanUpDataHeadLabel.Font = HeadlineFont;
             PrintDebug($"HeadlineFont = [{HeadlineFont.Name}]");
         }
 
-        private void StatusLogWriter_OnStatusChanged(object? sender, Status s)
+        private void LogWriter_OnStatusChanged(object? sender, Status s)
         {
             if (s == Status.READY)
             {
@@ -150,7 +155,7 @@ namespace ZomboidBackupManager
         private async void PerformAutoCleanup()
         {
             this.Enabled = false;
-            logWriter.WriteDefaultLabelToLog("AutoClean");
+            await logWriter.WriteLabelToLog(" Starting... "," Auto Clean ");
             bool resultUnlisted = false;
             bool resultDeleteUnlisted = false;
             bool resultJson = false;
@@ -249,20 +254,29 @@ namespace ZomboidBackupManager
             await Task.Delay(100);
         }
 
-        private void OnAutoCleanDone(object? sender, bool[] results)
+        private async void OnAutoCleanDone(object? sender, bool[] results)
         {
             this.Enabled = true;
-            logWriter.WriteDefaultLabelToLog("AutoCleanDone");
-            PrintStatusLog();
+            List<string> res = new List<string>();
+            res.Add("[ Auto Clean Done ]");
+            res.Add(" [ Found Unlisted Folders ]");
+            res.Add($" [ {results[0]} ] ");
+            res.Add(" [ Found broken/missing Json Data ]");
+            res.Add($" [ {results[1]} ] ");
+            res.Add(" [ Successfully Deleted Folders ]");
+            res.Add($" [ {results[2]} ] ");
+
+            await logWriter.WriteEmptyLinesToLog(2);
+
+            logWriter.WriteModularLabelToLog(res, 3, SeparatorType.Light, SeparatorType.Default);
+            await logWriter.WriteEmptyLinesToLog(2);
             MessageBox.Show($"Auto Clean Done! \nResults: \n\n Found Unlisted = {results[0]} \nFound Bad Json Data = {results[1]} \nDeleted = {results[2]}");
         }
 
         private async void ScanToolStripButton_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
-            logWriter.WriteDefaultLabelToLog("Scan");
-            await Task.Delay(500);
-            PrintStatusLog("! Scanning !", 1, 1, false, SeparatorType.Light, SeparatorType.Default);
+            await logWriter.WriteLabelToLog("Searching", "Unlisted Folders", "For");
             await Task.Delay(250);
             bool result = await FindAndCacheUnlistedSavegamePaths();
             if (!result)
@@ -270,7 +284,6 @@ namespace ZomboidBackupManager
                 OnScanUnlisted.Invoke(this, 0);
                 return;
             }
-            PrintStatusLog("! Almost Done !", 0, 1, false, SeparatorType.Light, SeparatorType.Default);
             await Task.Delay(500);
             OnScanUnlisted.Invoke(this, cleanupUnlistedCache.Count);
         }
@@ -278,9 +291,8 @@ namespace ZomboidBackupManager
         private async void ScanJsonToolStripButton_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
-            logWriter.WriteDefaultLabelToLog("ScanJson");
+            await logWriter.WriteLabelToLog("Searching For", " Json Files", "Broken / Missing");
             await Task.Delay(500);
-            PrintStatusLog("! Scanning !", 1, 1, false, SeparatorType.Light, SeparatorType.Default);
             await Task.Delay(500);
             bool result = await FindAndCacheBackupsMissingJsonDataPaths();
             if (!result)
@@ -288,77 +300,77 @@ namespace ZomboidBackupManager
                 OnScanBadJsonData.Invoke(this, 0);
                 return;
             }
-            PrintStatusLog("! Almost Done !", 1, 1, false, SeparatorType.Light, SeparatorType.Default);
             await Task.Delay(250);
             OnScanBadJsonData.Invoke(this, cleanupBadJsonsCache.Count);
         }
 
-        private void OnScanDone(object? sender, int found)
+        private async void OnScanDone(object? sender, int found)
         {
             List<string> list = [found.ToString()];
 
-            logWriter.WriteDefaultLabelToLog("ScanDone", $"Unlisted Folders = {found}");
+            await logWriter.WriteLabelToLog("ScanDone", $"Unlisted Folders Found = {found}");
             if (ShowDetailesAfterScanMenuItem.Checked)
             {
+                await logWriter.WriteEmptyLinesToLog(3);
                 WriteUnlistedCacheToStatusLog();
             }
             this.Enabled = true;
         }
 
-        private void OnJsonDataScanDone(object? sender, int found)
+        private async void OnJsonDataScanDone(object? sender, int found)
         {
             List<string> list = [found.ToString()];
-            logWriter.WriteDefaultLabelToLog("ScanJsonDone", null, list);
+            await logWriter.WriteLabelToLog("Scan Json Done", $"Broken/Missing Json Files Found = {found}");
             if (ShowDetailesAfterScanMenuItem.Checked)
             {
+                await logWriter.WriteEmptyLinesToLog(3);
                 WriteBadJsonCacheToStatusLog();
             }
             this.Enabled = true;
         }
 
-        private void PrintStatusLog(string txt = "", int sepBefore = 0, int sepAfter = 0, bool addSides = true, SeparatorType sepType = SeparatorType.WhiteSpace, SeparatorType sepTextType = SeparatorType.Default)
+        private async void PrintStatusLog(string txt = "", string val = "", int sepBefore = 0, int sepAfter = 0, bool addSides = true, SeparatorType sepType = SeparatorType.WhiteSpace, SeparatorType sepTextType = SeparatorType.Default)
         {
-            logWriter.WriteSingleLineToLog(txt, sepBefore, sepAfter, sepType, sepTextType, addSides);
+            await logWriter.WriteLabelToLog(txt, val, " = ");
         }
 
         private void HelpToolStripButton_Click(object sender, EventArgs e)
         {
-            //logWriter.Test();
-            System.Diagnostics.Process.Start("notepad.exe", System.Windows.Forms.Application.StartupPath + @"\AutoCleanupHelp.txt");
+            DataCleanupHelperWindow helpWindow = new DataCleanupHelperWindow();
+            helpWindow.ShowDialog();
+            helpWindow.Dispose();
         }
 
         private void WriteUnlistedCacheToStatusLog()
         {
-            logWriter.WriteSingleLineToLog("Loading Cache", 1, 1, SeparatorType.WhiteSpace, SeparatorType.Default, false);
+            logWriter.WriteDualLabelToLog("Unlisted Folders Found:", cleanupUnlistedCache.Count.ToString(), SeparatorType.Light);
             int num = 1;
             List<string> list = new List<string>();
             foreach (string path in cleanupUnlistedCache)
             {
-                list = new List<string>();
                 string name = Path.GetFileName(path);
                 list.Add("Folder No." + num.ToString());
                 list.Add(name);
                 list.Add(path);
-                logWriter.WriteDefaultLabelToLog("ScanUnlistedResult", null, list);
                 num++;
             }
+            logWriter.WriteModularLabelToLog(list, 4, SeparatorType.WhiteSpace, SeparatorType.Light);
         }
 
         private void WriteBadJsonCacheToStatusLog()
         {
-            logWriter.WriteSingleLineToLog("Loading Cache", 1, 1, SeparatorType.WhiteSpace, SeparatorType.Default, false);
+            logWriter.WriteDualLabelToLog("Broken/Missing Json Files Found:", cleanupBadJsonsCache.Count.ToString(), SeparatorType.Light);
             int num = 1;
             List<string> list = new List<string>();
             foreach (string path in cleanupBadJsonsCache)
             {
-                list = new List<string>();
                 string name = Path.GetFileName(path);
                 list.Add("Folder No." + num.ToString());
                 list.Add("Name: " + name);
                 list.Add("Path: " + path);
-                logWriter.WriteDefaultLabelToLog("ScanJsonResult", null, list);
                 num++;
             }
+            logWriter.WriteModularLabelToLog(list, 4, SeparatorType.WhiteSpace, SeparatorType.Light);
         }
 
         private void AskDeleteOnAutoCleanMenuItem_Click(object sender, EventArgs e)
@@ -378,12 +390,12 @@ namespace ZomboidBackupManager
 
         private void LogToggleNumCMStrip_CheckedChanged(object sender, EventArgs e)
         {
-            logWriter.LineNumeration = LogToggleNumCMStrip.Checked;
+            logWriter.SetNumeration(LogToggleNumCMStrip.Checked);
         }
 
         private void ClearStatusLogTSButton_Click(object sender, EventArgs e)
         {
-            logWriter.ClearLog();
+            logWriter.ClearStatusLog();
         }
 
         private void ChangeSep01_TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -393,7 +405,7 @@ namespace ZomboidBackupManager
 
         private void UnlistedBackupsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logWriter.OnStatusChanged -= StatusLogWriter_OnStatusChanged;
+            logWriter.OnStatusChanged -= LogWriter_OnStatusChanged;
         }
     }
 }

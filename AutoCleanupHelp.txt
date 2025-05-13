@@ -1,5 +1,4 @@
-  Backup Data Cleaner  
-
+Backup Data Cleaner  
 
 IMPORTANT: This feature isn't just experimental and can cause issues with your backups.
 It isn't very useful by now and I don't recommend using this until
@@ -7,30 +6,41 @@ It isn't very useful by now and I don't recommend using this until
 But if you're a dev or just curious, you're of couse can test it out. :)
 
 Introduction:
-When using the Backup Manager for some time and take a look in your backup directory, you'll notice some folders, that aren't matching your savegames, active in the game. Some of them are just empty folders, which aren't an issue, but nevertheless useless.
-But when you made serveral backups for a savegame and then start a new one, with a different name, while deleting the old one, the Backups Manager won't notice. This will cause the already made backups to be left over in the old backup directory, which uses disk space for no reason.
+When using the Backup Manager for some time and take a look in your backup directory,
+you'll notice some folders, that aren't matching your savegames,
+active in the game. Some of them are just empty folders, which aren't an issue, but nevertheless useless.
+But when you made serveral backups for a savegame and then start a new one,
+with a different name, while deleting the old one, the Backups Manager won't notice.
+This will cause the already made backups to be left over in the old backup directory,
+which uses disk space for no reason.
 
-What it does?
+What it does!
 
 Scan:
-The „Scan“ button starts the process to search your backup directory for folders, mentioned in the introduction. Everything this function finds, will be displayed in the „Status Log“ window.
-This is just for visualizing, which folders would be deleted in the „Auto Clean“ feature.
-So if you having backups in there you want to keep for some reason, move them to a different location manually via the windows explorer. 
+The 'Scan' button starts the process to search your backup directory for folders, mentioned in the introduction.
+Everything this function finds, will be displayed in the 'Status Log' window.
+This is just for visualizing, which folders would be deleted in the 'Auto Clean' feature.
+So if you having backups in there you want to keep for some reason,
+move them to a different location manually via the windows explorer. 
 
-Scan Json: 
-This button initiates another search process, to find backup directories, the function above isn't able to find. It searches for backups, which are missing the required data.json file,
+Scan Json:
+This button initiates another search process, to find backup directories,
+the function above isn't able to find.
+It searches for backups, which are missing the required data.json file,
 which is used by the Backup Manager to show up backups in the manager.
 
-Info: Both features, „Scan“ & „ScanJson“ can be used without worrying about loosing any data.
+Info: Both features, 'Scan' & 'ScanJson' can be used without worrying about loosing any data.
 
-Auto Clean:  
+Auto Clean:
 Executes both mentioned functions, and deletes all found directories and its contents.
-If the option „Deletion requires confrimation“ (Enabled by default) is active, nothing will be deleted in this process, without asking you before, which I strongly recommend. 
-
-
+If the option 'Deletion requires confrimation' (Enabled by default) is active, nothing will be deleted in this process,
+without asking you before, which I strongly recommend. 
 
 Future Plans:
 
-I've planned a feature, to be able to export, import backups from/to the Backup Manager, as well as being able to mark existing backups as favourite, to exclude them from e.g. the „Auto Delete“ feature.
-This window (if everything goes to plan) will become the „import/export“ window, which will additionaly include those above mentioned features, to keep your backup directory clean and tidy.
-
+I've planned a feature, to be able to export,
+import backups from/to the Backup Manager, as well as being able to mark existing backups as favourite,
+to exclude them from e.g. the 'Auto Delete' feature.
+This window (if everything goes to plan) will become the 'import/export' window,
+which will additionaly include those above mentioned features,
+to keep your backup directory clean and tidy.

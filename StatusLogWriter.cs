@@ -4,35 +4,19 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Reflection.Metadata;
+using System.Security.Policy;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using static ZomboidBackupManager.Configuration;
-using static ZomboidBackupManager.FunctionLibrary;
-using static System.Windows.Forms.AxHost;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Drawing.Interop;
-using ZstdSharp.Unsafe;
 using Microsoft.VisualBasic.Logging;
+using ZomboidBackupManager;
+using static ZomboidBackupManager.Configuration;
 
 namespace ZomboidBackupManager
 {
-    public enum LabelTemplates
-    {
-        None,
-        Simple,
-        LabelStart,
-        LabelEnd,
-        LabelSeparator,
-        LabelHeadline,
-        LabelName,
-        LabelValue,
-        LabelValues
-    }
-
     public enum SeparatorType
     {
         None,
@@ -43,16 +27,35 @@ namespace ZomboidBackupManager
         Full
     }
 
-    public class SeparatorLibrary
+    public enum LabelFramePart
     {
-        private Dictionary<SeparatorType, char> dict = new Dictionary<SeparatorType, char>();
+        FrameFill,
+        FrameTop,
+        FrameTopL,
+        FrameTopR,
+        FrameBase,
+        FrameBaseL,
+        FrameBaseR,
+        FrameSide
+    }
 
-        private char WSReplacer = '*';
-        private char WSSepChar = ' ';
-        private char LightSepChar = '─';
-        private char DefaultSepChar = '═';
-        private char ModeratSepChar = '░';
-        private char FullSepChar = '█';
+    public class SymbolLibrary
+    {
+        private Dictionary<SeparatorType, char> sepDict = new Dictionary<SeparatorType, char>();
+        private Dictionary<char, SeparatorType> dictSep = new Dictionary<char, SeparatorType>();
+        private Dictionary<LabelFramePart, char> frameDict = new Dictionary<LabelFramePart, char>();
+        private List<LabelFramePart> frameTopParts = [LabelFramePart.FrameTopL, LabelFramePart.FrameTop, LabelFramePart.FrameTopR];
+        private List<LabelFramePart> frameBaseParts = [LabelFramePart.FrameBaseL, LabelFramePart.FrameBase, LabelFramePart.FrameBaseR];
+        private List<LabelFramePart> frameMidParts = [LabelFramePart.FrameSide, LabelFramePart.FrameFill, LabelFramePart.FrameSide];
+
+        private char WS_Replacer = '*';
+        private char Separator_WS = ' ';
+        private char Separator_Light = '-';
+        private char Separator_Default = '=';
+        private char Separator_Moderat = '░';
+        private char Separator_Full = '█';
+
+        private char frameFill = 'x';
         private char frameSide = '║';
         private char frameTop = '═';
         private char frameTopL = '╔';
@@ -62,507 +65,610 @@ namespace ZomboidBackupManager
         private char frameBaseR = '╝';
 
 
-        public SeparatorLibrary()
+        public SymbolLibrary()
         {
-            dict.Add(SeparatorType.WhiteSpace, WSSepChar);
-            dict.Add(SeparatorType.Light, LightSepChar);
-            dict.Add(SeparatorType.Default, DefaultSepChar);
-            dict.Add(SeparatorType.Moderat, ModeratSepChar);
-            dict.Add(SeparatorType.Full, FullSepChar);
+            sepDict.Add(SeparatorType.WhiteSpace, Separator_WS);
+            sepDict.Add(SeparatorType.Light, Separator_Light);
+            sepDict.Add(SeparatorType.Default, Separator_Default);
+            sepDict.Add(SeparatorType.Moderat, Separator_Moderat);
+            sepDict.Add(SeparatorType.Full, Separator_Full);
+
+            dictSep.Add(Separator_WS, SeparatorType.WhiteSpace);
+            dictSep.Add(Separator_Light, SeparatorType.Light);
+            dictSep.Add(Separator_Default, SeparatorType.Default);
+            dictSep.Add(Separator_Moderat, SeparatorType.Moderat);
+            dictSep.Add(Separator_Full, SeparatorType.Full);
+
+            frameDict.Add(LabelFramePart.FrameFill, frameFill);
+            frameDict.Add(LabelFramePart.FrameTop, frameTop);
+            frameDict.Add(LabelFramePart.FrameTopL, frameTopL);
+            frameDict.Add(LabelFramePart.FrameTopR, frameTopR);
+            frameDict.Add(LabelFramePart.FrameBase, frameBase);
+            frameDict.Add(LabelFramePart.FrameBaseL, frameBaseL);
+            frameDict.Add(LabelFramePart.FrameBaseR, frameBaseR);
+            frameDict.Add(LabelFramePart.FrameSide, frameSide);
+        }
+
+        public SeparatorType GetSeparatorType(char symbol = ' ')
+        {
+            return dictSep[symbol];
         }
 
         public char GetSeparator(SeparatorType type = SeparatorType.Default)
         {
-            return dict[type];
+            return sepDict[type];
         }
 
-        public char GetFrameSide()
+        public char GetFramePart(LabelFramePart part)
         {
-            return frameSide;
+            return frameDict[part];
         }
 
-        public char GetFrameTop(int part = 1)
+        public string GetFrameTop(int width, bool numeration = false, int num = 0)
         {
-            if (part == 0) { return frameTopL; }
-            if (part == 1) { return frameTop; }
-            if (part == 2) { return frameTopR; }
-            return frameTop;
-        }
-
-        public char GetFrameBase(int part = 1)
-        {
-            if (part == 0) { return frameBaseL; }
-            if (part == 1) { return frameBase; }
-            if (part == 2) { return frameBaseR; }
-            return frameBase;
-        }
-
-        public char GetWSReplacer()
-        {
-            return WSReplacer;
-        }
-    }
-
-    public class CursorPos
-    {
-        public int X;
-        public int Y;
-
-        public CursorPos(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
-    public class LogBuffer
-    {
-        public int Width;
-        public int Height;
-
-        public string[] Buffer;
-
-        public CursorPos Cursor;
-
-        public LogBuffer(int horizontal, int vertical)
-        {
-            Width = horizontal;
-            Height = vertical;
-
-            Buffer = CreateEmpty(Width, Height);
-            PrintDebug($"Buffer.Length = {Buffer.Length}");
-            Cursor = new CursorPos(0, 0);
-        }
-
-        public LogBuffer(LogBuffer log)
-        {
-            Width = log.Width;
-            Height = log.Height;
-
-            Buffer = CreateEmpty(Width, Height);
-            PrintDebug($"Buffer.Length = {Buffer.Length}");
-            Cursor = new CursorPos(0, 0);
-        }
-
-        public string[] CreateEmpty(int width, int height)
-        {
-            string[] output = new string[height];
-            for (int i = 0; i < height; i++)
+            string output = string.Empty;
+            int adjustedWidth = width - 2;
+            if (numeration)
             {
-                output[i] = new string(' ' , width);
+                adjustedWidth -= StaticLogFunctions.GetNumStringLength();
+                output = StaticLogFunctions.GetAssembledNumString(num) + GetFramePart(frameTopParts[0]).ToString() + new string(GetFramePart(frameTopParts[1]), adjustedWidth) + GetFramePart(frameTopParts[2]).ToString();
+            }
+            else
+            {
+                output = GetFramePart(frameTopParts[0]).ToString() + new string(GetFramePart(frameTopParts[1]), adjustedWidth) + GetFramePart(frameTopParts[2]).ToString();
             }
             return output;
         }
 
-        public void ClearBuffer()
+        public string GetFrameBase(int width, bool numeration = false, int num = 0)
         {
-            string[] emptyBuffer = CreateEmpty(Width, Height);
-            Buffer = emptyBuffer;
-        }
-
-        public void InsertCursorPosInBuffer()
-        {
-            int cursorX = Cursor.X;
-            int cursorY = Cursor.Y;
-            List<string> current = Buffer.ToList();
-            string line = current[cursorY];
-            current.RemoveAt(cursorY);
-            line = line.Remove(cursorX,1);
-            line = line.Insert(cursorX, "█");
-            current.Insert(cursorY, line);
-            Buffer = current.ToArray();
-        }
-
-        private void ReplaceBufferValue(int x, int y, string value = " ")
-        {
-            if (y < 0) { y = 0; }
-            if (y >= Height - 1) { y = Height - 1; }
-            if (x < 0) { x = 0; }
-            if (x >= Width - 1) { x = Width - 1; }
-            List<string> current = Buffer.ToList();
-            string line = current[y];
-            current.RemoveAt(y);
-            line = line.Remove(x, 1);
-            line = line.Insert(x, value);
-            current.Insert(y, line);
-            Buffer = current.ToArray();
-        }
-
-        public int GetBufferHight()
-        {
-            return Buffer.Length;
-        }
-
-        public int GetBufferWidth()
-        {
-            return Buffer[0].Length;
-        }
-
-        public void SetCursorPos(int x, int y)
-        {
-            Cursor.X = x;
-            Cursor.Y = y;
-            //PrintDebug($"[StatusLogWriter.cs] - [LogBuffer] - [SetCursorPos] - [X = {Cursor.X}] - [Y = {Cursor.Y}]");
-        }
-
-        public async void DrawSquare(int x, int y, int length, int height, char c = '█')
-        {
-            SetCursorPos(x, y);
-            await Task.Delay(200);
-            DrawLine(2, height, c);
-            await Task.Delay(100);
-            DrawLine(1, length, c);
-            await Task.Delay(100);
-            DrawLine(0, height, c);
-            await Task.Delay(100);
-            DrawLine(3, length, c);
-        }
-
-        public void DrawLine(int dir = 1, int length = 5, char c = '█')
-        {
-            if (dir == 0)
+            string output = string.Empty;
+            int adjustedWidth = width - 2;
+            if (numeration)
             {
-                DrawVerticalLine(length, true, c);
-            }
-            else if (dir == 1)
-            {
-                DrawHorizontalLine(length, false, c);
-            }
-            else if (dir == 2)
-            {
-                DrawVerticalLine(length, false, c);
-            }
-            else if (dir == 3)
-            {
-                DrawHorizontalLine(length, true, c);
-            }
-        }
-
-        private void DrawVerticalLine(int height, bool bUp = true, char c = '█')
-        {
-            if (bUp)
-            {
-                for (int i = height; i > 0; i--)
-                {
-                    ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                    int res = MoveCursorPos(0, 1);
-                    if (res <= 0)
-                    {
-                        ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                        return;
-                    }
-                }
+                adjustedWidth -= StaticLogFunctions.GetNumStringLength();
+                output = StaticLogFunctions.GetAssembledNumString(num) + GetFramePart(frameBaseParts[0]).ToString() + new string(GetFramePart(frameBaseParts[1]), adjustedWidth) + GetFramePart(frameBaseParts[2]).ToString();
             }
             else
             {
-                for (int i = 0; i < height; i++)
-                {
-                    ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                    int res = MoveCursorPos(2, 1);
-                    if (res >= Height - 1)
-                    {
-                        ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                        return;
-                    }
-                }
+                output = GetFramePart(frameBaseParts[0]).ToString() + new string(GetFramePart(frameBaseParts[1]), adjustedWidth) + GetFramePart(frameBaseParts[2]).ToString();
             }
+            return output;
         }
 
-        private void DrawHorizontalLine(int length, bool bLeft = false, char c = '█')
+        public char GetWSReplacer()
         {
-            if (bLeft)
+            return WS_Replacer;
+        }
+    }
+
+    public class LogSize
+    {
+        private int width;
+        private int height;
+        private int widthOffset = 0;
+        private int heightOffset = 0;
+
+        public int Width { get; }
+        public int Height { get; }
+        public int WidthOffset { get; set; }
+        public int HeightOffset { get; set; }
+
+        public LogSize(ListBox log, System.Drawing.Font font, int offsetX = 0, int offsetY = 0)
+        {
+            width = GetVisibleCharCountMonospace(log, font, true);
+            height = GetVisibleCharCountMonospace(log, font, false);
+            widthOffset = offsetX;
+            heightOffset = offsetY;
+
+            PrintDebug($"[LogSize] - [LogSize Created] - [Measured Size = {width} x {height}] - [offsetX = {offsetX}] - [offsetY = {offsetY}]");
+        }
+
+        public Size GetRawLogSize()
+        {
+            return new Size(width, height);
+        }
+
+        public Size GetLogSize()
+        {
+            return new Size(width - widthOffset, height - heightOffset);
+        }
+
+        public int GetLogWidth()
+        {
+            return width - widthOffset;
+        }
+
+        public int GetLogHeight()
+        {
+            return height - heightOffset;
+        }
+
+        private static int GetVisibleCharCountMonospace(ListBox listBox, System.Drawing.Font font, bool bHorizontal = true)
+        {
+            Size measuredSize = TextRenderer.MeasureText("X", font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+
+            int charWidth = measuredSize.Width;
+            int charHeight = measuredSize.Height;
+
+            if (charWidth == 0 || charHeight == 0) return 0;
+
+            int visibleWidth = listBox.ClientSize.Width;
+            int visibleHeight = listBox.ClientSize.Height;
+
+            if (bHorizontal)
             {
-                for (int i = length; i > 0; i--)
-                {
-                    ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                    int res = MoveCursorPos(3, 1);
-                    if (res <= 0)
-                    {
-                        ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                        return;
-                    }
-                }
+                return visibleWidth / charWidth;
             }
             else
             {
-                for (int i = 0; i < length; i++)
-                {
-                    ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                    int res = MoveCursorPos(1, 1);
-                    if (res >= Width - 1)
-                    {
-                        ReplaceBufferValue(Cursor.X, Cursor.Y, c.ToString());
-                        return;
-                    }
-                }
+                return visibleHeight / charHeight;
             }
         }
+    }
 
-        public int MoveCursorPos(int dir = 1, int steps = 1)
+    public class FontData
+    {
+        public bool IsBolt { get; set; }
+
+        public System.Drawing.Font Type { get; set; }
+        public float Size { get; set; }
+
+        public FontData(float size, bool bBolt = false)
         {
-            //PrintDebug($"[StatusLogWriter.cs] - [LogBuffer] - [SetCursorPos] - [From] - [X = {Cursor.X}] - [Y = {Cursor.Y}]");
-            if ( dir == 0)
-            {
-                return MoveCursorVertical(steps, true);
-            }
-            else if (dir == 1)
-            {
-                return MoveCursorHorizontal(steps, false);
-            }
-            else if (dir == 2)
-            {
-                return MoveCursorVertical(steps, false);
-            }
-            else if (dir == 3)
-            {
-                return MoveCursorHorizontal(steps, true);
-            }
-            return -1;
+            Size = size;
+            IsBolt = bBolt;
+            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
         }
 
-        private int MoveCursorVertical(int steps = 1, bool bUp = true)
+        public void ChangeSize(float newSize)
         {
-            CursorPos lastPos = Cursor;
-            if (bUp)
-            {
-                Cursor.Y -= steps;
-                if (Cursor.Y < 0)
-                {
-                    Cursor.Y = 0;
-                }
-                return Cursor.Y;
-            }
-            else
-            {
-                Cursor.Y += steps;
-                if (Cursor.Y >= Height - 1)
-                {
-                    Cursor.Y = lastPos.Y;
-                }
-                return Cursor.Y;
-            }
+            float oldSize = Size;
+            Size = newSize;
+            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
+            PrintDebug($"[FontData] - [Changed FontData Size] - [From = {oldSize} To = {Size}]");
         }
 
-        private int MoveCursorHorizontal(int steps = 1, bool bLeft = true)
+        public void SwitchStyle()
         {
-            CursorPos lastPos = Cursor;
-            if (bLeft)
-            {
-                Cursor.X -= steps;
-                if (Cursor.X < 0)
-                {
-                    Cursor.X = 0;
-                }
-                return Cursor.X;
-            }
-            else
-            {
-                Cursor.X += steps;
-                if (Cursor.X >= Width - 1)
-                {
-                    Cursor.X = lastPos.X;
-                }
-                return Cursor.X;
-            }
+            IsBolt = !IsBolt;
+            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
+        }
+    }
+
+    public class LogData
+    {
+        private ListBox logRef;
+        private FontData font;
+        private LogSize size;
+        private bool numeration;
+        private int maxLines;
+
+        public ListBox LogRef { get { return logRef; } }
+        public FontData FontStyle { get { return font; } set { font = value; } }
+        public LogSize LogSize { get { return size; } }
+        public bool Numeration { get { return numeration; } set { numeration = value; } }
+        public int MaxLines { get { return maxLines; } set { maxLines = value; } }
+
+        public LogData(ListBox listBox, bool num = true, float fontSize = 11f, int numMax = 999, bool bolt = false, int offsetX = 4, int offsetY = 0)
+        {
+            logRef = listBox;
+            font = new FontData(fontSize, bolt);
+            size = new LogSize(logRef, font.Type, offsetX, offsetY);
+            numeration = num;
+            maxLines = numMax;
+            logRef.Font = font.Type;
+        }
+
+        public LogData(LogData logData)
+        {
+            logRef = logData.LogRef;
+            font = new FontData(logData.FontStyle.Size, logData.FontStyle.IsBolt);
+            size = new LogSize(logData.LogRef, font.Type, logData.LogSize.WidthOffset, logData.LogSize.HeightOffset);
+            numeration = logData.Numeration;
+            maxLines = logData.MaxLines;
+        }
+
+        public void ToggleLogFontStyle()
+        {
+            font.SwitchStyle();
+            logRef.Font = font.Type;
+        }
+
+        public void ChangeLogFontSize(float newSize = 11f)
+        {
+            font.ChangeSize(newSize);
+            logRef.Font = font.Type;
+        }
+
+        public int GetLogItemCount()
+        {
+            return LogRef.Items.Count;
+        }
+
+        public Size GetLogSize()
+        {
+            return LogSize.GetLogSize();
+        }
+
+        public List<string> GetLogText()
+        {
+            string[] str = new string[GetLogItemCount()];
+            LogRef.Items.CopyTo(str, 0);
+            return str.ToList();
+        }
+
+        public void ClearLog()
+        {
+            logRef.Items.Clear();
         }
     }
 
     public class StatusLogWriter
     {
-        private LogBuffer logBuffer;
-        private LogBuffer lastBuffer;
-
         public event EventHandler<Status>? OnStatusChanged;
+        public event EventHandler<int>? OnScrollingDone;
 
-        private ListBox StatusLogListBox;
-        private Status status;
+        private System.Windows.Forms.Timer logTimer;
+
+        private LogData logData;
+        private Status currentStatus;
         private Status lastStatus;
 
-        // Text Format Setup
-        private int maxWidth = 1;
-        private int maxHeight = 1;
+        private SymbolLibrary symbolLib;
 
-        // Log Structure Setup
-        private bool lineNumeration = true;
-        public bool LineNumeration { set { lineNumeration = value; } }
-        private float fontSize = 11f;
-        public float FontSize { set { fontSize = value; } }
-        private int lineNumMax = 999;
-        public int LineNumMax { get { return lineNumMax; } set { lineNumMax = value; } }
-        private char WhiteSpaceReplaceChar = '*';
-        private char WhiteSpaceSepChar = 'x';
-        private char LightSepChar = '─';
-        private char DefaultSepChar = '═';
-        private char ModeratSepChar = '░';
-        private char FullSepChar = '█';
-        private char SideSepChar = '║';
-        private char labelStartSep = '═';
-        private char labelStartSepL = '╔';
-        private char labelStartSepR = '╗';
-        private char labelEndSep = '═';
-        private char labelEndSepL = '╚';
-        private char labelEndSepR = '╝';
-        private readonly string labelPresetSimple = "[*<>*]";
-        private readonly string labelPresetHeadline = "*[*<>*]*";
-        private readonly string labelPresetName = "*(*<>*)*";
-        private readonly string labelPresetValue = "*(*<>*)*";
+        private int currentLogItemSelection = 0;
 
-        // Dictionaries
-        private Dictionary<int, LabelTemplates> integerToTemplate;
-
-        // Label Cache
-        private Dictionary<string, List<LabelTemplates>> customLabels;
-
-        private Dictionary<List<LabelTemplates>, string> labelsToHeadline;
-        private Dictionary<List<LabelTemplates>, string> labelsToName;
-        private Dictionary<List<LabelTemplates>, string> labelsToValue;
-        private Dictionary<List<LabelTemplates>, List<string>> labelsToValues;
-        private Dictionary<List<LabelTemplates>, SeparatorType> labelsToSepType;
-
-        public StatusLogWriter(ListBox listBox, bool numeration = true, float size = 11f, int numMax = 999, char ws = ' ', char lSChar = '─', char bSChar = '═')
+        public StatusLogWriter(ListBox listBox, bool numeration = false, float size = 11f, int numMax = 999, int offsetX = 4, int offsetY = 0)
         {
-            StatusLogListBox = listBox;
-            status = Status.INIT;
-            lastStatus = status;
+            symbolLib = new SymbolLibrary();
+
+            logData = new LogData(listBox, numeration, size, numMax, false, offsetX, offsetY);
+
             OnStatusChanged += StatusChanged;
+            OnScrollingDone += OnScrolling_Done;
 
-            fontSize = size;
-            lineNumeration = numeration;
-            lineNumMax = numMax;
-            WhiteSpaceSepChar = ws;
-            LightSepChar = lSChar;
-            DefaultSepChar = bSChar;
+            logTimer = new System.Windows.Forms.Timer();
+            logTimer.Interval = 5000;
+            logTimer.Tick += LogTimer_Tick;
 
-            StatusLogListBox.Font = FontLoader.LoadEmbeddedFont("ZomboidBackupManager.Fonts.UbuntuMono-Regular.ttf", size);
-
-            integerToTemplate = new Dictionary<int, LabelTemplates>();
-            customLabels = new Dictionary<string, List<LabelTemplates>>();
-            labelsToHeadline = new Dictionary<List<LabelTemplates>, string>();
-            labelsToName = new Dictionary<List<LabelTemplates>, string>();
-            labelsToValue = new Dictionary<List<LabelTemplates>, string>();
-            labelsToValues = new Dictionary<List<LabelTemplates>, List<string>>();
-            labelsToSepType = new Dictionary<List<LabelTemplates>, SeparatorType>();
-
-            logBuffer = GetVisibleCharCountMonospace(listBox);
-            lastBuffer = logBuffer;
-
-            maxWidth = logBuffer.Width;
-            maxHeight = logBuffer.Height;
-
-            PrintDebug($"[StatusLogWriter.cs] - [Constructor] - [maxWidth = {maxWidth}] - [maxHeight = {maxHeight}]");
-
-            CreateDictionaries();
-
-            CreateInitLabel();
-            CreateDefaultLabels();
+            ChangeCurrentStatus(Status.INIT);
 
             StatusLogWriter_Ready();
         }
 
-        private bool FlushLog()
+        public async void OnScrolling_Done(object? sender, int val)
         {
-            string[] buffer = logBuffer.Buffer;
-            if (buffer != null && buffer.Length > 0)
+            await Task.Delay(250);
+            currentLogItemSelection = val;
+        }
+
+        private void LogTimer_Tick(object? sender, EventArgs e)
+        {
+            PrintDebug($"[StatusLogWriter] - [LogTimer_Tick]");
+        }
+
+        public int GetLogItemLimit()
+        {
+            return logData.MaxLines;
+        }
+
+        public void ClearStatusLog()
+        {
+            logData.ClearLog();
+        }
+
+        public void SetNumeration(bool bSet)
+        {
+            logData.Numeration = bSet;
+        }
+
+        public async Task WriteLabelToLog(string text, string value = "", string textValueSeparator = " & ")
+        {
+            int i = logData.GetLogItemCount();
+            int width = logData.GetLogSize().Width;
+            string input = $"[ {text}.{textValueSeparator}.{value} ]";
+            string[] label = CreateSimpleLabel(input, width, logData.Numeration, i);
+            await WriteContentToLog(label);
+            await Task.Delay(100);
+        }
+
+        public async void WriteDualLabelToLog(string text, string value = "", SeparatorType sepTypeA = SeparatorType.Light)
+        {
+            int i = logData.GetLogItemCount();
+            int width = logData.GetLogSize().Width;
+            string inputTxt = $"[ {text} ]";
+            string inputVal = $"[ {value} ]";
+            string[] label = CreateDualLabel(inputTxt, inputVal, width, logData.Numeration, i);
+            await WriteContentToLog(label);
+        }
+
+        public void ChangeFontSize(float newSize = 11f, bool bBolt = false)
+        {
+            logData.ChangeLogFontSize(newSize);
+            logData = new LogData(logData);
+            if (bBolt) { logData.ToggleLogFontStyle(); }
+            logData.ClearLog();
+        }
+
+        public async void WriteModularLabelToLog(List<string> values, int sepEvery = 2, SeparatorType sepTypeA = SeparatorType.Light, SeparatorType sepTypeB = SeparatorType.Default)
+        {
+            if (currentStatus != Status.READY)
             {
-                lastBuffer = logBuffer;
-                logBuffer.ClearBuffer();
-                StatusLogListBox.Items.Clear();
-                StatusLogListBox.Items.AddRange(buffer);
-                StatusLogListBox.SetSelected(StatusLogListBox.Items.Count - 1, true);   // To force the log box to automaticly jump to the last entry (Unnecessary - just for qol...)
-                StatusLogListBox.SelectedItem = null;                                   // To clear the visual selection within the status log box (Unnecessary - just looks better...)
-                return true;
+                return;
+            }
+            ChangeCurrentStatus(Status.BUSY);
+            string[] content = CreateModularLabel(values, logData.GetLogSize().Width, logData.Numeration, logData.GetLogItemCount(), sepTypeA, sepEvery, sepTypeB);
+            await WriteContentToLog(content);
+            await Task.Delay(100);
+            ChangeCurrentStatus(Status.DONE);
+        }
+
+        private async Task<bool> WriteContentToLog(string[] lines, bool bAutoScroll = true)
+        {
+            await Task.Delay(250);
+            string[] output = lines;
+            ListBox log = logData.LogRef;
+            int linesMax = logData.MaxLines;
+            int linesCount = lines.Length;
+            int itemCount = logData.GetLogItemCount();
+            if (linesCount <= 0)
+            {
+                return false;
+            }
+            if (linesCount + itemCount >= linesMax)
+            {
+                logData.ClearLog();
+                itemCount = 0;
+            }
+            if (output != null && output.Length > 0)
+            {
+                log.Items.AddRange(output);
+                if (bAutoScroll)
+                {
+                    log.SelectionMode = SelectionMode.One;
+                    log.SetSelected(logData.GetLogItemCount() - 1, true);     // To force the log box to automaticly jump to the last entry (Unnecessary - just for qol...)
+                    currentLogItemSelection = log.SelectedIndex;    // To clear the visual selection within the status log box (Unnecessary - just looks better...)
+                    await Task.Delay(200);
+                    return true;
+                }
             }
             return false;
         }
 
-        public async void Test()
+        private string CreateSeparatorLine(int width, SeparatorType type = SeparatorType.Default, bool numeration = false, int num = 0, bool bAddSides = true)
         {
-            for(int i = 1; i < 26; i++)
+            if (numeration)
             {
-                await TestLoop(i);
-                await Task.Delay(750);
+                int adjWidth = width - StaticLogFunctions.GetNumStringLength();
+                if (bAddSides)
+                {
+                    return StaticLogFunctions.GetAssembledNumString(num) + symbolLib.GetFramePart(LabelFramePart.FrameSide).ToString() + new string(symbolLib.GetSeparator(type), adjWidth - 2) + symbolLib.GetFramePart(LabelFramePart.FrameSide).ToString();
+                }
+                else
+                {
+                    return StaticLogFunctions.GetAssembledNumString(num) + new string(symbolLib.GetSeparator(type), adjWidth);
+                }
+            }
+            else
+            {
+                if (bAddSides)
+                {
+                    return symbolLib.GetFramePart(LabelFramePart.FrameSide).ToString() + new string(symbolLib.GetSeparator(type), width - 2) + symbolLib.GetFramePart(LabelFramePart.FrameSide).ToString();
+                }
+                else
+                {
+                    return new string(symbolLib.GetSeparator(type), width);
+                }
             }
         }
 
-        public async Task TestLoop(int iScroll)
+        private string[] CreateEmptyLines(int amount = 1, int width = 0, bool numeration = false, int num = 0)
         {
-            logBuffer.DrawSquare(16, iScroll, 52, 12);
-            await Task.Delay(250);
-            FlushLog();
+            List<string> output = new List<string>();
+            for (int i = 0; i < amount; i++)
+            {
+                output.Add(CreateEmptyLine(width, numeration, num + i));
+            }
+            return output.ToArray();
         }
 
-        private void ChangeFontSize(ListBox log, float size = 11f)
+        private string CreateEmptyLine(int width, bool numeration = false, int num = 0)
         {
-            
-
+            if (numeration)
+            {
+                int adjWidth = width - StaticLogFunctions.GetNumStringLength();
+                return StaticLogFunctions.GetAssembledNumString(num) + new string(symbolLib.GetSeparator(SeparatorType.WhiteSpace), adjWidth);
+            }
+            else
+            {
+                return new string(symbolLib.GetSeparator(SeparatorType.WhiteSpace), width);
+            }
         }
 
-        private async void ReloadLogContent()
+        public async Task WriteEmptyLinesToLog(int amount = 1)
         {
-            await Task.Delay(250);
-
+            int idx = logData.GetLogItemCount();
+            bool bNum = logData.Numeration;
+            int width = logData.GetLogSize().Width;
+            List<string> output = new List<string>();
+            for (int i = 0; i < amount; i++)
+            {
+                string line = CreateEmptyLine(width, bNum, idx + i);
+                output.Add(line);
+            }
+            await WriteContentToLog(output.ToArray());
         }
 
-        private void CreateDefaultLabels()
+        public void ScrollLog(int iA, int iB, bool bUp = true)
         {
-            CreateDefaultLabels_ScanUnlisted();
-            CreateDefaultLabels_ScanJsonData();
+            logData.LogRef.SelectionMode = SelectionMode.One;
+            if (bUp)
+            {
+                ScrollLogUp(iB, iA);
+            }
+            else
+            {
+                ScrollLogDown(iB, iA);
+            }
         }
 
-
-        private void CreateDefaultLabels_ScanUnlisted()
+        private void ScrollLogUp(int steps = 1, int loops = 1)
         {
-            CreateLabel_Scan();
-            CreateLabel_ScanDone();
-            CreateLabel_ScanResult();
+            ListBox log = logData.LogRef;
+            int sel = log.SelectedIndex;
+            for (int i = 0; i < loops; i++)
+            {
+
+                sel -= steps;
+                if (sel < 0) { sel = 0; }
+                log.SetSelected(sel, true);
+            }
+            OnScrollingDone?.Invoke(this, sel);
         }
 
-        private void CreateDefaultLabels_ScanJsonData()
+        private void ScrollLogDown(int steps = 1, int loops = 1)
         {
-            CreateLabel_ScanJson();
-            CreateLabel_ScanJsonDone();
-            CreateLabel_ScanJsonResult();
+            ListBox log = logData.LogRef;
+            int sel = log.SelectedIndex;
+            for (int i = 0; i < loops; i++)
+            {
+                sel += steps;
+                if (sel > GetLogItemLimit()) { sel = 999; }
+                log.SetSelected(sel, true);
+            }
+            OnScrollingDone?.Invoke(this, sel);
         }
 
-        private void CreateDictionaries()
+        public async void WriteLabelsToLog(int steps = 1, int loops = 1, int separated = 0)
         {
-            integerToTemplate.Add(0, LabelTemplates.None);
-            integerToTemplate.Add(1, LabelTemplates.Simple);
-            integerToTemplate.Add(2, LabelTemplates.LabelStart);
-            integerToTemplate.Add(3, LabelTemplates.LabelEnd);
-            integerToTemplate.Add(4, LabelTemplates.LabelSeparator);
-            integerToTemplate.Add(5, LabelTemplates.LabelHeadline);
-            integerToTemplate.Add(6, LabelTemplates.LabelName);
-            integerToTemplate.Add(7, LabelTemplates.LabelValue);
-            integerToTemplate.Add(8, LabelTemplates.LabelValues);
+            for (int i = 0; i < loops; i++)
+            {
+                int num = i + 1;
+                await WriteLabelToLog("Test Label No. ", num.ToString());
+                Task.WaitAll();
+                if (separated > 0)
+                {
+                    await WriteEmptyLinesToLog(separated);
+                }
+                await Task.Delay(100);
+            }
+        }
+
+        public async void WriteStepsToLog(int steps = 1, int loops = 1)
+        {
+            for (int i = 0; i < loops; i++)
+            {
+                await WriteEmptyLinesToLog(steps);
+                await Task.Delay(100);
+            }
+        }
+
+        private async void AddEmptyLinesToScroll(int steps = 1, int loops = 1)
+        {
+            ListBox log = logData.LogRef;
+            for (int i = 0; i < loops; i++)
+            {
+                string[] lines = new string[steps];
+                lines = CreateEmptyLines(steps, logData.GetLogSize().Width, logData.Numeration, logData.GetLogItemCount());
+                await WriteContentToLog(lines);
+                await Task.Delay(500);
+            }
+        }
+
+        private string[] CreateSimpleLabelFromScratch(string txt, int width, string sAddBefore = " [ ", string sAddAfter = " ] ", bool numeration = false, int num = 0, SeparatorType sepType = SeparatorType.Light)
+        {
+            string newText = sAddBefore + txt + sAddAfter;
+            return CreateSimpleLabel(newText, width, numeration, num, sepType);
+        }
+
+        private string[] CreateSimpleLabel(string txt, int width, bool numeration = false, int num = 0, SeparatorType sepType = SeparatorType.Light)
+        {
+            string text = txt;
+            string[] label = new string[3];
+            label[0] = symbolLib.GetFrameTop(width, numeration, num);
+            label[1] = StaticLogFunctions.CenterText(text, width, symbolLib.GetSeparator(sepType), symbolLib.GetFramePart(LabelFramePart.FrameSide), true, numeration, num + 1);
+            label[2] = symbolLib.GetFrameBase(width, numeration, num + 2);
+            return label;
+        }
+
+        private string[] CreateDualLabel(string txt, string val, int width, bool numeration = false, int num = 0, SeparatorType sepType = SeparatorType.Light)
+        {
+            string text = $"[ {txt} ]";
+            string value = $"[ {val} ]";
+            string[] label = new string[4];
+            label[0] = symbolLib.GetFrameTop(width, numeration, num);
+            label[1] = StaticLogFunctions.CenterText(text, width, symbolLib.GetSeparator(sepType), symbolLib.GetFramePart(LabelFramePart.FrameSide), true, numeration, num + 1);
+            label[2] = StaticLogFunctions.CenterText(value, width, symbolLib.GetSeparator(sepType), symbolLib.GetFramePart(LabelFramePart.FrameSide), true, numeration, num + 2);
+            label[3] = symbolLib.GetFrameBase(width, numeration, num + 3);
+            return label;
+        }
+
+        private string[] CreateModularLabel(List<string> values, int width, bool numeration = false, int num = 0, SeparatorType sepTypeA = SeparatorType.Light, int sepEvery = 2, SeparatorType sepTypeB = SeparatorType.Default)
+        {
+            List<string> label = new List<string>();
+            label.Add(symbolLib.GetFrameTop(width, numeration, num));
+            int i = 1;
+            foreach (string val in values)
+            {
+                label.Add(StaticLogFunctions.CenterText(val, width, symbolLib.GetSeparator(sepTypeA), symbolLib.GetFramePart(LabelFramePart.FrameSide), true, numeration, num + i));
+                if (sepEvery > 0)
+                {
+                    if ((i + 1) % sepEvery == 0)
+                    {
+                        i++;
+                        label.Add(CreateSeparatorLine(width, sepTypeB, numeration, num + i));
+                    }
+                }
+                i++;
+            }
+            label.Add(symbolLib.GetFrameBase(width, numeration, num + i));
+            return label.ToArray();
+        }
+
+        private List<string> GetLogContents()
+        {
+            return logData.GetLogText();
+        }
+
+        private async void WriteInitLabelToLog()
+        {
+            ChangeCurrentStatus(Status.BUSY);
+            PrintDebug($"[WriteInitLabelToLog] - [INIT DONE] - [Log Width = {logData.LogSize.GetLogWidth()}]");
+            logData.ClearLog();
+            string[] output = CreateSimpleLabelFromScratch("INIT DONE!", logData.LogSize.GetLogWidth(), "[ ", " ]", logData.Numeration, logData.GetLogItemCount());
+            await WriteContentToLog(output);
+            ChangeCurrentStatus(Status.DONE);
         }
 
         private async void StatusLogWriter_Ready()
         {
             await Task.Delay(1500);
-            ChangeCurrentStatus(Status.READY);
+            ChangeCurrentStatus(Status.INITDONE);
         }
 
         private void ChangeCurrentStatus(Status s)
         {
-            lastStatus = status;
-            status = s;
+            lastStatus = currentStatus;
+            currentStatus = s;
             OnStatusChanged?.Invoke(this, s);
         }
 
         private void StatusChanged(object? sender, Status s)
         {
-            PrintDebug($"[StatusLogWriter.cs] - [OnStatusChanged] - [To = {s.ToString()}]");
+            PrintDebug($"[StatusLogWriter] - [StatusChanged] - [To = {s.ToString()}]");
             if (s == Status.INIT)
             {
 
             }
+            else if (s == Status.INITDONE)
+            {
+                WriteInitLabelToLog();
+
+            }
             else if (s == Status.READY)
             {
-                if (lastStatus == Status.INIT)
-                {
-                    WriteInitLabelToLog();
-                }
+
             }
             else if (s == Status.BUSY)
             {
@@ -570,11 +676,63 @@ namespace ZomboidBackupManager
             }
             else if (s == Status.DONE)
             {
-                ChangeCurrentStatus(Status.DONE);
+                ListBox log = logData.LogRef;
+                int count = logData.GetLogItemCount() - 1;
+                log.SelectionMode = SelectionMode.One;
+                log.SetSelected(count, true);
+                log.SelectedItem = null;
+                ChangeCurrentStatus(Status.READY);
             }
         }
+    }
 
-        private string ReplaceWithNumeration(string line, int num)
+    public static class StaticLogFunctions
+    {
+        //======================================================================================================================================
+        //------------------------------------------------------- [ Static Functions ] ---------------------------------------------------------
+        //======================================================================================================================================
+
+        public static string CenterText(string text, int totalLength, char fillChar = 'x', char sideChar = ' ', bool addSides = false, bool numeration = false, int num = 0)
+        {
+            if (text.Length >= totalLength)
+            {
+                PrintDebug($"[CenterText] - [OutputText] - [Expected Length = {totalLength}] - [Length = {text.Length}] - [Text = {text}]");
+                return text.Substring(0, totalLength);
+            }
+            string txt = string.Empty;
+            string leftTxt = string.Empty;
+            string RightTxt = string.Empty;
+            int numStrLength = GetNumStringLength();
+            int paddingTotal = totalLength - text.Length;
+            int padLeft = paddingTotal / 2;
+            int padRight = paddingTotal - padLeft;
+            if (numeration)
+            {
+                padLeft -= numStrLength / 2;
+                padRight -= numStrLength / 2;
+            }
+            if (addSides)
+            {
+                leftTxt = new string(fillChar, padLeft - 1);
+                RightTxt = new string(fillChar, padRight - 1);
+                txt = sideChar.ToString() + leftTxt + text + RightTxt + sideChar.ToString();
+            }
+            else
+            {
+                leftTxt = new string(fillChar, padLeft);
+                RightTxt = new string(fillChar, padRight);
+                txt = leftTxt + text + RightTxt;
+            }
+            if (numeration)
+            {
+                txt = StaticLogFunctions.GetAssembledNumString(num) + txt;
+            }
+            PrintDebug($"[CenterText] - [OutputText] - [Expected Length = {totalLength}] - [Length = {txt.Length}] - [Text = {txt}]");
+            PrintDebug($"[CenterText] - [OutputText] - [paddingTotal = {paddingTotal}] - [padLeft = {padLeft}] - [padRight = {padRight}] - [- numStrLength = {numStrLength}]");
+            return txt;
+        }
+
+        public static string GetAssembledNumString(int num)
         {
             string numString = num.ToString();
             if (num < 10)
@@ -586,524 +744,17 @@ namespace ZomboidBackupManager
                 numString = "0" + numString;
             }
 
-            string fullNumString = GetFullNumString(numString);
-            line = RemoveCharsForNumeration(line);
-            return fullNumString + line;
+            return GetFullNumString(numString);
         }
 
-        private string RemoveCharsForNumeration(string line)
+        private static string GetFullNumString(string num = "XXX")
         {
-            char firstChar = line[0];
-            int len = GetNumStringLength();
-            if (line.Length >= len) { line = line.Remove(0, len + 1); }
-            line = line.Insert(0, firstChar.ToString());
-            return line;
+            return $"[{num}] - ";
         }
 
-        private void WriteLinesToLog(string[] lines)
+        public static int GetNumStringLength()
         {
-            string[] output;
-            if (lineNumeration)
-            {
-                int idx = StatusLogListBox.Items.Count;
-                if ((idx + lines.Length) > lineNumMax)
-                {
-                    StatusLogListBox.Items.Clear();
-                    idx = 1;
-                }
-                List<string> temp = new List<string>();
-                foreach (string line in lines)
-                {
-                    string numLine = ReplaceWithNumeration(line, idx);
-                    temp.Add(numLine);
-                    idx++;
-                }
-                output = temp.ToArray();
-            }
-            else
-            {
-                output = lines;
-            }
-            if (output != null && output.Length > 0)
-            {
-                StatusLogListBox.Items.AddRange(output);
-                StatusLogListBox.SelectionMode = SelectionMode.One;
-                StatusLogListBox.SetSelected(StatusLogListBox.Items.Count - 1, true);   // To force the log box to automaticly jump to the last entry (Unnecessary - just for qol...)
-                StatusLogListBox.SelectedItem = null;                                   // To clear the visual selection within the status log box (Unnecessary - just looks better...)
-            }
-        }
-
-        public void WriteInitLabelToLog()
-        {
-            string[] output = TextLog_GetCustomLabel("Init");
-            StatusLogListBox.Items.Clear();
-            WriteLinesToLog(output);
-        }
-
-        public void WriteDefaultLabelToLog(string labelName, string? value = null, List<string>? values = null)
-        {
-            if (values == null)
-            {
-                values = new List<string>();
-            }
-
-            string[] output = TextLog_GetCustomLabel(labelName,value ,values);
-            WriteLinesToLog(output);
-        }
-
-        public void WriteSingleSeparatorLineToLog(SeparatorType sep = SeparatorType.Default, bool addSides = true)
-        {
-            string[] output = new string[1];
-            output[0] = GetSeparatorLine(sep, maxWidth, addSides, addSides);
-            WriteLinesToLog(output);
-        }
-
-        public void WriteSingleLineToLog(string text, int sepLinesBefore = 0, int sepLinesAfter = 0, SeparatorType sep = SeparatorType.WhiteSpace, SeparatorType sepText = SeparatorType.Default, bool addSides = true)
-        {
-            string sepLine = GetSeparatorLine(sep, maxWidth, addSides, addSides);
-            List<string> sepListBefore = new List<string>();
-            List<string> sepListAfter = new List<string>();
-            for (int i = 0; i < sepLinesBefore; i++)
-            {
-                sepListBefore.Add(sepLine);
-            }
-            for (int i = 0; i < sepLinesAfter; i++)
-            {
-                sepListAfter.Add(sepLine);
-            }
-            string str = GetCustomLabelTextLine(LabelTemplates.Simple, sepText, text, addSides);
-            List<string> outputList = new List<string>();
-            outputList.AddRange(sepListBefore);
-            outputList.Add(str);
-            outputList.AddRange(sepListAfter);
-            WriteLinesToLog(outputList.ToArray());
-        }
-
-        private void CreateInitLabel()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("2563");
-            bool result = CreateCustomLabel(list, "Init", "Initialized", "Welcome Human!");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateInitLabel] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_Scan()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("253");
-            bool result = CreateCustomLabel(list, "Scan", "Starting Scan");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_Scan] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_ScanDone()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("2573");
-            bool result = CreateCustomLabel(list, "ScanDone", "Scan Unlisted Done", "Unlisted folders found:");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanDone] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_ScanResult()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("25843");
-            bool result = CreateCustomLabel(list, "ScanUnlistedResult" , "Unlistet folder");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanResult] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_ScanJson()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("253");
-            bool result = CreateCustomLabel(list, "ScanJson", "Starting Scan");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJson] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_ScanJsonDone()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("2573");
-            bool result = CreateCustomLabel(list, "ScanJsonDone", "Scan Json Done", "Broken json data files found:");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJsonDone] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_ScanJsonResult()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("25843");
-            bool result = CreateCustomLabel(list, "ScanJsonResult", "Broken Json Data:");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJsonResult] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_AutoClean()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("253");
-            bool result = CreateCustomLabel(list, "ScanJson", "Starting Scan");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJson] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_AutoCleanDone()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("2573");
-            bool result = CreateCustomLabel(list, "ScanJsonDone", "Scan Json Done", "Broken json data files found:");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJsonDone] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private void CreateLabel_AutoCleanResult()
-        {
-            List<LabelTemplates> list = CreateBasicPresetStructureList("25843");
-            bool result = CreateCustomLabel(list, "ScanJsonResult", "Broken Json Data:");
-            PrintDebug($"[StatusLogWriter.cs] - [CreateLabel_ScanJsonResult] - [CreateCustomLabel Result] = [{result}]");
-        }
-
-        private List<LabelTemplates> CreateBasicPresetStructureList(string numeratedStructureString)
-        {
-            char[] numeratedStructureArray = numeratedStructureString.ToCharArray();
-            List<int> intList = new List<int>();
-            if (numeratedStructureArray.Length <= 0)
-            {
-                return new List<LabelTemplates>();
-            }
-            foreach (char num in numeratedStructureArray)
-            {
-                if (char.IsDigit(num))
-                {
-                    intList.Add(int.Parse(num.ToString()));
-                }
-            }
-            List<LabelTemplates> outputList = new List<LabelTemplates>();
-            foreach (int val in intList)
-            {
-                outputList.Add(integerToTemplate[val]);
-            }
-            return outputList;        
-        }
-
-        private string[] TextLog_GetCustomLabel(string labelName, string? singleVal = null, List<string>? inputValues = null)
-        {
-            List<string> outputList = new List<string>();
-            List<LabelTemplates> labelStructure = GetRawCustomLabelList(labelName);
-
-            if (labelStructure.Count <= 0) { return outputList.ToArray(); }
-
-            foreach (var line in labelStructure)
-            {
-                PrintDebug($"[StatusLogWriter.cs] - [TextLog_GetCustomLabel] = [line = {line}] = [inputValues.Count = {inputValues?.Count}]");
-                string str = 0.ToString();
-                if (line == LabelTemplates.LabelValue)
-                {
-                    if (string.IsNullOrWhiteSpace(singleVal))
-                    {
-                        singleVal = string.Empty;
-                    }
-                    str = GetCustomLabelValueLine(singleVal, SeparatorType.Light, true);
-                    outputList.Add(str);
-                }
-                else if (line == LabelTemplates.LabelValues)
-                {
-                    if (inputValues != null && inputValues.Count > 0)
-                    {
-                        foreach (string value in inputValues)
-                        {
-                            str = GetCustomLabelValueLine(value, SeparatorType.Light, true);
-                            outputList.Add(str);
-                        }
-                    }
-                }
-                else
-                {
-                    List<string>? temp = GetCustomLabelInput(labelStructure, line);
-                    if (temp == null || temp.Count <= 0)
-                    {
-                        temp = [string.Empty];
-                    }
-                    PrintDebug($"[StatusLogWriter.cs] - [TextLog_GetCustomLabel] = [temp.Count = {temp.Count}]");
-                    str = GetCustomPresetLine(line, temp?[0]);
-                    outputList.Add(str);
-                }
-            }
-            return outputList.ToArray();
-        }
-
-        private bool CreateCustomLabel(List<LabelTemplates> structureList, string labelName, string? labelHeadline = null, string? labelText = null, List<string>? labelValues = null, SeparatorType sepType = SeparatorType.Light)
-        {
-            bool result = false;
-            if (structureList.Count <= 0) { return false; }
-            result = customLabels.TryAdd(labelName, structureList);
-            if (!result) { return result; }
-            if (labelHeadline == null)
-            {
-                labelHeadline = string.Empty;
-            }
-            result = false;
-            result = labelsToHeadline.TryAdd(customLabels[labelName], labelHeadline);
-            if (!result) { return result; }
-            if (labelText == null)
-            {
-                labelText = string.Empty;
-            }
-            result = false;
-            result = labelsToName.TryAdd(customLabels[labelName], labelText);
-            if (!result) { return result; }
-            if (labelValues == null || labelValues.Count <= 0)
-            {
-                labelValues = [string.Empty];
-            }
-            result = false;
-            result = labelsToValue.TryAdd(customLabels[labelName], labelValues[0]);
-            if (!result) { return result; }
-            result = false;
-            result = labelsToValues.TryAdd(customLabels[labelName], labelValues);
-            if (!result) { return result; }
-            result = false;
-            result = labelsToSepType.TryAdd(customLabels[labelName], sepType);
-            return result;
-        }
-
-
-        private List<string> GetCustomLabelInput(List<LabelTemplates> list, LabelTemplates id)
-        {
-            List<string> outputList = new List<string>();
-
-            PrintDebug($"[StatusLogWriter.cs] - [GetCustomLabelInput] = [list.Count = {list.Count}] - [id = {id}]");
-
-            switch (id)
-            {
-                case LabelTemplates.None:
-                    return outputList;
-                case LabelTemplates.LabelHeadline:
-                    outputList.Insert(0, labelsToHeadline[list]);
-                    return outputList;
-                case LabelTemplates.LabelName:
-                    outputList.Insert(0, labelsToName[list]);
-                    return outputList;
-                case LabelTemplates.LabelValue:
-                    outputList.Insert(0, labelsToValue[list]);
-                    return outputList;
-                case LabelTemplates.LabelValues:
-                    outputList = labelsToValues[list];
-                    return outputList;
-                default:
-                    return outputList;
-            }
-        }
-
-        private List<LabelTemplates> GetRawCustomLabelList(string labelName)
-        {
-            return customLabels.GetValueOrDefault(labelName, new List<LabelTemplates>());
-        }
-
-        private string GetCustomPresetLine(LabelTemplates id, string? input = null, SeparatorType setupSepLine = SeparatorType.Light)
-        {
-            PrintDebug($"[StatusLogWriter.cs] - [GetCustomPresetLine] - [id = {id}] - [input = {input}]");
-
-            switch (id)
-            {
-                case LabelTemplates.None:
-                    return string.Empty;
-                case LabelTemplates.LabelStart:
-                    return GetCustomLabelStartEndLine(true);
-                case LabelTemplates.LabelEnd:
-                    return GetCustomLabelStartEndLine(false);
-                case LabelTemplates.LabelSeparator:
-                    return GetSeparatorLine(setupSepLine, maxWidth, true, true);
-                case LabelTemplates.LabelHeadline:
-                    return GetCustomLabelTextLine(id , SeparatorType.Light, input!);
-                case LabelTemplates.LabelName:
-                    return GetCustomLabelTextLine(id, SeparatorType.Light, input!);
-                case LabelTemplates.LabelValue:
-                    return GetCustomLabelValueLine(input , SeparatorType.Light);
-                case LabelTemplates.LabelValues:
-                    return GetCustomLabelValueLine(input, SeparatorType.Light);
-                default:
-                    return string.Empty;
-            }
-        }
-
-        private string GetCustomLabelStartEndLine(bool bStart = true)
-        {
-            if (bStart)
-            {
-                return labelStartSepL + new string(labelStartSep, maxWidth - 2) + labelStartSepR;
-            }
-            else
-            {
-                return labelEndSepL + new string(labelEndSep, maxWidth - 2) + labelEndSepR;
-            }
-        }
-
-        private string GetCustomLabelSeparatorLine(SeparatorType type)
-        {
-            string output = string.Empty;
-            char c = GetLabelSymbolTypeChar(type);
-            for (int i = 0; i < maxWidth; i++)
-            {
-                output.Append(c);
-            }
-            return output;
-        }
-
-        private string GetSeparatorLine(SeparatorType type, int width, bool addSideL = true, bool addSideR = true)
-        {
-            char c = GetLabelSymbolTypeChar(type);
-            string output = new string(c, width);
-            output = AddSideSeparators(output, addSideL, addSideR);
-            return output;
-        }
-
-        private string AddSideSeparators(string str, bool addStart = true, bool addEnd = true)
-        {
-            if (addStart)
-            {
-                str = str.Remove(0, 1);
-                str = SideSepChar.ToString() + str;
-            }
-            if (addEnd)
-            {
-                str = str.Remove(str.Length - 2, 1);
-                str = str + SideSepChar.ToString();
-            }
-            return str;
-        }
-
-        /*
-        private string CenterText(string text, int totalLength, char fillChar = '*')
-        {
-            if (text.Length >= totalLength)
-            {
-                return text.Substring(0, totalLength);
-            }
-            int paddingTotal = totalLength - text.Length;
-            int padLeft = paddingTotal / 2;
-            if (lineNumeration) { padLeft += GetNumStringLength() / 2; }
-            int padRight = paddingTotal - padLeft;
-
-            return new string(fillChar, padLeft) + text + new string(fillChar, padRight);
-        }
-        */
-
-        private string GetCustomLabelTextLine(LabelTemplates lineTextType , SeparatorType sep , string labelInsertText = "", bool addSides = true)
-        {
-            string output = string.Empty;
-            string preset = GetLabelLinePreset(lineTextType);
-            if (!string.IsNullOrWhiteSpace(preset))
-            {
-                if (preset.Contains('<'))
-                {
-                    List<string> list = new List<string>();
-                    string[] splitted = preset.Split('<', 3 , StringSplitOptions.None);
-                    if (splitted.Length > 0)
-                    {
-                        foreach (string key in splitted)
-                        {
-                            list.Add(key);
-                        }
-                        list.Insert(1, labelInsertText);
-                        string str = string.Empty;
-                        foreach (string item in list)
-                        {
-                            str += item;
-                        }
-                        int idx = str.IndexOf('>');
-                        str = str.Replace('>', ' ');
-                        str = str.Remove(idx, 1);
-                        output = CenterText(str, maxWidth, GetLabelSymbolTypeChar(sep), lineNumeration);
-                        output = output.Replace(WhiteSpaceReplaceChar, ' ');
-                        if (addSides) { output = AddSideSeparators(output, addSides, addSides); }
-                    }
-                }
-            }
-            return output;
-        }
-
-        private string GetCustomLabelValueLine(string? inputValue, SeparatorType sep, bool addSides = true)
-        {
-            string output = string.Empty;
-            if (inputValue == null) { return output; }
-            string preset = GetLabelLinePreset(LabelTemplates.LabelValue);
-            if (!string.IsNullOrWhiteSpace(preset))
-            {
-                if (preset.Contains('<'))
-                {
-                    List<string> list = new List<string>();
-                    string[] splitted = preset.Split('<', 3, StringSplitOptions.None);
-                    if (splitted.Length > 0)
-                    {
-                        foreach (string key in splitted)
-                        {
-                            list.Add(key);
-                        }
-                        list.Insert(1, inputValue);
-                        string str = string.Empty;
-                        foreach (string item in list)
-                        {
-                            str += item;
-                        }
-                        int idx = str.IndexOf('>');
-                        str = str.Replace('>', ' ');
-                        str = str.Remove(idx, 1);
-                        output = CenterText(str, maxWidth, GetLabelSymbolTypeChar(sep), lineNumeration);
-                        output = output.Replace(WhiteSpaceReplaceChar, ' ');
-                        if (addSides) { output = AddSideSeparators(output, addSides, addSides); }
-                    }
-                }
-            }
-            return output;
-        }
-
-        private string GetLabelLinePreset(LabelTemplates id)
-        {
-            switch (id)
-            {
-                case LabelTemplates.None:
-                    return string.Empty;
-                case LabelTemplates.Simple:
-                    return labelPresetSimple;
-                case LabelTemplates.LabelHeadline:
-                    return labelPresetHeadline;
-                case LabelTemplates.LabelName:
-                    return labelPresetName;
-                case LabelTemplates.LabelValue:
-                    return labelPresetValue;
-                case LabelTemplates.LabelValues:
-                    return labelPresetValue;
-                default:
-                    return string.Empty;
-            }
-        }
-
-        private char GetLabelSymbolTypeChar(SeparatorType type)
-        {
-            switch (type)
-            {
-                case SeparatorType.None:
-                    return ' ';
-                case SeparatorType.WhiteSpace:
-                    return WhiteSpaceSepChar;
-                case SeparatorType.Light:
-                    return LightSepChar;
-                case SeparatorType.Default:
-                    return DefaultSepChar;
-                case SeparatorType.Moderat:
-                    return ModeratSepChar;
-                case SeparatorType.Full:
-                    return FullSepChar;
-                default:
-                    return ' ';
-            }
-        }
-
-        public static LogBuffer GetVisibleCharCountMonospace(ListBox listBox)
-        {
-            Size measuredSize = TextRenderer.MeasureText("X", listBox.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
-            LogBuffer logBuffer = new LogBuffer(measuredSize.Width, measuredSize.Height);
-            int charWidth = logBuffer.Width;
-            int charHeight = logBuffer.Height;
-
-            if (charWidth == 0) return new LogBuffer(0, 0);
-
-            int visibleWidth = listBox.ClientSize.Width;
-            int visibleHight = listBox.ClientSize.Height;
-            
-            return new LogBuffer(visibleWidth / charWidth - 4, visibleHight / charHeight - 1);
-        }
-
-        public void ClearLog()
-        {
-            StatusLogListBox.Items.Clear();
+            return GetFullNumString().Length;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ZomboidBackupManager
 {
-    partial class UnlistedBackupsWindow
+    partial class BackupDataCleanerWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UnlistedBackupsWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BackupDataCleanerWindow));
             StatusLog = new ListBox();
             DepricatedBackupsLabel = new Label();
             ListBoxPanel = new Panel();
@@ -59,6 +59,7 @@
             LogSetupSepCSMenu = new ContextMenuStrip(components);
             ChangeSep01_TextBox = new ToolStripTextBox();
             ClearStatusLogTSButton = new ToolStripButton();
+            FontSizeComboBox = new ToolStripComboBox();
             ListBoxPanel.SuspendLayout();
             UnlistedBackupsToolStrip.SuspendLayout();
             UnlistedSettingsContextMenuStrip.SuspendLayout();
@@ -358,7 +359,7 @@
             EditLogToolStrip.BackColor = SystemColors.ControlLight;
             EditLogToolStrip.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             EditLogToolStrip.GripStyle = ToolStripGripStyle.Hidden;
-            EditLogToolStrip.Items.AddRange(new ToolStripItem[] { StatusLogSettingsTSDropDownButton, ClearStatusLogTSButton });
+            EditLogToolStrip.Items.AddRange(new ToolStripItem[] { StatusLogSettingsTSDropDownButton, ClearStatusLogTSButton, FontSizeComboBox });
             EditLogToolStrip.Location = new Point(0, 0);
             EditLogToolStrip.MaximumSize = new Size(600, 32);
             EditLogToolStrip.MinimumSize = new Size(600, 32);
@@ -394,7 +395,6 @@
             StatusLogConfigContextStripMenu.Items.AddRange(new ToolStripItem[] { LogGeneralMenuCMStrip, LogSepMenuCMStrip });
             StatusLogConfigContextStripMenu.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             StatusLogConfigContextStripMenu.Name = "ToolStripOptionsContextMenuStrip";
-            StatusLogConfigContextStripMenu.OwnerItem = StatusLogSettingsTSDropDownButton;
             StatusLogConfigContextStripMenu.RightToLeft = RightToLeft.Yes;
             StatusLogConfigContextStripMenu.ShowCheckMargin = true;
             StatusLogConfigContextStripMenu.ShowImageMargin = false;
@@ -499,6 +499,27 @@
             ClearStatusLogTSButton.TextImageRelation = TextImageRelation.TextBeforeImage;
             ClearStatusLogTSButton.Click += ClearStatusLogTSButton_Click;
             // 
+            // FontSizeComboBox
+            // 
+            FontSizeComboBox.AutoSize = false;
+            FontSizeComboBox.BackColor = Color.RosyBrown;
+            FontSizeComboBox.FlatStyle = FlatStyle.Flat;
+            FontSizeComboBox.Font = new Font("Bahnschrift SemiCondensed", 11.25F);
+            FontSizeComboBox.ForeColor = SystemColors.ControlLightLight;
+            FontSizeComboBox.Items.AddRange(new object[] { "10", "11", "12", "14", "16", "18", "20", "22", "4", "5", "6", "8", "9" });
+            FontSizeComboBox.Margin = new Padding(0);
+            FontSizeComboBox.MaxDropDownItems = 12;
+            FontSizeComboBox.MergeAction = MergeAction.MatchOnly;
+            FontSizeComboBox.Name = "FontSizeComboBox";
+            FontSizeComboBox.Overflow = ToolStripItemOverflow.Never;
+            FontSizeComboBox.Padding = new Padding(2, 5, 2, 5);
+            FontSizeComboBox.RightToLeft = RightToLeft.No;
+            FontSizeComboBox.Size = new Size(100, 28);
+            FontSizeComboBox.Sorted = true;
+            FontSizeComboBox.Text = "Font Size";
+            FontSizeComboBox.TextAlign = ContentAlignment.TopRight;
+            FontSizeComboBox.TextImageRelation = TextImageRelation.TextBeforeImage;
+            // 
             // UnlistedBackupsWindow
             // 
             AcceptButton = DoneButton;
@@ -573,5 +594,6 @@
         private ContextMenuStrip LogSetupGeneralCSMenu;
         private ToolStripMenuItem LogToggleNumCMStrip;
         private ToolStripMenuItem ShowDetailesAfterScanMenuItem;
+        private ToolStripComboBox FontSizeComboBox;
     }
 }

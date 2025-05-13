@@ -90,7 +90,7 @@ namespace ZomboidBackupManager
         {
             if (s == Status.READY)
             {
-                logWriter.WriteInitLabelToLog();
+                PrintDebug($"[PZScriptHook] - [StatusLogWriter] - [OnStatusChanged] - [Status = {s}]");
             }
         }
 
