@@ -1,50 +1,83 @@
-# ZomboidBackupManager
+# Project Zomboid Backup Manager
+<br/>
 
-[ATTENTION]
-This App isn`t currently just a BETA and WILL CONTAIN BUGS,
-AS WELL AS BAD AND/OR INEFFICIENT CODING.
-USAGE AT YOUR OWN RISK.
-I won't be responsible for any damage on your savegames and/or
-your system, when using this software.
+## Important Disclaimer <br/>
+**<ins>I'm not a programmer and I made both programs just for fun. <br/>
+I began with not much knowledge about programming or designing software! <br/>
+Please consider, that YOU ARE USING BOTH PROGRAMS AT YOUR OWN RISK! <br/>
+Therefore, I am not liable for any damage to your savesgames or similar.</ins>** <br/>
+<br/>
 
+## Introduction <br/>
+### What is this? <br/>
+This program is used to create backups of your savegame folders in the videogame [Project Zomboid](https://store.steampowered.com/app/108600/Project_Zomboid/), managing & <br/>
+restoring them more comfortable, than copy/pasting folders folders by hand. This allows you to save/backup the game at any time. <br/>
+If you than die or make a mistake you can't live with, you can just restore an old backup save & try again. <br/>
 
-[Introduction]
-	TODO;
-	
-	
-	
-[How to use]
-1. Download & extract PZBackupManager to a directory you like (Optionally create a shortcut to your desktop or else.)
-2. Select the gamemode, you're currently playing or want to create backups from.
-   Your Savegames will be shown up in the list box below.
-3. Select your current savegame from the box.
-4. Click on Backup, to make a backup that savegame in its current state.
+<br/>
+<br/>
+<br/>
 
+## Features
+### 1. - Display, rename, manage & restore your created backups of multiple savegames. <br/>
 
-[How to restore a backup]
-0. Be sure you have backups made before for that savegame.
-1.Select the savegame and the gamemode, it is inside.
-2.Select one of the previous made backups from the list to the right.
-3.If the game is running, make sure to close the game before starting the
-  restore process. (Just go to back to the main menu.)
-4.Click restore and wait for the process to finish.
-5.Load your game & have fun. :)
+### 2. - A (Hopefully) Easy2Use GUI. <br/>
 
+### 3. - No installation required. <br/>
+**Just unzip the downloaded file to a location of your choice & run the <ins> ZomboidBackupManager.exe** </ins> <br/>
 
-[How to use the mod] - [Optional]
-1. Make sure you have this app downloaded, installed and working.
-2. Download and enable the PZBackupManagerMod from the Steam Workshop,
-(WorkshopID = 3453009151, https://steamcommunity.com/sharedfiles/filedetails/?id=3453009151)
-3. Select the savegame you are playing right now &
-   click 'listen to PZ' in the top right corner of the manager. 
-4. Click the big 'Listen to Project Zomboid' button.
-   You can either minimize the window now, put it on a second screen or similar.
-5. In Project Zomboid, go into setting if you want to change the hotkey. (default = U)
-6. To make sure everything is working, you can use the test button. - [Optional]
-  (A Messagebox should appear shortly after pressing.)
-7. To use it, load your game, make sure your game isn't paused & you're not
-   fast forwarding - as well as not being chased by zombies or else is probably a good idea, too.
-8. Hit the backup hotkey & wait until a green text confirms completion & done!
+### 4. - Displays your savegames automaticaly. <br/>
+**Just select the one you are playing right now.** <br/>
 
-Note: To restore a backup or just go back to the main window, just hit the button again
-and close the window with the X button like every windows app & the main window should reappear.
+### 5. - Change Backup Data Directory. <br/>
+**Select any folder on your pc, to be used as the base backup savelocation.** <br/>
+
+###  6. - Project Zomboid Connection. <br/>
+**With the workshop mod subscribed & enabled,** (Steam Workshop Mod @ [ Steam ](https://steamcommunity.com/sharedfiles/filedetails/?id=3453009151)) <br/>
+you are able to establish some kind of connection between the game & the manager app. <br/>
+That will allow you to minimize the app or add it as an icon to your taskbar, <br/>
+while playing project zomboid. The manager app then will do backups silently in the background. <br/>
+
+### 7. - Auto Delete Backups <br/>
+Keeps an constant amount of backups, <br/>
+by auto-deleting the oldest backup after each new backup being made, <br/>
+after reaching an adjustable threshold. <br/>
+
+### 8. - Auto Clean Backup Directory <br/>
+Automatically finds (and deletes) unlisted & <br/>
+obsolete backup data of backups made in the past for savegames, <br/>
+that are currently not existing anymore. <br/>
+
+<br/>
+<br/>
+<br/>
+
+## Requirements
+**[Microsoft .Net 9.0 Desktop Runtime](https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/9.0.4/windowsdesktop-runtime-9.0.4-win-x64.exe)** <br/>
+
+<br/>
+<br/>
+<br/>
+
+## Installation <br/>
+### 1. - Download the requirements above if not installed already. <br/>
+**Download the lastest version of this program from the releases page** <br/>
+(File: PZBackupManager.zip) <br/>
+
+### 2. - Create a folder at the location you want the app to be installed & name it as you like. <br/>
+**<ins>(e.g. @ 'D:\Program Files\[u]PZBackupManger')</ins>** <br/>
+<br/>
+
+### 3. - Extract the content of the <ins>PZBackupManager.zip</ins> to the folder, you just created.<br/>
+<br/>
+
+### 4. - Create a shortcut of the ZomboidBackupManager.exe and move it to the desktop or startmenu. <br/>
+**(Create a Shortcut: RightClick on "ZomboidBackupManager.exe" --> New --> Create Shortcut.)** <br/>
+<br/>
+
+### 5. - Run the application, wait until its loaded & start Project Zomboid. <br/>
+<br/>
+
+### 6. - Optional: Set the base backup savedata directory. <br/>
+(Settings --> Change Directory) <br/>
+<br/>
