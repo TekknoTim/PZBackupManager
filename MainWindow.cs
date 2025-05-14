@@ -1440,6 +1440,7 @@ namespace ZomboidBackupManager
             //this.Opacity = 0.6;
             BackupDataCleanerWindow unlistedBackupsWin = new BackupDataCleanerWindow();
             unlistedBackupsWin.ShowDialog();
+            unlistedBackupsWin.Dispose();
             this.Visible = true;
             //this.Opacity = 1.0;
             LoadAndDisplayBackups();
@@ -1450,11 +1451,6 @@ namespace ZomboidBackupManager
         private void BackupCountValueLabel_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void SelectSavegameLabel_Click(object sender, EventArgs e)
-        {
-            SelectSavegameLabel.Font = FontLoader.GetStyleFont(12f);
         }
 
 
