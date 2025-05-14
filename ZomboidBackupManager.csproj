@@ -33,7 +33,7 @@
     <None Remove="Fonts\UbuntuMono-R.ttf" />
     <None Remove="Fonts\UbuntuMono-Regular.ttf" />
     <None Remove="Fonts\UbuntuMono-RI.ttf" />
-    <None Remove="Fonts\ZOMBIE.TTF" />
+    <None Remove="Fonts\Zombie.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,9 +41,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Fonts\UbuntuMono-Bolt.ttf" />
-    <EmbeddedResource Include="Fonts\UbuntuMono-Regular.ttf" />
-    <EmbeddedResource Include="Fonts\ZOMBIE.TTF" />
+    <Content Include="Fonts\UbuntuMono-Bolt.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fonts\UbuntuMono-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +56,12 @@
 
   <ItemGroup>
     <Folder Include="obj\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Fonts\Zombie.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

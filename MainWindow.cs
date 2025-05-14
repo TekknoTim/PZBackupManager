@@ -13,6 +13,8 @@ using System.Runtime;
 using System.IO.Compression;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Policy;
+using System.Drawing.Text;
+using System.Reflection.Emit;
 
 namespace ZomboidBackupManager
 {
@@ -224,7 +226,7 @@ namespace ZomboidBackupManager
             if (GamemodeComboBox.SelectedIndex < 0 || SavegameListBox.SelectedIndex < 0)
             {
                 return false;
-            }  
+            }
             var selSavegame = SavegameListBox.SelectedItem;
             if (selSavegame == null)
             {
@@ -1443,6 +1445,16 @@ namespace ZomboidBackupManager
             LoadAndDisplayBackups();
             SetSavegameLabelValues();
             SetBackupLabelValues();
+        }
+
+        private void BackupCountValueLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SelectSavegameLabel_Click(object sender, EventArgs e)
+        {
+            SelectSavegameLabel.Font = FontLoader.GetStyleFont(12f);
         }
 
 
