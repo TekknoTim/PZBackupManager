@@ -43,7 +43,7 @@ namespace ZomboidBackupManager
             InitializeComponent();
 
 
-            logWriter = new StatusLogWriter(txtLog, false, 9f);
+            logWriter = new StatusLogWriter(txtLog, true, 9f, 999, 2, 0);
             logWriter.OnStatusChanged += StatusLogWriter_OnStatusChanged;
 
             SetIndexChangeEventsSuspended(this, true);
@@ -555,10 +555,8 @@ namespace ZomboidBackupManager
 
         private void PZScriptHook_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (fileWatcher.EnableRaisingEvents)
-            {
-                StopTracking();
-            }
+            fileWatcher.Dispose();
+            checkTimer.Dispose();
         }
 
         private void SetSavegameInfoPanelValue()

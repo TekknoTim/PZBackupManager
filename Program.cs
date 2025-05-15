@@ -10,14 +10,29 @@ namespace ZomboidBackupManager
         [STAThread]
         static void Main()
         {
+            /*
+            Application.ThreadException += (sender, args) =>
+            {
+                MessageBox.Show("ThreadException: " + args.Exception.Message);
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                Exception ex = (Exception)args.ExceptionObject;
+                MessageBox.Show("UnhandledException: " + ex.Message);
+            };
+            */
             if (IsProcessOpen())
             {
                 MessageBox.Show("The program is already running!");
                 return;
             }
+            
+            FontLoader.LoadDefaultCustomFonts();
             Configuration.Init();
             ApplicationConfiguration.Initialize();
             Application.Run(new MainWindow());
+            
         }
 
         private static bool IsProcessOpen()

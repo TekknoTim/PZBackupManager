@@ -15,13 +15,12 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Policy;
 using System.Drawing.Text;
 using System.Reflection.Emit;
+using System.Collections.Generic;
 
 namespace ZomboidBackupManager
 {
     public partial class MainWindow : Form
     {
-        private Form? PZScriptHookWindow;
-
         private ZipWatcher? Watcher;
 
         public bool isInSelectionMode = false;
@@ -30,13 +29,32 @@ namespace ZomboidBackupManager
 
         public List<ZipData> ZipDataCache = new List<ZipData>();
 
-        public MainWindow()
+        private float ListBoxFontSize = 12f;
+        private bool ListBoxFontsBolt = true;
+
+        public MainWindow(float fListBoxFontSize = 12f, bool bListBoxFontsBolt = true)
         {
             InitializeComponent();
+            ListBoxFontSize = fListBoxFontSize;
+            ListBoxFontsBolt = bListBoxFontsBolt;
             SelectSavegameLabel.Font = FontLoader.GetStyleFont(40f);
-            SavegameListBox.Font = FontLoader.GetUbuntuMonoFont(12f, true);
-            BackupListBox.Font = FontLoader.GetUbuntuMonoFont(12f, true);
+            SavegameListBox.Font = FontLoader.GetMonoFont(ListBoxFontSize, ListBoxFontsBolt);
+            BackupListBox.Font = FontLoader.GetMonoFont(ListBoxFontSize, ListBoxFontsBolt);
             this.OnSkip += OnSkipCompressToZip;
+        }
+
+        private void SelectSavegameLabel_Click(object sender, EventArgs e)
+        {
+            ReloadForm();
+        }
+
+        private void ReloadForm()
+        {
+            this.Hide();
+            //ListBoxFontsBolt = !ListBoxFontsBolt;
+            var newForm = new MainWindow(ListBoxFontSize, ListBoxFontsBolt);
+            newForm.FormClosed += (s, e) => this.Close(); // alte Form schlieﬂen, wenn neue fertig
+            newForm.Show();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -50,6 +68,18 @@ namespace ZomboidBackupManager
             EnableExperimentalFeatures(expFeaturesEnabled);
             ShowUpdateInfoWindow();
             initRunning = false;
+        }
+
+        private void SetInteractablesEnabled(bool bSet = true)
+        {
+            Toolstrip1.Enabled = bSet;
+            BackupRestoreToolStrip.Enabled = bSet;
+            GamemodeComboBox.Enabled = bSet;
+            SavegameListBox.Enabled = bSet;
+            BackupListBox.Enabled = bSet;
+            HalfWindowModeRadioButton.Enabled = bSet;
+            NormalWindowModeRadioButton.Enabled = bSet;
+            ChangeBackupFolderTextbox.Enabled = bSet;
         }
 
         private void ShowUpdateInfoWindow()
@@ -540,7 +570,7 @@ namespace ZomboidBackupManager
                 return;
             }
             ProgressbarPanel.Visible = true;
-            this.Enabled = false;
+            SetInteractablesEnabled(false);
             Restore restore = new Restore();
             restore.OnStatusChanged += Restore_OnStatusChanged;
             await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel);
@@ -554,11 +584,10 @@ namespace ZomboidBackupManager
                 return;
             }
             ProgressbarPanel.Visible = true;
-            this.Enabled = false;
+            SetInteractablesEnabled(false);
             Backup backup = new Backup();
             backup.OnStatusChanged += Backup_OnStatusChanged;
-            await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetLastBackupIndexFromJson(), ProgressbarLabel, ProgressBarA);
-
+            await backup.DoBackup(currentLoadedSavegame, currentLoadedGamemode, GetFullLoadedSavegamePath(), currentLoadedBackupFolderPATH, GetBackupCount(), ProgressbarLabel, ProgressBarA);
         }
 
         private async void SetSaveBackupsAsZipSetting()
@@ -791,7 +820,7 @@ namespace ZomboidBackupManager
                 return;
             }
             multiDelete.OnStatusChanged += DeleteMulti_OnStatusChanged;
-            this.Enabled = false;
+            SetInteractablesEnabled(false);
             multiDelete.StartDeleteMultiple();
         }
 
@@ -805,7 +834,7 @@ namespace ZomboidBackupManager
             }
             else if ((s == Status.DONE) || (s == Status.CANCELED))
             {
-                this.Enabled = true;
+                SetInteractablesEnabled(true);
                 this.WindowState = FormWindowState.Normal;
                 SetSelectionMode(false);
                 LoadAndDisplayBackups();
@@ -846,7 +875,7 @@ namespace ZomboidBackupManager
                     ProgressBarA.Value = 0;
                     ProgressbarLabel.Text = @" - ";
                     ProgressbarPanel.Visible = false;
-                    this.Enabled = true;
+                    SetInteractablesEnabled(true);
                 }
 
             }
@@ -869,7 +898,7 @@ namespace ZomboidBackupManager
                 ProgressBarA.Value = 0;
                 ProgressbarLabel.Text = @" - ";
                 ProgressbarPanel.Visible = false;
-                this.Enabled = true;
+                SetInteractablesEnabled(true);
             }
         }
 
@@ -1010,21 +1039,10 @@ namespace ZomboidBackupManager
         private void LoadHookWindow()
         {
             var form = new PZScriptHook();
-            form.FormClosing += new FormClosingEventHandler(OnHookWindowClosing);
-            PZScriptHookWindow = form;
-            form.myParentForm = this;
-            form.Show();
             this.Hide();
-        }
-
-        public void OnHookWindowClosing(object? sender, EventArgs e)
-        {
-            if (PZScriptHookWindow != null)
-            {
-                PZScriptHookWindow.FormClosing -= OnHookWindowClosing;
-
-                PZScriptHookWindow = null;
-            }
+            form.myParentForm = this;
+            form.ShowDialog();
+            if (!form.IsDisposed) { form.Dispose(); }
             UnhideForm();
         }
 
@@ -1436,13 +1454,12 @@ namespace ZomboidBackupManager
 
         private void SearchForUnlistedBackupsToolStripButton_Click(object sender, EventArgs e)
         {
-            this.Visible = false;
-            //this.Opacity = 0.6;
-            BackupDataCleanerWindow unlistedBackupsWin = new BackupDataCleanerWindow();
-            unlistedBackupsWin.ShowDialog();
-            unlistedBackupsWin.Dispose();
-            this.Visible = true;
-            //this.Opacity = 1.0;
+            this.Hide();
+            BackupDataCleanerWindow backupDataCleanerWin = new BackupDataCleanerWindow();
+            backupDataCleanerWin.ShowDialog();
+            if (!backupDataCleanerWin.IsDisposed) { backupDataCleanerWin.Dispose(); } 
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
             LoadAndDisplayBackups();
             SetSavegameLabelValues();
             SetBackupLabelValues();
@@ -1452,9 +1469,6 @@ namespace ZomboidBackupManager
         {
 
         }
-
-
-
 
         //=================================================================================================================
         //----------------------------------------[ End Zip Archive Functions ]--------------------------------------------

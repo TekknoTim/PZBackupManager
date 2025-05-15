@@ -75,7 +75,7 @@
             // 
             StatusLog.BackColor = SystemColors.ControlLightLight;
             StatusLog.Dock = DockStyle.Fill;
-            StatusLog.Font = new Font("Ubuntu Mono", 11F);
+            StatusLog.Font = new Font("Microsoft Sans Serif", 11F);
             StatusLog.FormattingEnabled = true;
             StatusLog.HorizontalExtent = 10;
             StatusLog.Items.AddRange(new object[] { "Loading..." });
@@ -317,11 +317,11 @@
             // 
             CleanUpHeadLabel.AutoSize = true;
             CleanUpHeadLabel.BackColor = Color.MistyRose;
-            CleanUpHeadLabel.Font = new Font("Zombie", 40F);
+            CleanUpHeadLabel.Font = new Font("Microsoft Sans Serif", 40F);
             CleanUpHeadLabel.Location = new Point(16, 18);
             CleanUpHeadLabel.Margin = new Padding(2, 0, 2, 0);
             CleanUpHeadLabel.Name = "CleanUpHeadLabel";
-            CleanUpHeadLabel.Size = new Size(591, 43);
+            CleanUpHeadLabel.Size = new Size(539, 63);
             CleanUpHeadLabel.TabIndex = 25;
             CleanUpHeadLabel.Text = "Backup Data Cleaner";
             // 
@@ -395,6 +395,7 @@
             StatusLogConfigContextStripMenu.Items.AddRange(new ToolStripItem[] { LogGeneralMenuCMStrip, LogSepMenuCMStrip });
             StatusLogConfigContextStripMenu.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             StatusLogConfigContextStripMenu.Name = "ToolStripOptionsContextMenuStrip";
+            StatusLogConfigContextStripMenu.OwnerItem = StatusLogSettingsTSDropDownButton;
             StatusLogConfigContextStripMenu.RightToLeft = RightToLeft.Yes;
             StatusLogConfigContextStripMenu.ShowCheckMargin = true;
             StatusLogConfigContextStripMenu.ShowImageMargin = false;
@@ -469,7 +470,7 @@
             ChangeSep01_TextBox.AutoSize = false;
             ChangeSep01_TextBox.BorderStyle = BorderStyle.FixedSingle;
             ChangeSep01_TextBox.CharacterCasing = CharacterCasing.Upper;
-            ChangeSep01_TextBox.Font = new Font("Ubuntu Mono", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
+            ChangeSep01_TextBox.Font = new Font("Microsoft Sans Serif", 14F, FontStyle.Bold, GraphicsUnit.Pixel);
             ChangeSep01_TextBox.MaxLength = 19;
             ChangeSep01_TextBox.MergeAction = MergeAction.MatchOnly;
             ChangeSep01_TextBox.Name = "ChangeSep01_TextBox";
@@ -503,24 +504,22 @@
             // 
             FontSizeComboBox.AutoSize = false;
             FontSizeComboBox.BackColor = Color.RosyBrown;
-            FontSizeComboBox.FlatStyle = FlatStyle.Flat;
             FontSizeComboBox.Font = new Font("Bahnschrift SemiCondensed", 11.25F);
             FontSizeComboBox.ForeColor = SystemColors.ControlLightLight;
-            FontSizeComboBox.Items.AddRange(new object[] { "10", "11", "12", "14", "16", "18", "20", "22", "4", "5", "6", "8", "9" });
+            FontSizeComboBox.Items.AddRange(new object[] { "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" });
             FontSizeComboBox.Margin = new Padding(0);
-            FontSizeComboBox.MaxDropDownItems = 12;
+            FontSizeComboBox.MaxDropDownItems = 14;
             FontSizeComboBox.MergeAction = MergeAction.MatchOnly;
             FontSizeComboBox.Name = "FontSizeComboBox";
             FontSizeComboBox.Overflow = ToolStripItemOverflow.Never;
-            FontSizeComboBox.Padding = new Padding(2, 5, 2, 5);
-            FontSizeComboBox.RightToLeft = RightToLeft.No;
-            FontSizeComboBox.Size = new Size(100, 28);
-            FontSizeComboBox.Sorted = true;
+            FontSizeComboBox.Size = new Size(85, 28);
             FontSizeComboBox.Text = "Font Size";
             FontSizeComboBox.TextAlign = ContentAlignment.TopRight;
             FontSizeComboBox.TextImageRelation = TextImageRelation.TextBeforeImage;
+            FontSizeComboBox.SelectedIndexChanged += FontSizeComboBox_SelectedIndexChanged;
+            FontSizeComboBox.Click += FontSizeComboBox_Click;
             // 
-            // UnlistedBackupsWindow
+            // BackupDataCleanerWindow
             // 
             AcceptButton = DoneButton;
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -540,7 +539,7 @@
             MaximumSize = new Size(640, 780);
             MinimizeBox = false;
             MinimumSize = new Size(640, 780);
-            Name = "UnlistedBackupsWindow";
+            Name = "BackupDataCleanerWindow";
             Padding = new Padding(1);
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;

@@ -154,10 +154,10 @@ namespace ZomboidBackupManager
         public int WidthOffset { get; set; }
         public int HeightOffset { get; set; }
 
-        public LogSize(ListBox log, System.Drawing.Font font, int offsetX = 0, int offsetY = 0)
+        public LogSize(ListBox log, float fontSize, int offsetX = 0, int offsetY = 0)
         {
-            width = GetVisibleCharCountMonospace(log, font, true);
-            height = GetVisibleCharCountMonospace(log, font, false);
+            width = GetVisibleCharCountMonospace(log, fontSize, true);
+            height = GetVisibleCharCountMonospace(log, fontSize, false);
             widthOffset = offsetX;
             heightOffset = offsetY;
 
@@ -184,9 +184,9 @@ namespace ZomboidBackupManager
             return height - heightOffset;
         }
 
-        private static int GetVisibleCharCountMonospace(ListBox listBox, System.Drawing.Font font, bool bHorizontal = true)
+        private static int GetVisibleCharCountMonospace(ListBox listBox, float fontSize, bool bHorizontal = true)
         {
-            Size measuredSize = TextRenderer.MeasureText("X", font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+            Size measuredSize = TextRenderer.MeasureText("X", FontLoader.GetMonoFont(fontSize), new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
 
             int charWidth = measuredSize.Width;
             int charHeight = measuredSize.Height;
@@ -218,21 +218,21 @@ namespace ZomboidBackupManager
         {
             Size = size;
             IsBolt = bBolt;
-            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
+            Type = FontLoader.GetMonoFont(Size, IsBolt);
         }
 
         public void ChangeSize(float newSize)
         {
             float oldSize = Size;
             Size = newSize;
-            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
+            Type = FontLoader.GetMonoFont(Size, IsBolt);
             PrintDebug($"[FontData] - [Changed FontData Size] - [From = {oldSize} To = {Size}]");
         }
 
         public void SwitchStyle()
         {
             IsBolt = !IsBolt;
-            Type = FontLoader.GetUbuntuMonoFont(Size, IsBolt);
+            Type = FontLoader.GetMonoFont(Size, IsBolt);
         }
     }
 
@@ -254,7 +254,7 @@ namespace ZomboidBackupManager
         {
             logRef = listBox;
             font = new FontData(fontSize, bolt);
-            size = new LogSize(logRef, font.Type, offsetX, offsetY);
+            size = new LogSize(logRef, fontSize, offsetX, offsetY);
             numeration = num;
             maxLines = numMax;
             logRef.Font = font.Type;
@@ -262,11 +262,13 @@ namespace ZomboidBackupManager
 
         public LogData(LogData logData)
         {
+            //MessageBox.Show($"TEST = {logData}");
             logRef = logData.LogRef;
             font = new FontData(logData.FontStyle.Size, logData.FontStyle.IsBolt);
-            size = new LogSize(logData.LogRef, font.Type, logData.LogSize.WidthOffset, logData.LogSize.HeightOffset);
+            size = new LogSize(logData.LogRef, logData.FontStyle.Size, logData.LogSize.WidthOffset, logData.LogSize.HeightOffset);
             numeration = logData.Numeration;
             maxLines = logData.MaxLines;
+            logRef.Font = font.Type;
         }
 
         public void ToggleLogFontStyle()
@@ -309,8 +311,6 @@ namespace ZomboidBackupManager
         public event EventHandler<Status>? OnStatusChanged;
         public event EventHandler<int>? OnScrollingDone;
 
-        private System.Windows.Forms.Timer logTimer;
-
         private LogData logData;
         private Status currentStatus;
         private Status lastStatus;
@@ -328,10 +328,6 @@ namespace ZomboidBackupManager
             OnStatusChanged += StatusChanged;
             OnScrollingDone += OnScrolling_Done;
 
-            logTimer = new System.Windows.Forms.Timer();
-            logTimer.Interval = 5000;
-            logTimer.Tick += LogTimer_Tick;
-
             ChangeCurrentStatus(Status.INIT);
 
             StatusLogWriter_Ready();
@@ -341,11 +337,6 @@ namespace ZomboidBackupManager
         {
             await Task.Delay(250);
             currentLogItemSelection = val;
-        }
-
-        private void LogTimer_Tick(object? sender, EventArgs e)
-        {
-            PrintDebug($"[StatusLogWriter] - [LogTimer_Tick]");
         }
 
         public int GetLogItemLimit()
@@ -377,9 +368,7 @@ namespace ZomboidBackupManager
         {
             int i = logData.GetLogItemCount();
             int width = logData.GetLogSize().Width;
-            string inputTxt = $"[ {text} ]";
-            string inputVal = $"[ {value} ]";
-            string[] label = CreateDualLabel(inputTxt, inputVal, width, logData.Numeration, i);
+            string[] label = CreateDualLabel(text, value, width, logData.Numeration, i);
             await WriteContentToLog(label);
         }
 

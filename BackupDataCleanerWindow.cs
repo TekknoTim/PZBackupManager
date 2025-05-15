@@ -30,8 +30,6 @@ namespace ZomboidBackupManager
 
         StatusLogWriter logWriter;
 
-        private System.Drawing.Font HeadlineFont;
-
         private event EventHandler<bool[]> OnAutoClean;
         private event EventHandler<int> OnScanUnlisted;
         private event EventHandler<int> OnScanBadJsonData;
@@ -46,29 +44,10 @@ namespace ZomboidBackupManager
             OnAutoClean += OnAutoCleanDone;
             OnScanUnlisted += OnScanDone;
             OnScanBadJsonData += OnJsonDataScanDone;
-            
-
-            HeadlineFont = FontLoader.GetStyleFont(40f);
             logWriter = new StatusLogWriter(StatusLog, LogToggleNumCMStrip.Checked, 11f, 999, 3, 1);
-            logWriter.OnStatusChanged += LogWriter_OnStatusChanged;
-            CleanUpDataHeadLabel.Font = HeadlineFont;
-            PrintDebug($"HeadlineFont = [{HeadlineFont.Name}]");
-        }
-
-        private void LogWriter_OnStatusChanged(object? sender, Status s)
-        {
-            if (s == Status.READY)
-            {
-                PrintDebug($"[UnlistedBackupsWindow.cs] - [StatusLogWriter] - [OnStatusChanged] - [New Status = {s}]");
-            }
-            else if (s == Status.BUSY)
-            {
-                PrintDebug($"[UnlistedBackupsWindow.cs] - [StatusLogWriter] - [OnStatusChanged] - [New Status = {s}]");
-            }
-            else if (s == Status.DONE)
-            {
-                PrintDebug($"[UnlistedBackupsWindow.cs] - [StatusLogWriter] - [OnStatusChanged] - [New Status = {s}]");
-            }
+            //MessageBox.Show($" Font = {FontLoader.GetStyleFont(39f)}");
+            CleanUpHeadLabel.Font = FontLoader.GetStyleFont(39f);
+            PrintDebug($"[BackupDataCleanerWindow] - [CleanUpDataHeadLabel.Font = {CleanUpDataHeadLabel.Font}]");
         }
 
         private List<string> SearchForBackupsWithoutJsonData()
@@ -144,7 +123,6 @@ namespace ZomboidBackupManager
         private void DoneButton_Click(object sender, EventArgs e)
         {
             this.Close();
-            this.Dispose();
         }
 
         private void AutoCleanToolStripButton_Click(object sender, EventArgs e)
@@ -155,7 +133,7 @@ namespace ZomboidBackupManager
         private async void PerformAutoCleanup()
         {
             this.Enabled = false;
-            await logWriter.WriteLabelToLog(" Starting... "," Auto Clean ");
+            await logWriter.WriteLabelToLog(" Starting... ", " Auto Clean ");
             bool resultUnlisted = false;
             bool resultDeleteUnlisted = false;
             bool resultJson = false;
@@ -405,7 +383,29 @@ namespace ZomboidBackupManager
 
         private void UnlistedBackupsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logWriter.OnStatusChanged -= LogWriter_OnStatusChanged;
+
+        }
+
+        private void FontSizeComboBox_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FontSizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var item = FontSizeComboBox.SelectedItem;
+            if (item != null)
+            {
+                string? name = item.ToString();
+                if (!string.IsNullOrEmpty(name))
+                {
+                    float newSize = float.Parse(name);
+                    logWriter.ChangeFontSize(newSize, false);
+                    logWriter.WriteDualLabelToLog("Status Log font size set to: ", newSize.ToString(), SeparatorType.Light);
+                }
+            }
+            
+            
         }
     }
 }

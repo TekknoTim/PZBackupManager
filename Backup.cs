@@ -77,20 +77,20 @@ namespace ZomboidBackupManager
             await backupProcess.BackupDirectoryAsync(savegamePath, backupFolderPath, progress);
 
             statusLabel.Text = "Copying Files Done!";
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
             statusLabel.Text = "Writing JSON File...";
             WriteBackupDataToJson(savegameName, backupFolderPath);
-            Thread.Sleep(500);
+            await Task.Delay(500);
             statusLabel.Text = "Done!";
 
-            Thread.Sleep(100);
+            await Task.Delay(100);
 
             if (showMsgWhenBackupProcessDone)
             {
                 MessageBox.Show($"Backup No.{index + 1} successfully created!", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            Thread.Sleep(500);
+            await Task.Delay(500);
 
             ChangeCurrentStatus(Status.DONE);
         }
@@ -120,10 +120,10 @@ namespace ZomboidBackupManager
             await backupProcess.BackupDirectoryAsync(GetFullLoadedSavegamePath(), backupFolderPath, progress);
 
             PrintStatusLog(statusLog, "Copying Files Done!");
-            Thread.Sleep(1000);
+            await Task.Delay(1000);
             PrintStatusLog(statusLog, "Writing JSON File...");
             WriteBackupDataToJson(currentLoadedSavegame, backupFolderPath);
-            Thread.Sleep(500);
+            await Task.Delay(500);
 
             PrintStatusLog(statusLog, "Backup Process Finished!");
 
