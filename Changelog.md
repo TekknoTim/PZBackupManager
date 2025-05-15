@@ -1,4 +1,11 @@
 PZ Backup Manager Changelog:
+[v0.0.62] - [15.05.2025] - [Windows loading issue fixes]
+ 1. - Fixed: Errors when using & closing either the ScriptHookWindow or BackupDataCleanerWindow.
+ 2. - Fixed: The backup done confirmation messagebox was showing the wrong number of the new backup.
+ 3. - Added: A hidden method, to reload the main window, which is done by clicking the main headline label (Top left Headline)
+ 
+[v0.0.61] - [14.05.2025] - [Fonts not loading hotfix]
+ 1. - Fixed: Fonts should now load properly.
 
 [v0.0.6] - [12.05.2025] - [BugFixing & Cosmetic Adjustments] - [LATEST]
  1. - Fixed: If the PZBaMaScriptHook.ini contains just a single line, updating with savegame validation fails.

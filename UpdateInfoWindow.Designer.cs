@@ -36,10 +36,10 @@
             // 
             // OkButton
             // 
-            OkButton.AutoSize = true;
-            OkButton.Location = new Point(353, 540);
+            OkButton.Location = new Point(549, 717);
+            OkButton.Margin = new Padding(540, 3, 540, 3);
             OkButton.Name = "OkButton";
-            OkButton.Size = new Size(75, 29);
+            OkButton.Size = new Size(86, 32);
             OkButton.TabIndex = 0;
             OkButton.Text = "OK";
             OkButton.UseVisualStyleBackColor = true;
@@ -47,20 +47,21 @@
             // 
             // ChangeLogTextBox
             // 
-            ChangeLogTextBox.Location = new Point(34, 103);
+            ChangeLogTextBox.Location = new Point(34, 58);
             ChangeLogTextBox.Margin = new Padding(25);
             ChangeLogTextBox.Name = "ChangeLogTextBox";
-            ChangeLogTextBox.Size = new Size(716, 409);
+            ChangeLogTextBox.Size = new Size(1116, 631);
             ChangeLogTextBox.TabIndex = 1;
             ChangeLogTextBox.Text = "";
             // 
             // GeneralInfoLabel
             // 
             GeneralInfoLabel.AutoSize = true;
-            GeneralInfoLabel.Location = new Point(317, 34);
-            GeneralInfoLabel.Margin = new Padding(25);
+            GeneralInfoLabel.Font = new Font("Bahnschrift", 18F);
+            GeneralInfoLabel.Location = new Point(475, 14);
+            GeneralInfoLabel.Margin = new Padding(480, 5, 480, 25);
             GeneralInfoLabel.Name = "GeneralInfoLabel";
-            GeneralInfoLabel.Size = new Size(148, 19);
+            GeneralInfoLabel.Size = new Size(220, 29);
             GeneralInfoLabel.TabIndex = 2;
             GeneralInfoLabel.Text = "Update Information";
             // 
@@ -70,7 +71,7 @@
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(784, 591);
+            ClientSize = new Size(1184, 761);
             Controls.Add(GeneralInfoLabel);
             Controls.Add(ChangeLogTextBox);
             Controls.Add(OkButton);
@@ -80,7 +81,6 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "UpdateInfoWindow";
-            Opacity = 0.9D;
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Update Information";
