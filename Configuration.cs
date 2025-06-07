@@ -8,7 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using static ZomboidBackupManager.DebugLog;
 using static ZomboidBackupManager.Configuration;
 using SharpCompress.Common;
 
@@ -32,8 +32,10 @@ namespace ZomboidBackupManager
         public int UsedZipArchiverID { get; set; }
         public string ZipArchiverExePath { get; set; }
         public  bool ExperimentalFeatures {  get; set; }
+        public bool EnableDebugLog { get; set; }
+        public int LogFileMax { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool enDebugLog, int logFileMaximum)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -51,6 +53,8 @@ namespace ZomboidBackupManager
             UsedZipArchiverID = zipArchiver;
             ZipArchiverExePath = archiverExe;
             ExperimentalFeatures = expFeatures;
+            EnableDebugLog = enDebugLog;
+            LogFileMax = logFileMaximum;
         }
     }
 
@@ -70,7 +74,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, enableDebugLog, logFileMax);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -160,7 +164,8 @@ namespace ZomboidBackupManager
                     usedZipArchiver = cfg.UsedZipArchiverID;
                     zipArchiverExePath = cfg.ZipArchiverExePath;
                     expFeaturesEnabled = cfg.ExperimentalFeatures;
-
+                    enableDebugLog = cfg.EnableDebugLog;
+                    logFileMax = cfg.LogFileMax;
                 }
             }
         }
@@ -211,8 +216,8 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2505.15f;
-        public static readonly string appVersion = "v0.0.62";
+        private static readonly float version = 2506.07f;
+        public static readonly string appVersion = "v0.1.0";
         public static bool initRunning = false;
         
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
@@ -258,6 +263,8 @@ namespace ZomboidBackupManager
         public static bool keepBackupFolderAfterZip = true;
         public static bool autoDeleteEnabled = false;
         public static bool expFeaturesEnabled = false;
+        public static bool enableDebugLog = false;
+        public static int logFileMax = 4;
 
         public static int autoDeleteKeepBackupsCount = 5;
         public static int autoDelBackupCountUserSet = 5;
@@ -271,6 +278,7 @@ namespace ZomboidBackupManager
         public static bool showUpdateInfoWindow = false;
 
         //Debug Functions:
+        private static DebugLog? debugLog;
 
         public static void PrintDebug(string msg, int lvl = 0)
         // msg = the debug message, which is printed in console.
@@ -280,6 +288,10 @@ namespace ZomboidBackupManager
             if (lvl == 2)
             {
                 label = debugErrorLabel;
+                if (enableDebugLog)
+                {
+                    LogError(msg);
+                }
             }
             else if (lvl == 1)
             {
@@ -288,8 +300,12 @@ namespace ZomboidBackupManager
             else
             {
                 label = debugInfoLabel;
+                if (enableDebugLog)
+                {
+                    LogInfo(msg);
+                }
             }
-            string fullMessage = label + msg;
+            string fullMessage = label + msg;            
             Debug.WriteLine(fullMessage);
         }
 
@@ -297,16 +313,24 @@ namespace ZomboidBackupManager
         public static void Init()
         {
             initRunning = true;
-            PrintDebug("======================================================");
-            PrintDebug("-------------[ Starting Initialization! ]-------------");
-            PrintDebug("======================================================");
-            PrintDebug("[Initialization] --> Setting Properties:");
             currentBaseBackupFolderPATH = baseBackupFolderPATH;
             absoluteSavegamePATH = userProfilePATH + relativeSavegamePATH;
             CreateDirStructures(currentBaseBackupFolderPATH);
             LoadConfigurationFromJson();
+            if (enableDebugLog)
+            {
+                debugLog = new DebugLog();
+            }
+            PrintDebug("-------------======================================================-------------");
+            PrintDebug("--------------------------[ Starting Initialization! ]--------------------------");
+            PrintDebug("-------------======================================================-------------");
             WriteModVersionFile();
-            PrintDebug($"userProfilePATH = [{userProfilePATH}] \n absoluteSavegamePATH = [{absoluteSavegamePATH}] \n currentBaseBackupFolderPATH = [{currentBaseBackupFolderPATH}]");
+            PrintDebug($"---------[userProfilePATH = {userProfilePATH}]---------");
+            PrintDebug("-------------======================================================-------------");
+            PrintDebug($"-------[absoluteSavegamePATH = {absoluteSavegamePATH}]-------");
+            PrintDebug("-------------======================================================-------------");
+            PrintDebug($"-----[currentBaseBackupFolderPATH = {currentBaseBackupFolderPATH}]-----");
+            PrintDebug("-------------======================================================-------------");
             PrintDebug("[Initialization] --> Setting Properties Done! --> Loading last loaded savegame");
             if (autoSelectSavegameOnStart)
             {
@@ -324,9 +348,9 @@ namespace ZomboidBackupManager
             {
                 PrintDebug("[Initialization] --> Load Last loaded savegame aborted! -> Feature disabled");
             }
-            PrintDebug("======================================================");
-            PrintDebug("--------------------[ Init Done! ]--------------------");
-            PrintDebug("======================================================");
+            PrintDebug("-------------======================================================-------------");
+            PrintDebug("----------------------------[ Initialization Done! ]----------------------------");
+            PrintDebug("-------------======================================================-------------");
         }
 
         public static void CreateDirStructures(string backupFolderPATH)
