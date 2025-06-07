@@ -27,7 +27,6 @@ namespace ZomboidBackupManager
                 MessageBox.Show("The program is already running!");
                 return;
             }
-            
             FontLoader.LoadDefaultCustomFonts();
             Configuration.Init();
             ApplicationConfiguration.Initialize();
