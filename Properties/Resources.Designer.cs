@@ -145,6 +145,15 @@ namespace ZomboidBackupManager.Properties
             }
         }
 
+        internal static System.Drawing.Bitmap SquareWithPlusIconImage
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SquareWithPlusIconImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         internal static System.Drawing.Image PZBackupManagerLogo
         {
             get

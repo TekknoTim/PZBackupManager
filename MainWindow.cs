@@ -1,6 +1,7 @@
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 using static ZomboidBackupManager.JsonData;
@@ -16,6 +17,7 @@ using System.Security.Policy;
 using System.Drawing.Text;
 using System.Reflection.Emit;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace ZomboidBackupManager
 {
@@ -27,6 +29,7 @@ namespace ZomboidBackupManager
 
         private event EventHandler<string> OnSkip;
 
+        public Dictionary<string, DatabaseData>? databaseDataList;
         public List<ZipData> ZipDataCache = new List<ZipData>();
 
         private float ListBoxFontSize = 12f;
@@ -50,11 +53,13 @@ namespace ZomboidBackupManager
 
         private void ReloadForm()
         {
+            PrintDebug("[MainWindow] - [ReloadingForm] - [Reloading form now...]");
             this.Hide();
             //ListBoxFontsBolt = !ListBoxFontsBolt;
             var newForm = new MainWindow(ListBoxFontSize, ListBoxFontsBolt);
             newForm.FormClosed += (s, e) => this.Close(); // alte Form schließen, wenn neue fertig
             newForm.Show();
+            PrintDebug("[MainWindow] - [ReloadingForm] - [Form Reloaded]");
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -71,6 +76,21 @@ namespace ZomboidBackupManager
             SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
             EnableExperimentalFeatures(expFeaturesEnabled);
             ShowUpdateInfoWindow();
+            ImportDatabaseDataList();
+            if (Configuration.smartBackupModeEnabled)
+            {
+                if (!SmartBackupDatabasePanel.Visible)
+                {
+                    SmartBackupDatabasePanel.Visible = true;
+                }
+            }
+            else
+            {
+                if (SmartBackupDatabasePanel.Visible)
+                {
+                    SmartBackupDatabasePanel.Visible = false;
+                }
+            }
             initRunning = false;
         }
 
@@ -250,9 +270,89 @@ namespace ZomboidBackupManager
                 BackupButton.Enabled = false;
                 SetAutoDeleteInfoLabelEn(false);
             }
+            if (Configuration.smartBackupModeEnabled)
+            {
+                if (!SmartBackupDatabasePanel.Visible)
+                {
+                    SmartBackupDatabasePanel.Visible = true;
+                }
+                if (databaseDataList != null && databaseDataList.Count > 0)
+                {
+                    if (databaseDataList.TryGetValue(currentLoadedSavegame, out DatabaseData? dbData))
+                    {
+                        SetupDataGridView(dbData);
+                    }
+                    else
+                    {
+                        string savegame = currentLoadedSavegame;
+                        if (savegame == null) { return; }
+                        DatabaseData data = new DatabaseData(savegame, currentLoadedGamemode, Configuration.GetFullLoadedSavegamePath(), Configuration.currentLoadedBackupFolderPATH, Configuration.GetDatabasePath(savegame));
+                        databaseDataList.Add(savegame, data);
+                        SetupDataGridView(data);
+                        WriteDatabaseDataToJson(databaseDataList);
+                    }
+                }
+                else
+                {
+                    databaseDataList = new Dictionary<string, DatabaseData>();
+                    string savegame = currentLoadedSavegame;
+                    if (savegame == null) { return; }
+                    DatabaseData data = new DatabaseData(savegame, currentLoadedGamemode, Configuration.GetFullLoadedSavegamePath(), Configuration.currentLoadedBackupFolderPATH, Configuration.GetDatabasePath(savegame));
+                    databaseDataList.Add(savegame, data);
+                    SetupDataGridView(data);
+                    WriteDatabaseDataToJson(databaseDataList);
+                }
+            }
+            else
+            {
+                if (SmartBackupDatabasePanel.Visible)
+                {
+                    SmartBackupDatabasePanel.Visible = false;
+                }
+            }
             SetSavegameLabelValues();
             ResetBackupThumbnailAndData();
             SetBackupButtonsEn(false);
+        }
+
+        private void WriteDatabaseDataToJson(Dictionary<string, DatabaseData> data)
+        {
+            if (data == null)
+            {
+                PrintDebug("[MainWindow] - [WriteDatabaseDataToJson] - [Aborted] - Data is null!");
+                return;
+            }
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Formatting.Indented);
+            string filePath = Configuration.databaseDataListFile;
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                PrintDebug("[MainWindow] - [WriteDatabaseDataToJson] - [Aborted] - Database path is null or empty!", 2);
+                return;
+            }
+            if (!File.Exists(filePath))
+            {
+                PrintDebug($"[MainWindow] - [WriteDatabaseDataToJson] - [Creating new file at {filePath}]");
+                File.Create(filePath).Close();
+            }
+
+            File.WriteAllText(filePath, json);
+            PrintDebug($"[MainWindow] - [WriteDatabaseDataToJson] - [Data written to {filePath}]");
+        }
+
+        private void ImportDatabaseDataList()
+        {
+            databaseDataList = ReadDatabaseDataFromJson();
+        }
+
+        private Dictionary<string, DatabaseData>? ReadDatabaseDataFromJson()
+        {
+            if (!File.Exists(Configuration.databaseDataListFile))
+            {
+                File.Create(Configuration.databaseDataListFile).Close();
+            }
+            string jsonData = File.ReadAllText(Configuration.databaseDataListFile);
+            Dictionary<string, DatabaseData>? dataList = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, DatabaseData>>(jsonData);
+            return dataList;
         }
 
         private bool LoadSavegameThumbnail()
@@ -726,6 +826,8 @@ namespace ZomboidBackupManager
             LoadAndDisplayBackups();
         }
 
+
+
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------[  Edit Backup Menu  ]---------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1147,6 +1249,8 @@ namespace ZomboidBackupManager
             await WriteCfgToJson();
         }
 
+
+
         //=================================================================================================================
         //--------------------------------------[ Start Zip Archive Functions ]--------------------------------------------
         //=================================================================================================================
@@ -1461,7 +1565,7 @@ namespace ZomboidBackupManager
             this.Hide();
             BackupDataCleanerWindow backupDataCleanerWin = new BackupDataCleanerWindow();
             backupDataCleanerWin.ShowDialog();
-            if (!backupDataCleanerWin.IsDisposed) { backupDataCleanerWin.Dispose(); } 
+            if (!backupDataCleanerWin.IsDisposed) { backupDataCleanerWin.Dispose(); }
             this.Show();
             this.WindowState = FormWindowState.Normal;
             LoadAndDisplayBackups();
@@ -1474,11 +1578,303 @@ namespace ZomboidBackupManager
 
         }
 
+        private void SmartBackupMenuOption_Click(object sender, EventArgs e)
+        {
+            SmartBackupSetupWindow smartBackupSetup = new SmartBackupSetupWindow();
+            smartBackupSetup.ShowDialog();
+            bool modeChanged = smartBackupSetup.WasSmartModeEnabled != Configuration.smartBackupModeEnabled;
+            if (!smartBackupSetup.IsDisposed)
+            {
+                smartBackupSetup.Dispose();
+            }
+            if (modeChanged)
+            {
+                MessageBox.Show($"Smart Backup Mode changed! Reloading App...");
+                PrintDebug($"[MainWindow.cs] - [SmartBackupMenuOptionResult] - [Smart Backup Mode did change to: {Configuration.smartBackupModeEnabled}]");
+                ReloadForm();
+            }
+            else
+            {
+                PrintDebug($"[MainWindow.cs] - [SmartBackupMenuOptionResult] - [Smart Backup Mode didn't change!]");
+            }
+            if (!smartBackupSetup.IsDisposed)
+            {
+                smartBackupSetup.Dispose();
+            }
+        }
+
         //=================================================================================================================
         //----------------------------------------[ End Zip Archive Functions ]--------------------------------------------
         //=================================================================================================================
+
+        private void SetupDataGridView(DatabaseData data)
+        {
+            string databasePath = GetDatabasePath(currentLoadedSavegame);
+            bool bDBExists = File.Exists(databasePath);
+            DatabaseGridView dbGridView = new DatabaseGridView(data);
+            Dictionary<string, string> gridviewList = dbGridView.GetStringList();
+            List<string> pNames = gridviewList.Keys.ToList();
+            List<string> pValues = gridviewList.Values.ToList();
+
+            SmartBackupDataGridView.Rows.Clear();
+            SmartBackupDataGridView.Columns.Clear();
+
+            SmartBackupDataGridView.ColumnCount = 1;
+            SmartBackupDataGridView.Columns[0].Name = "Value";
+
+            string[] rowA = new string[] { pValues[0] };
+            string[] rowB = new string[] { pValues[1] };
+            string[] rowC = new string[] { pValues[2] };
+            string[] rowD = new string[] { pValues[3] };
+            string[] rowE = new string[] { pValues[4] };
+            string[] rowF = new string[] { pValues[5] };
+            string[] rowG = new string[] { pValues[6] };
+            string[] rowH = new string[] { pValues[7] };
+            string[] rowI = new string[] { pValues[8] };
+            string[] rowJ = new string[] { pValues[9] };
+
+            SmartBackupDataGridView.Rows.Add(rowA);
+            SmartBackupDataGridView.Rows.Add(rowB);
+            SmartBackupDataGridView.Rows.Add(rowC);
+            SmartBackupDataGridView.Rows.Add(rowD);
+            SmartBackupDataGridView.Rows.Add(rowE);
+            SmartBackupDataGridView.Rows.Add(rowF);
+            SmartBackupDataGridView.Rows.Add(rowG);
+            SmartBackupDataGridView.Rows.Add(rowH);
+            SmartBackupDataGridView.Rows.Add(rowI);
+            SmartBackupDataGridView.Rows.Add(rowJ);
+
+            SmartBackupDataGridView.TopLeftHeaderCell.Value = "Property";
+            foreach (DataGridViewRow row in SmartBackupDataGridView.Rows)
+            {
+                row.HeaderCell.Value = pNames[row.Index];
+            }
+            SmartBackupDataGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader);
+            SmartBackupDataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            SmartBackupDataGridView.Invalidate();
+        }
+
+        private void LoadOrCreateDatabaseButton_Click(object sender, EventArgs e)
+        {
+            if (databaseDataList == null || databaseDataList.Count == 0)
+            {
+                MessageBox.Show("DatabaseList Empty");
+                return;
+            }
+            bool result = databaseDataList.TryGetValue(currentLoadedSavegame, out DatabaseData? data);
+            if (result)
+            {
+                if (data != null)
+                {
+                    data.LoadDatabase(true);
+                    WriteDatabaseDataToJson(databaseDataList);
+                    SetupDataGridView(data);
+                }
+            }
+        }
     }
 
+    public class DatabaseGridView
+    {
+        public string? Savegame { get; set; }
+        public string? Gamemode { get; set; }
+        public string? SavegamePath { get; set; }
+        public string? BackupFolderPath { get; set; }
+        public string? DatabasePath { get; set; }
+        public string? HasDatabase { get; set; }
+        public string? IsLoaded { get; set; }
+        public string? DatabaseSize { get; set; }
+        public string? DateCreated { get; set; }
+        public string? DateEdited { get; set; }
+
+        public DatabaseGridView(DatabaseData data)
+        {
+            Savegame = data.Savegame;
+            Gamemode = data.Gamemode;
+            SavegamePath = data.SavegamePath;
+            BackupFolderPath = data.BackupFolderPath;
+            DatabasePath = data.DatabasePath;
+            HasDatabase = data.HasDatabase.ToString();
+            IsLoaded = data.DatabaseLoaded.ToString();
+            DatabaseSize = data.DBSize.ToString();
+            DateCreated = data.DBDateCreated.ToString();
+            DateEdited = data.DBDateEdited.ToString();
+        }
+
+        public Dictionary<string, string> GetStringList()
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            dict.Add("Savegame", Savegame ?? "ERROR");
+            dict.Add("Gamemode", Gamemode ?? "ERROR");
+            dict.Add("Savegame Path", SavegamePath ?? "ERROR");
+            dict.Add("Backup Path", BackupFolderPath ?? "ERROR");
+            dict.Add("Database Path", DatabasePath ?? "ERROR");
+            dict.Add("Has Database", HasDatabase ?? "False");
+            dict.Add("Is Loaded", IsLoaded ?? "False");
+            dict.Add("File Count", DatabaseSize ?? "0");
+            dict.Add("Date Created", DateCreated ?? "Unknown");
+            dict.Add("Date Edited", DateEdited ?? "Unknown");
+            dict.Add("Placeholder", ""); 
+            return dict;
+        }
+    }
+
+    public class DatabaseData
+    {
+        public bool DatabaseLoaded { get { return Database != null; } }
+        public bool HasDatabase { get { return File.Exists(DatabasePath); } }
+
+        public string Savegame { get; set; }
+        public string Gamemode { get; set; }
+        public string SavegamePath { get; set; }
+        public string BackupFolderPath { get; set; }
+        public string DatabasePath { get; set; }
+        public int DBSize { get; set; }
+        public DateTime? DBDateCreated { get; set; }
+        public DateTime? DBDateEdited { get; set; }
+
+        [JsonIgnore]
+        private Dictionary<string, FileRecord>? database;
+        [JsonIgnore]
+        public Dictionary<string, FileRecord>? Database { get { return database; } }
+
+        public DatabaseData(string savegame, string gamemode, string savegamePath, string backupPath, string databasePath)
+        {
+            Savegame = savegame;
+            Gamemode = gamemode;
+            SavegamePath = savegamePath;
+            BackupFolderPath = backupPath;
+            DatabasePath = databasePath;
+            DBSize = 0;
+            DBDateCreated = null;
+            DBDateEdited = null;
+            database = null;
+        }
+
+        public void LoadDatabase(bool bCreateNew = false)
+        {
+            bool result = TryToLoadDatabase();
+            if (!result || !DatabaseLoaded)
+            {
+                if (bCreateNew)
+                {
+                    PrintDebug($"[DatabaseData] - [LoadDatabase failed] - [No Database loaded] - [Creating new database at path = {DatabasePath}]");
+                    CreateDataBase();
+                    MessageBox.Show("Database created");
+                }
+                else
+                {
+                    MessageBox.Show("Failed to load database");
+                    PrintDebug($"[DatabaseData] - [LoadDatabase] - [Failed to load or create database]");
+                }
+            }
+            else
+            {
+                PrintDebug($"[DatabaseData] - [LoadDatabase] - [Database loaded successfully] - [DBSize = {DBSize}]");
+            }
+        }
+        private void CreateDataBase()
+        {
+            Dictionary<string, FileRecord> db = BuildFileDatabase(SavegamePath);
+            DBSize = db.Count;
+            DBDateCreated = DateTime.Now;
+            DBDateEdited = DateTime.Now;
+            WriteDatabaseToJson(DatabasePath, db);
+            database = db;
+        }
+
+        private bool TryToLoadDatabase()
+        {
+            PrintDebug($"[DatabaseData] - [LoadDatabase] - [DatabasePath = {DatabasePath}]");
+            if (string.IsNullOrEmpty(DatabasePath) || !File.Exists(DatabasePath))
+            {
+                PrintDebug($"[DatabaseData] - [LoadDatabase] - [Database does not exist at path = {DatabasePath}]");
+                return false;
+            }
+            Dictionary<string, FileRecord>? dbContent = GetDatabaseFromJson();
+            if (dbContent == null)
+            {
+                PrintDebug($"[DatabaseData] - [LoadDatabase] - [Failed to load database from JSON]");
+                return false;
+            }
+            database = dbContent;
+            DBSize = database.Count;
+            PrintDebug($"[DatabaseData] - [LoadDatabase] - [Loaded database with {DBSize} records]");
+            return true;
+        }
+
+        private Dictionary<string, FileRecord>? GetDatabaseFromJson()
+        {
+            string? dirPath = Path.GetDirectoryName(DatabasePath);
+            if (string.IsNullOrEmpty(dirPath))
+            {
+                MessageBox.Show($"Invalid dir path = [{dirPath}]");
+                return null;
+            }
+            if (!File.Exists(DatabasePath))
+            {
+                PrintDebug($"[DatabaseData] - [GetDatabaseFromJson] - [Database not existing at path = {DatabasePath}]");
+                return null;
+            }
+            PrintDebug($"[DatabaseData] - [GetDatabaseFromJson] - [backupFolderPath = {Configuration.currentBaseBackupFolderPATH}]");
+            PrintDebug($"[DatabaseData] - [GetDatabaseFromJson] - [jsonPath = {DatabasePath}]");
+            string json = File.ReadAllText(DatabasePath);
+            Dictionary<string, FileRecord>? content = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, FileRecord>>(json);
+            return content;
+        }
+
+        private void WriteDatabaseToJson(string path, Dictionary<string, FileRecord> database)
+        {
+            string? dirPath = Path.GetDirectoryName(path);
+            if (string.IsNullOrEmpty(dirPath)) { MessageBox.Show($"Invalid dir path = [{dirPath}]"); return; }
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+            }
+            PrintDebug($"[FileDatabaseInfo] - [WriteDatabaseToJson] - [backupFolderPath = {Configuration.currentBaseBackupFolderPATH}]");
+            PrintDebug($"[FileDatabaseInfo] - [WriteDatabaseToJson] - [path = {path}]");
+
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(database, Newtonsoft.Json.Formatting.Indented);
+            System.IO.File.WriteAllText(path, json);
+        }
+
+        private Dictionary<string, FileRecord> BuildFileDatabase(string directoryPath)
+        {
+            PrintDebug($"[FileDatabaseInfo] - [BuildFileDatabase] - [directoryPath = {directoryPath}]");
+            var database = new Dictionary<string, FileRecord>();
+
+            string rootPath = Path.GetFullPath(directoryPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
+            string[] allFiles = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
+
+
+            foreach (string filePath in allFiles)
+            {
+                var fileInfo = new FileInfo(filePath);
+
+                string relativePath = filePath.Substring(rootPath.Length);
+
+                database[relativePath] = new FileRecord
+                {
+                    FilePath = relativePath,
+                    Size = fileInfo.Length,
+                    LastModifiedUtc = fileInfo.LastWriteTimeUtc
+                };
+            }
+            return database;
+        }
+    }
+
+    public class FileRecord
+    {
+        public string? FilePath { get; set; } // relative path to file
+        public long? Size { get; set; } // file size in bytes
+        public DateTime? LastModifiedUtc { get; set; } // UTC-timestamp of latest change
+    }
 
     public class ZipData
     {
