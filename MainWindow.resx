@@ -129,6 +129,9 @@
   <metadata name="BackupRestoreToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>975, 15</value>
   </metadata>
+  <metadata name="BackupRestoreToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>975, 15</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="RestoreButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -166,27 +169,6 @@ with a backup, selected on the right.
 before restoring anything, if the latest backup
 isn't matching your savegame version)</value>
   </data>
-  <data name="SearchForUnlistedBackupsToolStripButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANlSURBVFhHrZfPS1tBEMeNiYFAAj16aKFFkVxziD9AAl5j
-        c9aDejLxEAIh4g+CIRcPObR3/wT/hGgP9o9oj6U99ChCvYhg8jrfIbPO27dv87Qd+OBmd97M7Ozu7Drz
-        AnlDfCQ+EdfEN+LnBLTRhzHoQPe/yXsChn8TQUKg+5n4QLxaMkSX+EO4nCQB38IGbL1I3hJfCZfR1wBb
-        sJlIisQPImJodnbWtDOZTGgsAbAJ215BlE7nwurqanB0dDRGO5VKOXU8wPY7wilYJ2fa9cy73e643+9z
-        ACCdTpuxhMCHc09gs7g+YNbW1gI4BgEJ/vZ6PROIoAPSgVvAV0hw1Ly7fXl52QRAwu3T09NQALIkFxcX
-        o4ODA9PvAL5CRxTn3KXI6JmcnJxElsDeCxKo/I7JBOoEC6qWt8hoB+VyOWi322xc9y8uLgZYEjgejUYm
-        iEajEVmmCfDJFROl06UQXF5ejtbX181vPRN780FvOByO4BR7RJYJaD0L+H5Ov3YwPz/PBprNZijd0tbo
-        71AfbMeek8LLgEvEdG5sbBgDstvB1taWMeg6/3AsgVxdXXEm0HbpKr4QfJOZzr29veDm5sak8uHhgX+f
-        nZ1FUinBHR8f85jMtFKpjJeWlkK6MXwn+DrlDl1et7e32bjMBMzNzZnxXC4XytLh4SHrZbNZozNl9uAX
-        8RyADWZerVadY2AwGASPj4+IgYPodDqhTCSAAwgtgQapLBQK3LZnI07g2BVEwsuKlyC0CQVX+orFIjsp
-        lUohHR3E/f190Gq1kgbBm9BbBTWbm5tyIkyfKwi0pQBNCYKPYWwhstcShsWB7pfNiX6tkyCIGuEvxfo0
-        IL0QHE3p29nZYSc6E0CCqNfr3O8IwpRiCFJhKzBiUIyK6H7R1UE8PT2x3t3dXbC/v8/9VhDmMoLgaoxc
-        x/rcLywssGFxHqcn2EFIJibLGrmOId4HCdjd3eUZ04xCAcShg7i9vQ1qtZqMRR4kkNgnmbCyssJGcV+4
-        xl1AX6Djib7YJxkED8bYRynSh0spn887x+PAO/L8/Bxt76NUJPZZ/hpUQYPNqc9yEUTpXY4XAltTZ24L
-        1gmbxftYnQK+hY3YNU8iOC44s953owV08c0//XNqC6oWyjYM4xLBTYbrFKCNPoyhvJoK55eZmb8S3jNz
-        0Cb/dAAAAABJRU5ErkJggg==
-</value>
-  </data>
   <data name="BackupButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -212,8 +194,8 @@ isn't matching your savegame version)</value>
   <metadata name="Toolstrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>498, 10</value>
   </metadata>
-  <metadata name="GeneralSettingsContextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>587, 10</value>
+  <metadata name="Toolstrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>498, 10</value>
   </metadata>
   <data name="SettingsDropDownButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -229,6 +211,9 @@ isn't matching your savegame version)</value>
         lAfSZsLBLanpXTbD+c577lXLnvY2spOxmaiq52a4bLl90J0Ggz/FYI3hul4eswAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="GeneralSettingsContextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>587, 10</value>
+  </metadata>
   <metadata name="EditBackupsToolbarMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>803, 15</value>
   </metadata>
@@ -306,6 +291,9 @@ isn't matching your savegame version)</value>
         tDy2JP+1f83+1RgMfgMImgVfegQZEAAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="MinimizeButtonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>68</value>
   </metadata>

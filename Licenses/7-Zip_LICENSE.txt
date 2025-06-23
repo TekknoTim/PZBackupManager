@@ -1,0 +1,14 @@
+Dieses Projekt beinhaltet die ausführbare Datei von 7-Zip,
+einem Open-Source-Dateikomprimierungsprogramm.
+
+Lizenz:
+7-Zip ist lizenziert unter der GNU LGPL v2.1.
+
+Copyright (C) 1999–2024 Igor Pavlov
+
+Der Quellcode von 7-Zip ist verfügbar unter:
+==> https://www.7-zip.org/download.html
+
+Die enthaltene Datei 7z.exe (bzw. 7zG.exe)
+wurde nicht verändert und wird lediglich zur
+ Funktionalität dieses Programms mitgeliefert.

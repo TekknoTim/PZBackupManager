@@ -19,7 +19,7 @@ using System.Reflection;
 namespace ZomboidBackupManager
 {
     public class Compress
-    {
+    {    /*
         public async Task SimpleCompress(ZipData data)
         {
             if (!expFeaturesEnabled) { return; }
@@ -100,5 +100,6 @@ namespace ZomboidBackupManager
                 archive.SaveTo(zip, CompressionType.Deflate);
             }
         }
+        */
     }
 }

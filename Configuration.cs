@@ -34,11 +34,13 @@ namespace ZomboidBackupManager
         public int UsedZipArchiverID { get; set; }
         public string ZipArchiverExePath { get; set; }
         public  bool ExperimentalFeatures {  get; set; }
-        public bool smartBackupModeEn { get; set; }
+        public bool SmartBackupModeEn { get; set; }
+        public bool SmartBackupAutoLoadEn { get; set; }
+        public int DatabaseGridViewMode { get; set; }
         public bool EnableDebugLog { get; set; }
         public int LogFileMax { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool enDebugLog, int logFileMaximum)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, int dbGridViewMode, bool enDebugLog, int logFileMaximum)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -56,7 +58,9 @@ namespace ZomboidBackupManager
             UsedZipArchiverID = zipArchiver;
             ZipArchiverExePath = archiverExe;
             ExperimentalFeatures = expFeatures;
-            smartBackupModeEn = smartBaModeEn;
+            SmartBackupModeEn = smartBaModeEn;
+            SmartBackupAutoLoadEn = smartBaAutoloadEn;
+            DatabaseGridViewMode = dbGridViewMode;
             EnableDebugLog = enDebugLog;
             LogFileMax = logFileMaximum;
         }
@@ -78,11 +82,10 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, enableDebugLog, logFileMax);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, databaseGridViewMode,enableDebugLog, logFileMax);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
-            //MessageBox.Show("Setting written to json!");
         }
 
         public static async void LoadConfigurationFromJson()
@@ -92,6 +95,12 @@ namespace ZomboidBackupManager
 
         public static bool LoadLastLoadedSavegame()
         {
+            if (smartBackupModeEnabled)
+            {
+                PrintDebug("LoadLastLoadedSavegame --> Smart Backup Mode is enabled! LoadLastLoadedSavegame is not supported yet!");
+                return false;
+            }
+
             if (!File.Exists(appConfig))
             {
                 PrintDebug("LoadLastLoadedSavegame --> Config file not found!", 2);
@@ -170,7 +179,9 @@ namespace ZomboidBackupManager
                     expFeaturesEnabled = cfg.ExperimentalFeatures;
                     enableDebugLog = cfg.EnableDebugLog;
                     logFileMax = cfg.LogFileMax;
-                    smartBackupModeEnabled = cfg.smartBackupModeEn;
+                    smartBackupModeEnabled = cfg.SmartBackupModeEn;
+                    smartBackupAutoLoadEnabled = cfg.SmartBackupAutoLoadEn;
+                    databaseGridViewMode = cfg.DatabaseGridViewMode;
                 }
             }
         }
@@ -221,16 +232,15 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2506.07f;
-        public static readonly string appVersion = "v0.1.0";
+        private static readonly float version = 2506.21f;
+        public static readonly string appVersion = "v0.6.0";
         public static bool initRunning = false;
         
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
         public static readonly string cleanUpHelperFile = Application.StartupPath + @"\AutoCleanupHelp.txt";
         public static readonly string placeholderThumbnail = Application.StartupPath + @"\placeholder.png";
-        public static readonly string smartBackupPrefix = @"_Smart";
         public static readonly string smartBackupBaseFolder = @"\SmartBackups";
-        public static readonly string databaseDataListFile = Application.StartupPath + @"\databasedata.json";
+        public static readonly string databaseDataListFile = Application.StartupPath + @"databasedata.json";
 
         //Debug Properties:
 
@@ -265,7 +275,7 @@ namespace ZomboidBackupManager
         public static string currentLoadedBackupFolderPATH = currentBaseBackupFolderPATH + @"\None";      // eg. G:\Visual Studio Projects\ZomboidBackupManager\bin\Debug\net9.0-windows\Backups\<SavegameName>
         public static int currentLoadedSavegameIndex = -1;
         public static int currentLoadedGamemodeIndex = -1;
-        public static LoadedElements loadedElements = new LoadedElements(currentLoadedGamemode, currentLoadedGamemodeIndex, currentLoadedSavegame, currentLoadedSavegameIndex, currentLoadedBackupFolderPATH);
+        public static LoadedElements loadedElements = new LoadedElements("[Init]",currentLoadedGamemode, currentLoadedGamemodeIndex, currentLoadedSavegame, currentLoadedSavegameIndex, currentLoadedBackupFolderPATH);
         public static bool showMsgWhenBackupProcessDone = true;
         public static bool autoSelectSavegameOnStart = false;
         public static bool saveBackupsAsZipFile = false;
@@ -273,6 +283,8 @@ namespace ZomboidBackupManager
         public static bool autoDeleteEnabled = false;
         public static bool expFeaturesEnabled = false;
         public static bool smartBackupModeEnabled = false;
+        public static bool smartBackupAutoLoadEnabled = false;
+        public static int databaseGridViewMode = 0;
         public static bool enableDebugLog = false;
         public static int logFileMax = 4;
 
@@ -286,6 +298,8 @@ namespace ZomboidBackupManager
         public static bool indexChangeEventsSuspended = false;
 
         public static bool showUpdateInfoWindow = false;
+
+        public static event EventHandler<string>? OnInitDone;
 
         //Debug Functions:
         private static DebugLog? debugLog;
@@ -361,6 +375,8 @@ namespace ZomboidBackupManager
             PrintDebug("-------------======================================================-------------");
             PrintDebug("----------------------------[ Initialization Done! ]----------------------------");
             PrintDebug("-------------======================================================-------------");
+            OnInitDone?.Invoke(null, "Init Done");
+            initRunning = false;
         }
 
         public static void CreateDirStructures(string backupFolderPATH)
@@ -384,6 +400,11 @@ namespace ZomboidBackupManager
 
         public static void SetSmartBackupMode(bool bSet = true)
         {
+            if (bSet && !expFeaturesEnabled)
+            {
+                PrintDebug("[Configuration.cs] - [SetSmartBackupMode] - [Smart Backup Mode unable to start. experimental features are disabled!]");
+                return;
+            }
             if (smartBackupModeEnabled && bSet) { PrintDebug("[Configuration.cs] - [SetSmartBackupMode] - [Smart Backup Mode Already Enabled!]"); return; }
             if (!smartBackupModeEnabled && !bSet) { PrintDebug("[Configuration.cs] - [SetSmartBackupMode] - [Smart Backup Mode Already Disabled!]"); return; }
             if (bSet)
@@ -399,6 +420,18 @@ namespace ZomboidBackupManager
                 PrintDebug("[Configuration.cs] - [SetSmartBackupMode] - [Smart Backup Mode disabled!]");
                 ChangeBackupFolderPath(currentBaseBackupFolderPATH);
             }
+        }
+
+        public static void SetDatabaseGridViewMode(int id)
+        {
+            PrintDebug($"[Configuration.cs] - [SetDatabaseGridViewMode] - [DatabaseGridViewMode = {databaseGridViewMode}]");
+            if (id < 0 || id > 2)
+            {
+                PrintDebug($"[Configuration.cs] - [SetDatabaseGridViewMode] - [Invalid ID!]");
+                return;
+            }
+            databaseGridViewMode = id;
+            SaveConfig();
         }
 
         public static bool IsAnySavegameLoadedCurrently()
@@ -421,8 +454,7 @@ namespace ZomboidBackupManager
             PrintDebug($"[Configuration] - [UnloadSavegame] - Unloading savegame --> [Savegame = {loadedElements.Savegame}] - [SavegameIndex = {loadedElements.SavegameIndex}]");
             //currentLoadedSavegame = string.Empty;
             //currentLoadedSavegameIndex = -1;
-            loadedElements.Savegame = string.Empty;
-            loadedElements.SavegameIndex = -1;
+
         }
 
         public static bool LoadJustGamemode(string? gamemode, int gamemodeIndex)
@@ -432,7 +464,7 @@ namespace ZomboidBackupManager
                 PrintDebug($"[Configuration] - [LoadJustGamemode] - Failed to load gamemode because it was null, empty or whitspaced - [gamemode = {gamemode}]");
                 return false;
             }
-            loadedElements = new LoadedElements(gamemode, gamemodeIndex, string.Empty, -1, currentBaseBackupFolderPATH + @"\None");
+            loadedElements = new LoadedElements("[LoadJustGamemode]", gamemode, gamemodeIndex, string.Empty, -1, currentBaseBackupFolderPATH + @"\None");
             //currentLoadedSavegame = string.Empty;
             //currentLoadedGamemode = gamemode;
             //currentLoadedBackupFolderPATH = currentBaseBackupFolderPATH + @"\None";
@@ -454,7 +486,7 @@ namespace ZomboidBackupManager
                 PrintDebug("[LoadSavegame] - Savegame already loaded!");
                 return false;
             }
-            loadedElements = new LoadedElements(gamemode, gamemodeIndex, name, savegameIndex, path);
+            loadedElements = new LoadedElements("[LoadSavegame]", gamemode, gamemodeIndex, name, savegameIndex, path);
             //currentLoadedSavegame = name;
             //currentLoadedGamemode = gamemode;
             //currentLoadedBackupFolderPATH = path;
@@ -462,6 +494,39 @@ namespace ZomboidBackupManager
             //currentLoadedSavegameIndex = savegameIndex;
             SaveConfig();
             return true;
+        }
+
+        public static bool LoadDatabaseData(string name, string gamemode)
+        {
+            string path = currentBaseBackupFolderPATH + @"\" + name;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            if ((name == currentLoadedSavegame) && (gamemode == currentLoadedGamemode))
+            {
+                PrintDebug($"[Configuration.cs] - [LoadDatabaseData] - [Savegame already loaded] - [Savegame = {currentLoadedSavegame}]");
+                return false;
+            }
+            loadedElements = new LoadedElements("[LoadDatabaseData]", gamemode, 0, name, 0, path);
+            //currentLoadedSavegame = name;
+            //currentLoadedGamemode = gamemode;
+            //currentLoadedBackupFolderPATH = path;
+            //currentLoadedGamemodeIndex = gamemodeIndex;
+            //currentLoadedSavegameIndex = savegameIndex;
+            SaveConfig();
+            return true;
+        }
+
+        public static void SetLoadedBackupFolder(string savegame)
+        {
+            string path = currentBaseBackupFolderPATH + @"\" + savegame;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            currentLoadedBackupFolderPATH = path;
+            PrintDebug($"[Configuration.cs] - [SetLoadedBackupFolder] - [LoadedBackupFolder Set To = {currentLoadedBackupFolderPATH}]");
         }
 
         public static async void ChangeBackupFolderPath(string newPATH)
@@ -510,7 +575,24 @@ namespace ZomboidBackupManager
         public static string GetDatabasePath(string savegame)
         {
             if (string.IsNullOrEmpty(savegame)) { return string.Empty; }
-            return currentBaseBackupFolderPATH + @"\" + savegame + @"\Database.json";
+            return currentBaseBackupFolderPATH + @"\" + savegame + @"\Database\Database.json";
+        }
+
+        public static string GetInitialBaseBackupPath(string savegame)
+        {
+            if (string.IsNullOrEmpty(savegame)) { return string.Empty; }
+            return currentBaseBackupFolderPATH + @"\" + savegame + @"\Database";
+        }
+
+        public static string GetSmartBackupDirPath(int index, string savegame)
+        {
+            if (string.IsNullOrEmpty(savegame)) { return string.Empty; }
+            return currentBaseBackupFolderPATH + @"\" + savegame + @"\" + FunctionLibrary.GetDefaultBackupFolderName(index);
+        }
+
+        public static string GetConfigINIFilePath()
+        {
+            return appConfig;
         }
     }
 
@@ -521,9 +603,17 @@ namespace ZomboidBackupManager
         public string Savegame { get { return currentLoadedSavegame; } set { currentLoadedSavegame = value; } }
         public int SavegameIndex { get { return currentLoadedSavegameIndex; } set { currentLoadedSavegameIndex = value; } }
         public string BackupFolder { get { return currentLoadedBackupFolderPATH; } set { currentLoadedBackupFolderPATH = value; } }
+        public bool SavegameLoaded { get { return !string.IsNullOrWhiteSpace(currentLoadedSavegame) && currentLoadedSavegameIndex >= 0; } }
+        public bool GamemodeLoaded { get { return !string.IsNullOrWhiteSpace(currentLoadedGamemode) && currentLoadedGamemodeIndex >= 0; } }
 
-        public LoadedElements(string gamemode, int iGamemode, string savegame, int iSavegame, string backupFolder)
+        public LoadedElements(string infoMsg, string gamemode, int iGamemode, string savegame, int iSavegame, string backupFolder)
         {
+            PrintDebug($"[Configuration.cs] - [LoadingElements] - [Loading {infoMsg}]");
+            PrintDebug($"[LoadingElements] - [Loaded Gamemode] - [Index = {currentLoadedGamemodeIndex}] - [Gamemode = {currentLoadedGamemode}]");
+            PrintDebug($"[LoadingElements] - [Loaded Savegame] - [Index = {currentLoadedSavegameIndex}] - [Savegame = {currentLoadedSavegame}]");
+            PrintDebug($"[LoadingElements] - [Loaded Backup Dir] - [Backup Dir = {currentLoadedBackupFolderPATH}]");
+            PrintDebug($"[LoadingElements] - [Gamemode Loaded = {GamemodeLoaded}] - [Savegame Loaded = {SavegameLoaded}]");
+
             Gamemode = gamemode;
             GamemodeIndex = iGamemode;
             Savegame = savegame;

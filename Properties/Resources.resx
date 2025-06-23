@@ -118,46 +118,103 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SwitchIconOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SwitchIconOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\IconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="CheckmarkFilled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CheckmarkFilled.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="WinRarIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\WinRarIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Checkmark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Checkmark.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SquareWithPlusIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SquareWithPlusIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ThumbnailPlaceholder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Properties\src\ThumbnailPlaceholder.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="TrashbinIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TrashbinIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ConnectSpiffo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ConnectToSpiffo211x128.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="PZBackupManagerIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>src\PZBackupManagerIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SwitchIconOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SwitchIconOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Checkmark16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Checkmark16.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DoneButtonIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DoneButtonIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PZBackupManagerLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PZBackupManagerLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadIconCCW_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LoadIconCCW_B.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowLeftIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ArrowLeftIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SpiffoHighlightsWithBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SpiffoHighlightsWithBackground.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DocumentIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\documentIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SwitchIconOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SwitchIconOn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowRightIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ArrowRightIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StarCharButton64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StarCharButton64.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowRightUpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ArrowRightUpIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WinRarIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WinRarIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="RadiowaveIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\RadiowaveIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PZBackupManagerLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PZBackupManagerLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Checkmark24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Checkmark24.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CheckmarkIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CheckmarkIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SwitchIconOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SwitchIconOff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CheckmarkFilled24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CheckmarkFilled24.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DoneButtonIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DoneButtonIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SquareWithPlusIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SquareWithPlusIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Gear2Color_BW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Gear2Color_BW.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SteamLogo128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SteamLogo128.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConnectSpiffo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ConnectToSpiffo211x128.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FolderIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FolderIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GitHubLogo128" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GitHubLogo128.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThumbnailPlaceholder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Properties\src\ThumbnailPlaceholder.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RedBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedBar.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InfoIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\infoIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TrashbinIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TrashbinIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StarCharButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StarCharButton.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CheckmarkFilled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CheckmarkFilled.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowLeftDownIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ArrowLeftDownIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

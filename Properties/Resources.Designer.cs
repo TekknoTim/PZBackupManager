@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ZomboidBackupManager.Properties
 {
@@ -150,6 +151,159 @@ namespace ZomboidBackupManager.Properties
             get
             {
                 object obj = ResourceManager.GetObject("SquareWithPlusIconImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap StarCharButton
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("StarCharButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap RedBar
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RedBar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap InfoIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("InfoIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap FolderIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("FolderIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap CheckmarkIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("CheckmarkIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap DocumentIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("DocumentIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap SpiffoHighlightsWithBackground
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SpiffoHighlightsWithBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap SteamLogo128
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SteamLogo128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap GitHubLogo128
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("GitHubLogo128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap Gear2Color_BW
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Gear2Color_BW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap LoadIconCCW_B
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("LoadIconCCW_B", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap Checkmark24
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Checkmark24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap CheckmarkFilled24
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("CheckmarkFilled24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ArrowRightIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ArrowRightIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ArrowLeftIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ArrowLeftIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ArrowLeftDownIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ArrowLeftDownIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ArrowRightUpIcon
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ArrowRightUpIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

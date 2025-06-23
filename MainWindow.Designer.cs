@@ -33,7 +33,10 @@ namespace ZomboidBackupManager
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             GamemodeComboBox = new ComboBox();
             SelectSavegameLabel = new Label();
@@ -44,15 +47,21 @@ namespace ZomboidBackupManager
             SavegameListBox = new ListBox();
             ThumbnailPictureBox = new PictureBox();
             SavegameInfoPanel = new Panel();
+            BackupModeInfoPanel = new Panel();
+            HasBaseBackupValuePictureBox = new PictureBox();
+            HasBaseBackupTextLabel = new Label();
+            IsDatabaseLoadedValuePictureBox = new PictureBox();
+            ActiveBackupModeValueLabel = new Label();
+            ActiveBackupModeTextLabel = new Label();
+            IsDatabaseLoadedTextLabel = new Label();
             BackupCountSubPanel = new Panel();
             BackupCountValueLabel = new Label();
             BackupCountTextLabel = new Label();
-            GamemodeInfoSubPanel = new Panel();
-            GamemodeInfoValueLabel = new Label();
-            GamemodeInfoTextLabel = new Label();
-            SavegameInfoSubPanel = new Panel();
+            GamemodeAndSavegameInfoSubPanel = new Panel();
             SavgameInfoValueLabel = new Label();
+            GamemodeInfoValueLabel = new Label();
             SavgameInfoTextLabel = new Label();
+            GamemodeInfoTextLabel = new Label();
             EditBackupsContextMenu = new ContextMenuStrip(components);
             SelectContextMenuItem = new ToolStripMenuItem();
             SelectMultiMenuItem = new ToolStripMenuItem();
@@ -86,10 +95,9 @@ namespace ZomboidBackupManager
             BackupRestoreToolStrip = new ToolStrip();
             RestoreButton = new ToolStripButton();
             TSSeparator1 = new ToolStripSeparator();
-            SearchForUnlistedBackupsToolStripButton = new ToolStripButton();
             BackupButton = new ToolStripButton();
             TSSeparator2 = new ToolStripSeparator();
-            LoadOrCreateDatabaseButton = new ToolStripButton();
+            LoadDataBaseButton = new ToolStripButton();
             AutoDeleteInfoLabel = new Label();
             BackupInfoPanel = new Panel();
             BackupDataInfoPanel = new Panel();
@@ -123,6 +131,7 @@ namespace ZomboidBackupManager
             ShowMsgSettingMenuOption = new ToolStripMenuItem();
             AutoDeleteBackupMenuOption = new ToolStripMenuItem();
             ChangeDirectoryMenuOption = new ToolStripMenuItem();
+            DataCleanerMenuOption = new ToolStripMenuItem();
             SmartBackupMenuOption = new ToolStripMenuItem();
             ZipSetupMenuOption = new ToolStripMenuItem();
             AboutToolStripMenuItem = new ToolStripMenuItem();
@@ -150,9 +159,11 @@ namespace ZomboidBackupManager
             ((System.ComponentModel.ISupportInitialize)SmartBackupDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
             SavegameInfoPanel.SuspendLayout();
+            BackupModeInfoPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)HasBaseBackupValuePictureBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)IsDatabaseLoadedValuePictureBox).BeginInit();
             BackupCountSubPanel.SuspendLayout();
-            GamemodeInfoSubPanel.SuspendLayout();
-            SavegameInfoSubPanel.SuspendLayout();
+            GamemodeAndSavegameInfoSubPanel.SuspendLayout();
             EditBackupsContextMenu.SuspendLayout();
             RenameContextMenu.SuspendLayout();
             ProgressbarPanel.SuspendLayout();
@@ -201,7 +212,6 @@ namespace ZomboidBackupManager
             // 
             // SelectSavegamePanel
             // 
-            SelectSavegamePanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             SelectSavegamePanel.BackColor = SystemColors.ControlLight;
             SelectSavegamePanel.BorderStyle = BorderStyle.FixedSingle;
             SelectSavegamePanel.Controls.Add(SmartBackupDatabasePanel);
@@ -222,21 +232,38 @@ namespace ZomboidBackupManager
             SmartBackupDatabasePanel.BackColor = SystemColors.ControlDarkDark;
             SmartBackupDatabasePanel.BorderStyle = BorderStyle.Fixed3D;
             SmartBackupDatabasePanel.Controls.Add(SmartBackupDataGridView);
-            SmartBackupDatabasePanel.Location = new Point(20, 662);
+            SmartBackupDatabasePanel.Location = new Point(20, 518);
             SmartBackupDatabasePanel.Margin = new Padding(5, 5, 5, 15);
+            SmartBackupDatabasePanel.MaximumSize = new Size(530, 264);
+            SmartBackupDatabasePanel.MinimumSize = new Size(530, 121);
             SmartBackupDatabasePanel.Name = "SmartBackupDatabasePanel";
             SmartBackupDatabasePanel.Padding = new Padding(5);
-            SmartBackupDatabasePanel.Size = new Size(530, 121);
+            SmartBackupDatabasePanel.Size = new Size(530, 264);
             SmartBackupDatabasePanel.TabIndex = 26;
+            SmartBackupDatabasePanel.MouseClick += SmartBackupDatabasePanel_MouseClick;
             // 
             // SmartBackupDataGridView
             // 
-            dataGridViewCellStyle1.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SmartBackupDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            SmartBackupDataGridView.AllowUserToAddRows = false;
+            SmartBackupDataGridView.AllowUserToDeleteRows = false;
+            SmartBackupDataGridView.AllowUserToResizeColumns = false;
+            SmartBackupDataGridView.AllowUserToResizeRows = false;
+            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.WrapMode = DataGridViewTriState.False;
+            SmartBackupDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle13;
             SmartBackupDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             SmartBackupDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            SmartBackupDataGridView.BackgroundColor = SystemColors.ControlLightLight;
+            SmartBackupDataGridView.BackgroundColor = Color.FromArgb(192, 255, 255);
             SmartBackupDataGridView.BorderStyle = BorderStyle.Fixed3D;
+            SmartBackupDataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
+            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = Color.FromArgb(255, 192, 192);
+            dataGridViewCellStyle14.Font = new Font("Bahnschrift", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle14.ForeColor = Color.Black;
+            dataGridViewCellStyle14.SelectionBackColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle14.SelectionForeColor = Color.Yellow;
+            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.True;
+            SmartBackupDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle14;
             SmartBackupDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             SmartBackupDataGridView.Dock = DockStyle.Fill;
             SmartBackupDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
@@ -244,11 +271,35 @@ namespace ZomboidBackupManager
             SmartBackupDataGridView.MultiSelect = false;
             SmartBackupDataGridView.Name = "SmartBackupDataGridView";
             SmartBackupDataGridView.ReadOnly = true;
+            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = Color.FromArgb(255, 192, 192);
+            dataGridViewCellStyle15.Font = new Font("Bahnschrift", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle15.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle15.NullValue = "ERROR";
+            dataGridViewCellStyle15.SelectionBackColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle15.SelectionForeColor = Color.Yellow;
+            dataGridViewCellStyle15.WrapMode = DataGridViewTriState.False;
+            SmartBackupDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            SmartBackupDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle16.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle16.WrapMode = DataGridViewTriState.False;
+            SmartBackupDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle16;
             SmartBackupDataGridView.RowTemplate.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.BackColor = Color.FromArgb(64, 64, 64);
             SmartBackupDataGridView.RowTemplate.DefaultCellStyle.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.ForeColor = Color.Yellow;
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.NullValue = "Unknown";
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(255, 255, 192);
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.Black;
+            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+            SmartBackupDataGridView.RowTemplate.ReadOnly = true;
+            SmartBackupDataGridView.RowTemplate.Resizable = DataGridViewTriState.False;
             SmartBackupDataGridView.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            SmartBackupDataGridView.Size = new Size(516, 107);
+            SmartBackupDataGridView.Size = new Size(516, 250);
             SmartBackupDataGridView.TabIndex = 0;
+            SmartBackupDataGridView.TabStop = false;
+            SmartBackupDataGridView.CellContentClick += SmartBackupDataGridView_CellContentClick;
             // 
             // SavegameHeadlineLabel
             // 
@@ -271,9 +322,11 @@ namespace ZomboidBackupManager
             SavegameListBox.Items.AddRange(new object[] { "Select a Gamemode first!" });
             SavegameListBox.Location = new Point(20, 450);
             SavegameListBox.Margin = new Padding(15);
+            SavegameListBox.MaximumSize = new Size(530, 194);
+            SavegameListBox.MinimumSize = new Size(530, 69);
             SavegameListBox.Name = "SavegameListBox";
             SavegameListBox.ScrollAlwaysVisible = true;
-            SavegameListBox.Size = new Size(530, 194);
+            SavegameListBox.Size = new Size(530, 61);
             SavegameListBox.TabIndex = 24;
             SavegameListBox.SelectedIndexChanged += SavegameListBox_SelectedIndexChanged;
             // 
@@ -291,35 +344,127 @@ namespace ZomboidBackupManager
             // 
             // SavegameInfoPanel
             // 
-            SavegameInfoPanel.BackColor = SystemColors.ControlLightLight;
+            SavegameInfoPanel.BackColor = Color.Black;
             SavegameInfoPanel.BorderStyle = BorderStyle.Fixed3D;
+            SavegameInfoPanel.Controls.Add(BackupModeInfoPanel);
             SavegameInfoPanel.Controls.Add(BackupCountSubPanel);
-            SavegameInfoPanel.Controls.Add(GamemodeInfoSubPanel);
-            SavegameInfoPanel.Controls.Add(SavegameInfoSubPanel);
-            SavegameInfoPanel.Location = new Point(297, 150);
+            SavegameInfoPanel.Controls.Add(GamemodeAndSavegameInfoSubPanel);
+            SavegameInfoPanel.Location = new Point(280, 150);
             SavegameInfoPanel.Name = "SavegameInfoPanel";
-            SavegameInfoPanel.Size = new Size(256, 256);
+            SavegameInfoPanel.Size = new Size(270, 256);
             SavegameInfoPanel.TabIndex = 12;
+            // 
+            // BackupModeInfoPanel
+            // 
+            BackupModeInfoPanel.BackColor = SystemColors.ControlDark;
+            BackupModeInfoPanel.BorderStyle = BorderStyle.FixedSingle;
+            BackupModeInfoPanel.Controls.Add(HasBaseBackupValuePictureBox);
+            BackupModeInfoPanel.Controls.Add(HasBaseBackupTextLabel);
+            BackupModeInfoPanel.Controls.Add(IsDatabaseLoadedValuePictureBox);
+            BackupModeInfoPanel.Controls.Add(ActiveBackupModeValueLabel);
+            BackupModeInfoPanel.Controls.Add(ActiveBackupModeTextLabel);
+            BackupModeInfoPanel.Controls.Add(IsDatabaseLoadedTextLabel);
+            BackupModeInfoPanel.Location = new Point(2, 148);
+            BackupModeInfoPanel.Margin = new Padding(2, 1, 2, 2);
+            BackupModeInfoPanel.Name = "BackupModeInfoPanel";
+            BackupModeInfoPanel.Size = new Size(262, 100);
+            BackupModeInfoPanel.TabIndex = 19;
+            // 
+            // HasBaseBackupValuePictureBox
+            // 
+            HasBaseBackupValuePictureBox.BackColor = SystemColors.Control;
+            HasBaseBackupValuePictureBox.BorderStyle = BorderStyle.FixedSingle;
+            HasBaseBackupValuePictureBox.Image = Resources.Checkmark24;
+            HasBaseBackupValuePictureBox.Location = new Point(215, 71);
+            HasBaseBackupValuePictureBox.Name = "HasBaseBackupValuePictureBox";
+            HasBaseBackupValuePictureBox.Size = new Size(24, 24);
+            HasBaseBackupValuePictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+            HasBaseBackupValuePictureBox.TabIndex = 33;
+            HasBaseBackupValuePictureBox.TabStop = false;
+            // 
+            // HasBaseBackupTextLabel
+            // 
+            HasBaseBackupTextLabel.BackColor = SystemColors.Control;
+            HasBaseBackupTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            HasBaseBackupTextLabel.Font = new Font("Bahnschrift", 10F);
+            HasBaseBackupTextLabel.Location = new Point(23, 71);
+            HasBaseBackupTextLabel.Name = "HasBaseBackupTextLabel";
+            HasBaseBackupTextLabel.Size = new Size(193, 24);
+            HasBaseBackupTextLabel.TabIndex = 32;
+            HasBaseBackupTextLabel.Text = "Base Backup Exists";
+            HasBaseBackupTextLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // IsDatabaseLoadedValuePictureBox
+            // 
+            IsDatabaseLoadedValuePictureBox.BackColor = SystemColors.Control;
+            IsDatabaseLoadedValuePictureBox.BorderStyle = BorderStyle.FixedSingle;
+            IsDatabaseLoadedValuePictureBox.Image = Resources.Checkmark24;
+            IsDatabaseLoadedValuePictureBox.Location = new Point(215, 48);
+            IsDatabaseLoadedValuePictureBox.Name = "IsDatabaseLoadedValuePictureBox";
+            IsDatabaseLoadedValuePictureBox.Size = new Size(24, 24);
+            IsDatabaseLoadedValuePictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+            IsDatabaseLoadedValuePictureBox.TabIndex = 31;
+            IsDatabaseLoadedValuePictureBox.TabStop = false;
+            // 
+            // ActiveBackupModeValueLabel
+            // 
+            ActiveBackupModeValueLabel.BackColor = SystemColors.Control;
+            ActiveBackupModeValueLabel.BorderStyle = BorderStyle.FixedSingle;
+            ActiveBackupModeValueLabel.Font = new Font("Bahnschrift", 10F);
+            ActiveBackupModeValueLabel.Location = new Point(23, 24);
+            ActiveBackupModeValueLabel.Margin = new Padding(23, 0, 23, 8);
+            ActiveBackupModeValueLabel.Name = "ActiveBackupModeValueLabel";
+            ActiveBackupModeValueLabel.Size = new Size(216, 20);
+            ActiveBackupModeValueLabel.TabIndex = 17;
+            ActiveBackupModeValueLabel.Text = "Default";
+            ActiveBackupModeValueLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // ActiveBackupModeTextLabel
+            // 
+            ActiveBackupModeTextLabel.BackColor = SystemColors.Control;
+            ActiveBackupModeTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            ActiveBackupModeTextLabel.Font = new Font("Bahnschrift", 10F);
+            ActiveBackupModeTextLabel.Location = new Point(23, 5);
+            ActiveBackupModeTextLabel.Margin = new Padding(23, 8, 23, 0);
+            ActiveBackupModeTextLabel.Name = "ActiveBackupModeTextLabel";
+            ActiveBackupModeTextLabel.Size = new Size(216, 20);
+            ActiveBackupModeTextLabel.TabIndex = 16;
+            ActiveBackupModeTextLabel.Text = "Backup Mode:";
+            ActiveBackupModeTextLabel.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // IsDatabaseLoadedTextLabel
+            // 
+            IsDatabaseLoadedTextLabel.BackColor = SystemColors.Control;
+            IsDatabaseLoadedTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            IsDatabaseLoadedTextLabel.Font = new Font("Bahnschrift", 10F);
+            IsDatabaseLoadedTextLabel.Location = new Point(23, 48);
+            IsDatabaseLoadedTextLabel.Name = "IsDatabaseLoadedTextLabel";
+            IsDatabaseLoadedTextLabel.Size = new Size(193, 24);
+            IsDatabaseLoadedTextLabel.TabIndex = 30;
+            IsDatabaseLoadedTextLabel.Text = "Database Loaded";
+            IsDatabaseLoadedTextLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BackupCountSubPanel
             // 
             BackupCountSubPanel.BackColor = SystemColors.ControlDark;
+            BackupCountSubPanel.BorderStyle = BorderStyle.FixedSingle;
             BackupCountSubPanel.Controls.Add(BackupCountValueLabel);
             BackupCountSubPanel.Controls.Add(BackupCountTextLabel);
-            BackupCountSubPanel.Location = new Point(5, 172);
+            BackupCountSubPanel.Location = new Point(2, 98);
+            BackupCountSubPanel.Margin = new Padding(2, 1, 2, 2);
             BackupCountSubPanel.Name = "BackupCountSubPanel";
-            BackupCountSubPanel.Size = new Size(246, 75);
+            BackupCountSubPanel.Size = new Size(262, 48);
             BackupCountSubPanel.TabIndex = 18;
             // 
             // BackupCountValueLabel
             // 
             BackupCountValueLabel.BackColor = SystemColors.Control;
             BackupCountValueLabel.BorderStyle = BorderStyle.FixedSingle;
-            BackupCountValueLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            BackupCountValueLabel.Location = new Point(23, 37);
-            BackupCountValueLabel.Margin = new Padding(23, 0, 23, 8);
+            BackupCountValueLabel.Font = new Font("Bahnschrift", 10F);
+            BackupCountValueLabel.Location = new Point(23, 21);
+            BackupCountValueLabel.Margin = new Padding(23, 0, 23, 2);
             BackupCountValueLabel.Name = "BackupCountValueLabel";
-            BackupCountValueLabel.Size = new Size(200, 30);
+            BackupCountValueLabel.Size = new Size(216, 20);
             BackupCountValueLabel.TabIndex = 17;
             BackupCountValueLabel.Text = "-";
             BackupCountValueLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -329,86 +474,80 @@ namespace ZomboidBackupManager
             // 
             BackupCountTextLabel.BackColor = SystemColors.Control;
             BackupCountTextLabel.BorderStyle = BorderStyle.FixedSingle;
-            BackupCountTextLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            BackupCountTextLabel.Location = new Point(23, 8);
-            BackupCountTextLabel.Margin = new Padding(23, 8, 23, 0);
+            BackupCountTextLabel.Font = new Font("Bahnschrift", 10F);
+            BackupCountTextLabel.Location = new Point(23, 2);
+            BackupCountTextLabel.Margin = new Padding(23, 2, 23, 0);
             BackupCountTextLabel.Name = "BackupCountTextLabel";
-            BackupCountTextLabel.Size = new Size(200, 30);
+            BackupCountTextLabel.Size = new Size(216, 20);
             BackupCountTextLabel.TabIndex = 16;
             BackupCountTextLabel.Text = "Backups:";
             BackupCountTextLabel.TextAlign = ContentAlignment.TopCenter;
             // 
-            // GamemodeInfoSubPanel
+            // GamemodeAndSavegameInfoSubPanel
             // 
-            GamemodeInfoSubPanel.BackColor = SystemColors.ControlDark;
-            GamemodeInfoSubPanel.Controls.Add(GamemodeInfoValueLabel);
-            GamemodeInfoSubPanel.Controls.Add(GamemodeInfoTextLabel);
-            GamemodeInfoSubPanel.Location = new Point(5, 8);
-            GamemodeInfoSubPanel.Name = "GamemodeInfoSubPanel";
-            GamemodeInfoSubPanel.Size = new Size(246, 75);
-            GamemodeInfoSubPanel.TabIndex = 15;
-            // 
-            // GamemodeInfoValueLabel
-            // 
-            GamemodeInfoValueLabel.BackColor = SystemColors.Control;
-            GamemodeInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
-            GamemodeInfoValueLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            GamemodeInfoValueLabel.Location = new Point(23, 37);
-            GamemodeInfoValueLabel.Margin = new Padding(23, 0, 23, 8);
-            GamemodeInfoValueLabel.Name = "GamemodeInfoValueLabel";
-            GamemodeInfoValueLabel.Size = new Size(200, 30);
-            GamemodeInfoValueLabel.TabIndex = 14;
-            GamemodeInfoValueLabel.Text = "-";
-            GamemodeInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // GamemodeInfoTextLabel
-            // 
-            GamemodeInfoTextLabel.BackColor = SystemColors.Control;
-            GamemodeInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
-            GamemodeInfoTextLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            GamemodeInfoTextLabel.Location = new Point(23, 8);
-            GamemodeInfoTextLabel.Margin = new Padding(23, 8, 23, 0);
-            GamemodeInfoTextLabel.Name = "GamemodeInfoTextLabel";
-            GamemodeInfoTextLabel.Size = new Size(200, 30);
-            GamemodeInfoTextLabel.TabIndex = 13;
-            GamemodeInfoTextLabel.Text = "Gamemode:";
-            GamemodeInfoTextLabel.TextAlign = ContentAlignment.TopCenter;
-            // 
-            // SavegameInfoSubPanel
-            // 
-            SavegameInfoSubPanel.BackColor = SystemColors.ControlDark;
-            SavegameInfoSubPanel.Controls.Add(SavgameInfoValueLabel);
-            SavegameInfoSubPanel.Controls.Add(SavgameInfoTextLabel);
-            SavegameInfoSubPanel.Location = new Point(5, 90);
-            SavegameInfoSubPanel.Name = "SavegameInfoSubPanel";
-            SavegameInfoSubPanel.Size = new Size(246, 75);
-            SavegameInfoSubPanel.TabIndex = 12;
+            GamemodeAndSavegameInfoSubPanel.BackColor = SystemColors.ControlDark;
+            GamemodeAndSavegameInfoSubPanel.BorderStyle = BorderStyle.FixedSingle;
+            GamemodeAndSavegameInfoSubPanel.Controls.Add(SavgameInfoValueLabel);
+            GamemodeAndSavegameInfoSubPanel.Controls.Add(GamemodeInfoValueLabel);
+            GamemodeAndSavegameInfoSubPanel.Controls.Add(SavgameInfoTextLabel);
+            GamemodeAndSavegameInfoSubPanel.Controls.Add(GamemodeInfoTextLabel);
+            GamemodeAndSavegameInfoSubPanel.Location = new Point(2, 2);
+            GamemodeAndSavegameInfoSubPanel.Margin = new Padding(2);
+            GamemodeAndSavegameInfoSubPanel.Name = "GamemodeAndSavegameInfoSubPanel";
+            GamemodeAndSavegameInfoSubPanel.Size = new Size(262, 94);
+            GamemodeAndSavegameInfoSubPanel.TabIndex = 15;
             // 
             // SavgameInfoValueLabel
             // 
             SavgameInfoValueLabel.BackColor = SystemColors.Control;
             SavgameInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
-            SavgameInfoValueLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SavgameInfoValueLabel.Location = new Point(23, 37);
+            SavgameInfoValueLabel.Font = new Font("Bahnschrift", 10F);
+            SavgameInfoValueLabel.Location = new Point(23, 62);
             SavgameInfoValueLabel.Margin = new Padding(23, 0, 23, 8);
             SavgameInfoValueLabel.Name = "SavgameInfoValueLabel";
-            SavgameInfoValueLabel.Size = new Size(200, 30);
+            SavgameInfoValueLabel.Size = new Size(216, 20);
             SavgameInfoValueLabel.TabIndex = 11;
             SavgameInfoValueLabel.Text = "-";
             SavgameInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // GamemodeInfoValueLabel
+            // 
+            GamemodeInfoValueLabel.BackColor = SystemColors.Control;
+            GamemodeInfoValueLabel.BorderStyle = BorderStyle.FixedSingle;
+            GamemodeInfoValueLabel.Font = new Font("Bahnschrift", 10F);
+            GamemodeInfoValueLabel.Location = new Point(23, 21);
+            GamemodeInfoValueLabel.Margin = new Padding(23, 0, 23, 8);
+            GamemodeInfoValueLabel.Name = "GamemodeInfoValueLabel";
+            GamemodeInfoValueLabel.Size = new Size(216, 20);
+            GamemodeInfoValueLabel.TabIndex = 14;
+            GamemodeInfoValueLabel.Text = "-";
+            GamemodeInfoValueLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SavgameInfoTextLabel
             // 
             SavgameInfoTextLabel.BackColor = SystemColors.Control;
             SavgameInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
-            SavgameInfoTextLabel.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SavgameInfoTextLabel.Location = new Point(23, 8);
-            SavgameInfoTextLabel.Margin = new Padding(23, 8, 23, 0);
+            SavgameInfoTextLabel.Font = new Font("Bahnschrift", 10F);
+            SavgameInfoTextLabel.Location = new Point(23, 43);
+            SavgameInfoTextLabel.Margin = new Padding(23, 2, 23, 0);
             SavgameInfoTextLabel.Name = "SavgameInfoTextLabel";
-            SavgameInfoTextLabel.Size = new Size(200, 30);
+            SavgameInfoTextLabel.Size = new Size(216, 20);
             SavgameInfoTextLabel.TabIndex = 10;
             SavgameInfoTextLabel.Text = "Savegame:";
             SavgameInfoTextLabel.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // GamemodeInfoTextLabel
+            // 
+            GamemodeInfoTextLabel.BackColor = SystemColors.Control;
+            GamemodeInfoTextLabel.BorderStyle = BorderStyle.FixedSingle;
+            GamemodeInfoTextLabel.Font = new Font("Bahnschrift", 10F);
+            GamemodeInfoTextLabel.Location = new Point(23, 2);
+            GamemodeInfoTextLabel.Margin = new Padding(23, 2, 23, 2);
+            GamemodeInfoTextLabel.Name = "GamemodeInfoTextLabel";
+            GamemodeInfoTextLabel.Size = new Size(216, 20);
+            GamemodeInfoTextLabel.TabIndex = 13;
+            GamemodeInfoTextLabel.Text = "Gamemode:";
+            GamemodeInfoTextLabel.TextAlign = ContentAlignment.TopCenter;
             // 
             // EditBackupsContextMenu
             // 
@@ -609,7 +748,6 @@ namespace ZomboidBackupManager
             CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
             CreateZipEditBackupMenuOption.Size = new Size(175, 24);
             CreateZipEditBackupMenuOption.Text = "Create Zip";
-            CreateZipEditBackupMenuOption.Click += CreateZipEditBackupMenuOption_Click;
             // 
             // ProgressbarPanel
             // 
@@ -618,9 +756,9 @@ namespace ZomboidBackupManager
             ProgressbarPanel.Controls.Add(ProgressBarA);
             ProgressbarPanel.Controls.Add(ProgressbarLabel);
             ProgressbarPanel.Dock = DockStyle.Bottom;
-            ProgressbarPanel.Location = new Point(15, 730);
+            ProgressbarPanel.Location = new Point(15, 728);
             ProgressbarPanel.Name = "ProgressbarPanel";
-            ProgressbarPanel.Size = new Size(530, 60);
+            ProgressbarPanel.Size = new Size(528, 60);
             ProgressbarPanel.TabIndex = 10;
             ProgressbarPanel.Visible = false;
             // 
@@ -633,7 +771,7 @@ namespace ZomboidBackupManager
             ProgressBarA.Margin = new Padding(15, 4, 15, 4);
             ProgressBarA.MarqueeAnimationSpeed = 10;
             ProgressBarA.Name = "ProgressBarA";
-            ProgressBarA.Size = new Size(526, 32);
+            ProgressBarA.Size = new Size(524, 32);
             ProgressBarA.Step = 1;
             ProgressBarA.Style = ProgressBarStyle.Continuous;
             ProgressBarA.TabIndex = 8;
@@ -647,7 +785,7 @@ namespace ZomboidBackupManager
             ProgressbarLabel.Location = new Point(0, 31);
             ProgressbarLabel.Margin = new Padding(3, 2, 3, 8);
             ProgressbarLabel.Name = "ProgressbarLabel";
-            ProgressbarLabel.Size = new Size(526, 25);
+            ProgressbarLabel.Size = new Size(524, 25);
             ProgressbarLabel.TabIndex = 7;
             ProgressbarLabel.Text = "-";
             ProgressbarLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -708,7 +846,6 @@ namespace ZomboidBackupManager
             // BackgroundPanel
             // 
             BackgroundPanel.AutoSize = true;
-            BackgroundPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackgroundPanel.BackColor = Color.Transparent;
             BackgroundPanel.BackgroundImageLayout = ImageLayout.Center;
             BackgroundPanel.BorderStyle = BorderStyle.FixedSingle;
@@ -726,6 +863,7 @@ namespace ZomboidBackupManager
             // SelectBackupPanel
             // 
             SelectBackupPanel.BackColor = SystemColors.ControlLight;
+            SelectBackupPanel.BorderStyle = BorderStyle.FixedSingle;
             SelectBackupPanel.Controls.Add(HalfWindowModeRadioButton);
             SelectBackupPanel.Controls.Add(NormalWindowModeRadioButton);
             SelectBackupPanel.Controls.Add(BackupRestoreTSPanel);
@@ -810,7 +948,7 @@ namespace ZomboidBackupManager
             BackupRestoreToolStrip.GripMargin = new Padding(5);
             BackupRestoreToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             BackupRestoreToolStrip.ImageScalingSize = new Size(32, 32);
-            BackupRestoreToolStrip.Items.AddRange(new ToolStripItem[] { RestoreButton, TSSeparator1, SearchForUnlistedBackupsToolStripButton, BackupButton, TSSeparator2, LoadOrCreateDatabaseButton });
+            BackupRestoreToolStrip.Items.AddRange(new ToolStripItem[] { RestoreButton, TSSeparator1, BackupButton, TSSeparator2, LoadDataBaseButton });
             BackupRestoreToolStrip.Location = new Point(10, 5);
             BackupRestoreToolStrip.Name = "BackupRestoreToolStrip";
             BackupRestoreToolStrip.Padding = new Padding(0);
@@ -852,27 +990,6 @@ namespace ZomboidBackupManager
             TSSeparator1.Padding = new Padding(5, 0, 5, 0);
             TSSeparator1.Size = new Size(25, 55);
             // 
-            // SearchForUnlistedBackupsToolStripButton
-            // 
-            SearchForUnlistedBackupsToolStripButton.AutoSize = false;
-            SearchForUnlistedBackupsToolStripButton.BackColor = SystemColors.ControlDarkDark;
-            SearchForUnlistedBackupsToolStripButton.Font = new Font("Closeness", 9.749999F);
-            SearchForUnlistedBackupsToolStripButton.ForeColor = SystemColors.ButtonHighlight;
-            SearchForUnlistedBackupsToolStripButton.Image = (Image)resources.GetObject("SearchForUnlistedBackupsToolStripButton.Image");
-            SearchForUnlistedBackupsToolStripButton.ImageScaling = ToolStripItemImageScaling.None;
-            SearchForUnlistedBackupsToolStripButton.ImageTransparentColor = Color.Magenta;
-            SearchForUnlistedBackupsToolStripButton.Margin = new Padding(2);
-            SearchForUnlistedBackupsToolStripButton.MergeAction = MergeAction.MatchOnly;
-            SearchForUnlistedBackupsToolStripButton.MergeIndex = 3;
-            SearchForUnlistedBackupsToolStripButton.Name = "SearchForUnlistedBackupsToolStripButton";
-            SearchForUnlistedBackupsToolStripButton.Overflow = ToolStripItemOverflow.Never;
-            SearchForUnlistedBackupsToolStripButton.Padding = new Padding(1, 1, 5, 1);
-            SearchForUnlistedBackupsToolStripButton.Size = new Size(72, 58);
-            SearchForUnlistedBackupsToolStripButton.Text = "Cleanup";
-            SearchForUnlistedBackupsToolStripButton.TextImageRelation = TextImageRelation.ImageAboveText;
-            SearchForUnlistedBackupsToolStripButton.ToolTipText = "Cleanup Backup Directory\r\n>---[EXPERIMENTAL]---<\r\n\r\n(This page is for finding &\r\ndeleting unsused, broken &\r\ndeprecated backup data.)";
-            SearchForUnlistedBackupsToolStripButton.Click += SearchForUnlistedBackupsToolStripButton_Click;
-            // 
             // BackupButton
             // 
             BackupButton.Alignment = ToolStripItemAlignment.Right;
@@ -911,27 +1028,27 @@ namespace ZomboidBackupManager
             TSSeparator2.Padding = new Padding(5, 0, 5, 0);
             TSSeparator2.Size = new Size(25, 55);
             // 
-            // LoadOrCreateDatabaseButton
+            // LoadDataBaseButton
             // 
-            LoadOrCreateDatabaseButton.Alignment = ToolStripItemAlignment.Right;
-            LoadOrCreateDatabaseButton.AutoSize = false;
-            LoadOrCreateDatabaseButton.BackColor = SystemColors.ControlDarkDark;
-            LoadOrCreateDatabaseButton.Font = new Font("Closeness", 9.749999F);
-            LoadOrCreateDatabaseButton.ForeColor = SystemColors.ButtonHighlight;
-            LoadOrCreateDatabaseButton.Image = Resources.SquareWithPlusIconImage;
-            LoadOrCreateDatabaseButton.ImageScaling = ToolStripItemImageScaling.None;
-            LoadOrCreateDatabaseButton.ImageTransparentColor = Color.Magenta;
-            LoadOrCreateDatabaseButton.Margin = new Padding(2);
-            LoadOrCreateDatabaseButton.MergeAction = MergeAction.MatchOnly;
-            LoadOrCreateDatabaseButton.MergeIndex = 3;
-            LoadOrCreateDatabaseButton.Name = "LoadOrCreateDatabaseButton";
-            LoadOrCreateDatabaseButton.Overflow = ToolStripItemOverflow.Never;
-            LoadOrCreateDatabaseButton.Padding = new Padding(1, 1, 5, 1);
-            LoadOrCreateDatabaseButton.Size = new Size(72, 58);
-            LoadOrCreateDatabaseButton.Text = "Load DB";
-            LoadOrCreateDatabaseButton.TextImageRelation = TextImageRelation.ImageAboveText;
-            LoadOrCreateDatabaseButton.ToolTipText = "Cleanup Backup Directory\r\n>---[EXPERIMENTAL]---<\r\n\r\n(This page is for finding &\r\ndeleting unsused, broken &\r\ndeprecated backup data.)";
-            LoadOrCreateDatabaseButton.Click += LoadOrCreateDatabaseButton_Click;
+            LoadDataBaseButton.Alignment = ToolStripItemAlignment.Right;
+            LoadDataBaseButton.AutoSize = false;
+            LoadDataBaseButton.BackColor = SystemColors.ControlDarkDark;
+            LoadDataBaseButton.Font = new Font("Closeness", 9.749999F);
+            LoadDataBaseButton.ForeColor = SystemColors.ButtonHighlight;
+            LoadDataBaseButton.Image = Resources.LoadIconCCW_B;
+            LoadDataBaseButton.ImageScaling = ToolStripItemImageScaling.None;
+            LoadDataBaseButton.ImageTransparentColor = Color.Magenta;
+            LoadDataBaseButton.Margin = new Padding(2);
+            LoadDataBaseButton.MergeAction = MergeAction.MatchOnly;
+            LoadDataBaseButton.MergeIndex = 3;
+            LoadDataBaseButton.Name = "LoadDataBaseButton";
+            LoadDataBaseButton.Overflow = ToolStripItemOverflow.Never;
+            LoadDataBaseButton.Padding = new Padding(1, 1, 5, 1);
+            LoadDataBaseButton.Size = new Size(75, 56);
+            LoadDataBaseButton.Text = "LOAD DB";
+            LoadDataBaseButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            LoadDataBaseButton.ToolTipText = "Create and/or Load Database for\r\nthe Savegame selected in the box\r\nto the left.";
+            LoadDataBaseButton.Click += LoadDataBaseButton_Click;
             // 
             // AutoDeleteInfoLabel
             // 
@@ -974,7 +1091,7 @@ namespace ZomboidBackupManager
             BackupDataInfoPanel.Controls.Add(BackupNameTextLabel);
             BackupDataInfoPanel.Controls.Add(BackupIndexValueLabel);
             BackupDataInfoPanel.Controls.Add(BackupNameValueLabel);
-            BackupDataInfoPanel.Location = new Point(3, 3);
+            BackupDataInfoPanel.Location = new Point(1, 3);
             BackupDataInfoPanel.Name = "BackupDataInfoPanel";
             BackupDataInfoPanel.Size = new Size(250, 250);
             BackupDataInfoPanel.TabIndex = 12;
@@ -987,7 +1104,7 @@ namespace ZomboidBackupManager
             HasLooseValuePictureBox.Location = new Point(218, 110);
             HasLooseValuePictureBox.Name = "HasLooseValuePictureBox";
             HasLooseValuePictureBox.Size = new Size(30, 30);
-            HasLooseValuePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            HasLooseValuePictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
             HasLooseValuePictureBox.TabIndex = 31;
             HasLooseValuePictureBox.TabStop = false;
             // 
@@ -1011,7 +1128,7 @@ namespace ZomboidBackupManager
             HasZipValuePictureBox.Location = new Point(95, 110);
             HasZipValuePictureBox.Name = "HasZipValuePictureBox";
             HasZipValuePictureBox.Size = new Size(30, 30);
-            HasZipValuePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            HasZipValuePictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
             HasZipValuePictureBox.TabIndex = 29;
             HasZipValuePictureBox.TabStop = false;
             // 
@@ -1196,6 +1313,7 @@ namespace ZomboidBackupManager
             BackupsPictureBox.Size = new Size(256, 256);
             BackupsPictureBox.TabIndex = 3;
             BackupsPictureBox.TabStop = false;
+            BackupsPictureBox.Click += BackupsPictureBox_Click;
             // 
             // BackupListBox
             // 
@@ -1230,7 +1348,7 @@ namespace ZomboidBackupManager
             SettingsPanelA.MaximumSize = new Size(530, 48);
             SettingsPanelA.Name = "SettingsPanelA";
             SettingsPanelA.Padding = new Padding(4);
-            SettingsPanelA.Size = new Size(530, 48);
+            SettingsPanelA.Size = new Size(528, 48);
             SettingsPanelA.TabIndex = 9;
             // 
             // Toolstrip1
@@ -1247,14 +1365,14 @@ namespace ZomboidBackupManager
             Toolstrip1.MinimumSize = new Size(240, 40);
             Toolstrip1.Name = "Toolstrip1";
             Toolstrip1.Padding = new Padding(1);
-            Toolstrip1.Size = new Size(518, 40);
+            Toolstrip1.Size = new Size(516, 40);
             Toolstrip1.Stretch = true;
             Toolstrip1.TabIndex = 12;
             // 
             // SettingsDropDownButton
             // 
             SettingsDropDownButton.BackColor = SystemColors.Control;
-            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
+            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, DataCleanerMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
             SettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SettingsDropDownButton.Image = (Image)resources.GetObject("SettingsDropDownButton.Image");
             SettingsDropDownButton.ImageTransparentColor = Color.Magenta;
@@ -1360,6 +1478,16 @@ namespace ZomboidBackupManager
             ChangeDirectoryMenuOption.Size = new Size(205, 24);
             ChangeDirectoryMenuOption.Text = "Change Directory";
             ChangeDirectoryMenuOption.Click += ChangeDirectoryMenuOption_Click;
+            // 
+            // DataCleanerMenuOption
+            // 
+            DataCleanerMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DataCleanerMenuOption.ForeColor = SystemColors.Control;
+            DataCleanerMenuOption.Name = "DataCleanerMenuOption";
+            DataCleanerMenuOption.Size = new Size(205, 24);
+            DataCleanerMenuOption.Text = "Data Cleaner";
+            DataCleanerMenuOption.ToolTipText = "Cleanup Backup Directory\r\n>---[EXPERIMENTAL]---<\r\n\r\n(This page is for finding &\r\ndeleting unsused, broken &\r\ndeprecated backup data.)\r\n";
+            DataCleanerMenuOption.Click += DataCleanerMenuOption_Click;
             // 
             // SmartBackupMenuOption
             // 
@@ -1513,7 +1641,6 @@ namespace ZomboidBackupManager
             CreateZipToolbarMenuOption.Name = "CreateZipToolbarMenuOption";
             CreateZipToolbarMenuOption.Size = new Size(175, 24);
             CreateZipToolbarMenuOption.Text = "Create Zip";
-            CreateZipToolbarMenuOption.Click += CreateZipEditBackupMenuOption_Click;
             // 
             // ToolStripSeparator1
             // 
@@ -1605,9 +1732,7 @@ namespace ZomboidBackupManager
             // 
             // MainWindow
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            AutoScaleMode = AutoScaleMode.None;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1180, 832);
@@ -1617,6 +1742,7 @@ namespace ZomboidBackupManager
             MaximizeBox = false;
             Name = "MainWindow";
             Padding = new Padding(5);
+            SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Zomboid Backup Manager";
             MinimizeButtonToolTip.SetToolTip(this, resources.GetString("$this.ToolTip"));
@@ -1627,9 +1753,11 @@ namespace ZomboidBackupManager
             ((System.ComponentModel.ISupportInitialize)SmartBackupDataGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).EndInit();
             SavegameInfoPanel.ResumeLayout(false);
+            BackupModeInfoPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)HasBaseBackupValuePictureBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)IsDatabaseLoadedValuePictureBox).EndInit();
             BackupCountSubPanel.ResumeLayout(false);
-            GamemodeInfoSubPanel.ResumeLayout(false);
-            SavegameInfoSubPanel.ResumeLayout(false);
+            GamemodeAndSavegameInfoSubPanel.ResumeLayout(false);
             EditBackupsContextMenu.ResumeLayout(false);
             RenameContextMenu.ResumeLayout(false);
             RenameContextMenu.PerformLayout();
@@ -1674,10 +1802,9 @@ namespace ZomboidBackupManager
         private Label SavgameInfoTextLabel;
         private Panel SavegameInfoPanel;
         private Label SavgameInfoValueLabel;
-        private Panel SavegameInfoSubPanel;
         private Label GamemodeInfoValueLabel;
         private Label GamemodeInfoTextLabel;
-        private Panel GamemodeInfoSubPanel;
+        private Panel GamemodeAndSavegameInfoSubPanel;
         private Label BackupCountValueLabel;
         private Label BackupCountTextLabel;
         private Panel BackupCountSubPanel;
@@ -1762,10 +1889,17 @@ namespace ZomboidBackupManager
         private RadioButton NormalWindowModeRadioButton;
         private Label SavegameHeadlineLabel;
         private ListBox SavegameListBox;
-        private ToolStripButton SearchForUnlistedBackupsToolStripButton;
+        private ToolStripButton LoadDataBaseButton;
         private ToolStripMenuItem SmartBackupMenuOption;
         private Panel SmartBackupDatabasePanel;
         private DataGridView SmartBackupDataGridView;
-        private ToolStripButton LoadOrCreateDatabaseButton;
+        private ToolStripMenuItem DataCleanerMenuOption;
+        private PictureBox IsDatabaseLoadedValuePictureBox;
+        private Label IsDatabaseLoadedTextLabel;
+        private Panel BackupModeInfoPanel;
+        private Label ActiveBackupModeValueLabel;
+        private Label ActiveBackupModeTextLabel;
+        private PictureBox HasBaseBackupValuePictureBox;
+        private Label HasBaseBackupTextLabel;
     }
 }

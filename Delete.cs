@@ -104,5 +104,25 @@ namespace ZomboidBackupManager
             statusLog.SelectionMode = SelectionMode.One;
             statusLog.SetSelected(i, true);
         }
+
+        public async Task DoDeleteBaseSmartBackup( string savegame , string path , ProgressBar progressBar)
+        {
+            DeleteProcess deleteProcess = new DeleteProcess();
+            var progress = new Progress<int>(percent =>
+            {
+                //statusLabel.Text = $"Deleting Backup... {percent}%";
+                progressBar.Value = percent;
+            });
+
+            await deleteProcess.DeleteDirectoryAsync(path, progress);
+
+            Thread.Sleep(500);
+            //DeleteBackupFromJson(index);
+            Thread.Sleep(500);
+
+            Thread.Sleep(500);
+
+            progressBar.Value = 0;
+        }
     }
 }

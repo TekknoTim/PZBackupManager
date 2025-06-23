@@ -42,6 +42,7 @@
             SelectExePanel = new Panel();
             SelectExeTextLabel = new Label();
             SelectExeButton = new Button();
+            TEMP_INFO_PANEL = new Label();
             CheckboxPanel.SuspendLayout();
             ExternalArchiverPanel.SuspendLayout();
             SelectExePanel.SuspendLayout();
@@ -50,6 +51,7 @@
             // SaveButton
             // 
             SaveButton.DialogResult = DialogResult.OK;
+            SaveButton.Enabled = false;
             SaveButton.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SaveButton.Location = new Point(214, 284);
             SaveButton.Name = "SaveButton";
@@ -231,6 +233,17 @@
             SelectExeButton.UseVisualStyleBackColor = false;
             SelectExeButton.Click += SelectExeButton_Click;
             // 
+            // TEMP_INFO_PANEL
+            // 
+            TEMP_INFO_PANEL.BorderStyle = BorderStyle.Fixed3D;
+            TEMP_INFO_PANEL.Font = new Font("Bahnschrift", 14F, FontStyle.Bold);
+            TEMP_INFO_PANEL.Location = new Point(0, 0);
+            TEMP_INFO_PANEL.Name = "TEMP_INFO_PANEL";
+            TEMP_INFO_PANEL.Size = new Size(331, 261);
+            TEMP_INFO_PANEL.TabIndex = 6;
+            TEMP_INFO_PANEL.Text = "ZIP Functions are removed/blocked entirely.\r\nI will add them back in later, wenn more important\r\nsystems are working stabile ";
+            TEMP_INFO_PANEL.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // ZipArchiveSetup
             // 
             AcceptButton = SaveButton;
@@ -240,6 +253,7 @@
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             CancelButton = AbortButton;
             ClientSize = new Size(333, 326);
+            Controls.Add(TEMP_INFO_PANEL);
             Controls.Add(SelectExePanel);
             Controls.Add(ExternalArchiverPanel);
             Controls.Add(CheckboxPanel);
@@ -247,9 +261,8 @@
             Controls.Add(SaveButton);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ZipArchiveSetup";
-            Opacity = 0.9D;
             StartPosition = FormStartPosition.CenterParent;
-            Text = "ZipArchiveSetup";
+            Text = "CURRENTLY DISABLED!!!";
             TopMost = true;
             CheckboxPanel.ResumeLayout(false);
             ExternalArchiverPanel.ResumeLayout(false);
@@ -272,5 +285,6 @@
         private Panel SelectExePanel;
         private Label SelectExeTextLabel;
         private Button SelectExeButton;
+        private Label TEMP_INFO_PANEL;
     }
 }

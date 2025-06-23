@@ -8,31 +8,59 @@ namespace ZomboidBackupManager
     public class JsonData
     {
 
-        public string? Name { get; }
-        public List<BackupData> Backups { get; set; }
+        public string Name { get; }
+        public List<BackupData>? Backups { get; set; }
+        public List<SmartBackupData>? SmartBackups { get; set; }
 
-        public JsonData(string name, List<BackupData> backups)
+        public JsonData(string name, List<BackupData>? backups, List<SmartBackupData>? smartBackups)
         {
             Name = name;
-            Backups = backups;
+            Backups = backups ?? null;
+            SmartBackups = smartBackups ?? null;
         }
 
-        public static JsonData NewJsonData(string name)
+        public static JsonData NewJsonData(string name, bool bAddBackupData = true, bool bAddSmartBackupData = true)
         {
-            List<BackupData> backups = new List<BackupData>(1);
-            return new JsonData(name, backups);
+            List<BackupData>? backups = null;
+            List<SmartBackupData>? smartBackups = null;
+            if (bAddBackupData)
+            {
+                backups = new List<BackupData>(1);
+            }
+            if (bAddSmartBackupData)
+            {
+                smartBackups = new List<SmartBackupData>(1);
+            }
+
+            return new JsonData(name, backups, smartBackups);
         }
 
-        public static JsonData AddBackup(JsonData jsonData, BackupData backupData)
+        public static JsonData AddBackup(JsonData jsonData, BackupData? backupData = null, SmartBackupData? smartBackupData = null)
         {
             string? name = jsonData.Name;
             if (string.IsNullOrEmpty(name))
             {
                 throw new Exception("Name is null or empty");
             }
-            List<BackupData> backups = jsonData.Backups;
-            backups.Add(backupData);
-            JsonData newJsonData = new JsonData(name, backups);
+            List<BackupData>? backups = jsonData.Backups;
+            List<SmartBackupData>? smartBackups = jsonData.SmartBackups;
+            if (backupData != null)
+            {
+                if (backups == null)
+                {
+                    backups = new List<BackupData>();
+                }
+                backups.Add(backupData);
+            }
+            if (smartBackupData != null)
+            {
+                if (smartBackups == null)
+                {
+                    smartBackups = new List<SmartBackupData>();
+                }
+                smartBackups.Add(smartBackupData);
+            }
+            JsonData newJsonData = new JsonData(name, backups, smartBackups);
             return newJsonData;
         }
 
@@ -41,16 +69,37 @@ namespace ZomboidBackupManager
             return new BackupData(index, name, path,zipPath , GetCurrentDate(), GetCurrentTime(), GetDirSizeInMegaBytes(path));
         }
 
-        public static int GetLastBackupDataIndex(JsonData jsonData)
+        public static SmartBackupData NewSmartBackupData(int index, string name, string path, List<string>? changedFiles = null, string zipPath = "")
         {
-            List<BackupData> backups = jsonData.Backups;
-            return backups.Count - 1;
+            return new SmartBackupData(index, name, path, changedFiles, zipPath);
         }
 
-        public static int GetBackupDataCount(JsonData jsonData)
+        public static int GetLastBackupDataIndex(JsonData jsonData, bool bSmart = false)
         {
-            List<BackupData> backups = jsonData.Backups;
-            return backups.Count;
+            if (bSmart)
+            {
+                List<SmartBackupData>? smartBackups = jsonData.SmartBackups;
+                return smartBackups?.Count - 1 ?? 0;
+            }
+            else
+            {
+                List<BackupData>? backups = jsonData.Backups;
+                return backups?.Count - 1 ?? 0;
+            }
+        }
+
+        public static int GetBackupDataCount(JsonData jsonData, bool bSmart = false)
+        {
+            if (bSmart)
+            {
+                List<SmartBackupData>? smartBackups = jsonData.SmartBackups;
+                return smartBackups?.Count ?? 0;
+            }
+            else
+            {
+                List<BackupData>? backups = jsonData.Backups;
+                return backups?.Count ?? 0;
+            }
         }
 
         public static JsonData AddNewBackup(JsonData jsonData, string path = "", string zipPath = "")
@@ -58,7 +107,15 @@ namespace ZomboidBackupManager
             int i = GetLastBackupDataIndex(jsonData);
             string name = GetDefaultBackupFolderName(GetLastBackupFolderNumber());
             BackupData backupData = NewBackupData(i + 1, name, path, zipPath);
-            return AddBackup(jsonData, backupData);
+            return AddBackup(jsonData, backupData, null);
+        }
+
+        public static JsonData AddNewSmartBackup(JsonData jsonData, List<string> changedFiles, string path = "", string zipPath = "")
+        {
+            int i = GetLastBackupDataIndex(jsonData, true);
+            string name = GetDefaultBackupFolderName(GetLastBackupFolderNumber());
+            SmartBackupData smartBackupData = NewSmartBackupData(i + 1, name, path, changedFiles, zipPath);
+            return AddBackup(jsonData, null , smartBackupData);
         }
 
         public static JsonData? ReadJsonDataFromJson(string? path = null)
@@ -77,6 +134,19 @@ namespace ZomboidBackupManager
             {
                 return null;
             }
+            string? dir = Path.GetDirectoryName(jsonDataFilePath);
+            if (!string.IsNullOrEmpty(dir))
+            {
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+
+            if (!File.Exists(jsonDataFilePath))
+            {
+                File.Create(jsonDataFilePath).Close();
+            }
             string? json = System.IO.File.ReadAllText(jsonDataFilePath);
             if (string.IsNullOrEmpty(json))
             {
@@ -91,45 +161,48 @@ namespace ZomboidBackupManager
                     return null;
                 }
             }
-            JsonData? data = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonData>(json);
-            if (data == null)
-            {
-                return null;
-            }
-            return data;
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<JsonData>(json);
         }
 
         public static void WriteJsonDataToJson(JsonData? jsonData)
         {
-            string jsonDataFilePath = GetJsonDataFilePath();
             if (jsonData == null)
             {
                 MessageBox.Show("[ERROR] - (WriteJsonDataToJson) --> jsonData == 0!");
                 return;
             }
-            else if (string.IsNullOrWhiteSpace(jsonDataFilePath))
+            string jsonDataFilePath = GetUnlistedJsonDataFilePath(jsonData.Name);
+            if (string.IsNullOrWhiteSpace(jsonDataFilePath))
             {
                 MessageBox.Show($"[ERROR] - (WriteJsonDataToJson) - [ERROR] \n--> [jsonDataFilePath (data.json directory)] == null or empty! \n--> [jsonDataFilePath] == {jsonDataFilePath}");
                 return;
             }
-            PrintDebug($"[WriteJsonDataToJson] - [Savegame = {jsonData.Name}] - [BackupData Length = {jsonData.Backups.Count}]");
+            //MessageBox.Show("[JsonData.cs] - [WriteJsonDataToJson] - [Fired]");
+            PrintDebug($"[WriteJsonDataToJson] - [Savegame = {jsonData.Name}] - [BackupData Length = {jsonData.Backups?.Count ?? null}]");
+            PrintDebug($"[WriteJsonDataToJson] - [Savegame = {jsonData.Name}] - [SmartBackupData Length = {jsonData.SmartBackups?.Count ?? null}]");
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(jsonData, Newtonsoft.Json.Formatting.Indented);
             System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
 
-        public static void WriteBackupDataToJson(string SavegameName, string fullBackupFolderPath)
+        public static void WriteBackupDataToJson(string SavegameName, string fullBackupFolderPath, List<string>? changedFiles)
         {
             JsonData? outputData = null;
-            JsonData? data = ReadJsonDataFromJson();
+            JsonData? data = ReadJsonDataFromJson(GetUnlistedJsonDataFilePath(SavegameName));
             if (data == null)
             {
                 //MessageBox.Show("ReadJsonDataFromJson == null");
                 data = NewJsonData(SavegameName);
             }
 
-            outputData = AddNewBackup(data, fullBackupFolderPath);
-
-            string jsonDataFilePath = GetJsonDataFilePath();
+            if(changedFiles == null)
+            {
+                outputData = AddNewBackup(data, fullBackupFolderPath);
+            }
+            else
+            {
+                outputData = AddNewSmartBackup(data, changedFiles, fullBackupFolderPath);
+            }
+            string jsonDataFilePath = GetUnlistedJsonDataFilePath(SavegameName);
             if (string.IsNullOrWhiteSpace(jsonDataFilePath))
             {
                 return;
@@ -196,8 +269,6 @@ namespace ZomboidBackupManager
 
     }
 
-
-
     public class BackupData
     {
 
@@ -218,6 +289,35 @@ namespace ZomboidBackupManager
             Date = date;
             Time = time;
             Size = size;
+        }
+    }
+
+    public class SmartBackupData
+    {
+
+        public int Index { get; set; }
+        public string? Name { get; set; }
+        public string? Path { get; set; }
+        public string? ZipPath { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public string Size { get; set; }
+        public List<string>? Files { get; set; }
+
+
+        public SmartBackupData(int index, string name, string backupDir, List<string>? changedFiles, string zipPath = "")
+        {
+            //PrintDebug($"[SmartBackupUtil.cs] - [SmartBackupData] - [Created]");
+            //PrintDebug($"[SmartBackupUtil.cs] - [SmartBackupData] - [Index = {index}] - [name = {name}] - [backupDir = {backupDir}]");
+            //PrintDebug($"[SmartBackupUtil.cs] - [SmartBackupData] - [changedFiles = {changedFiles?.Count ?? 0}] - [zipPath = {zipPath}]");
+            Index = index;
+            Name = name;
+            Path = backupDir;
+            ZipPath = zipPath;
+            Date = FunctionLibrary.GetCurrentDate();
+            Time = FunctionLibrary.GetCurrentTime();
+            Size = FunctionLibrary.FilesSize(changedFiles).ToString();
+            Files = changedFiles;
         }
 
     }

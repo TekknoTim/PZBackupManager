@@ -24,6 +24,12 @@ namespace ZomboidBackupManager
                 MessageBox.Show("The program is already running!");
                 return;
             }
+            bool bResult = GetArguments();
+            if (bResult)
+            {
+                DummyFileCreatorUtility.CreateDummyFiles();
+                return;
+            }
             FontLoader.LoadDefaultCustomFonts();
             Configuration.Init();
             ApplicationConfiguration.Initialize();
@@ -45,6 +51,23 @@ namespace ZomboidBackupManager
             if (count > 1)
             {
                 return true;
+            }
+            return false;
+        }
+
+        private static bool GetArguments()
+        {
+            // Gets command line arguments
+            string[] args = Environment.GetCommandLineArgs();
+
+            for (int i = 1; i < args.Length; i++)
+            {
+                //MessageBox.Show($"Argument {i}: {args[i]}");
+                if (args[i].Contains("-CreateDummy"))
+                {
+                    Console.WriteLine("[DEBUG] - Debug mode enabled.");
+                    return true;
+                }
             }
             return false;
         }

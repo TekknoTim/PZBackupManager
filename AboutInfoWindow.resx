@@ -121,7 +121,7 @@
   <data name="PZBackupManagerLogoPictureBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAIAAABMXPacAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wAAADsABataJCQAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIDUuMS43i9b3OQAAfS5JREFUeF59vQV8
+        vAAADrwBlbxySQAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIDUuMS43i9b3OQAAfS5JREFUeF59vQV8
         lFfa/323UBxiM5OZjM9kNBN3d3dPSCBYAgSHEIKEBHd319JSpEKFAsXd6t12d9utrbTdeot1n/d5v5PD
         k+1/3+f/ng9798yZI9f1+/2u6zp3SLvSf///tq+//vratWu7du1qaWkZNmxYXFxcYGBgbGwsnYSEhLy8
         vGnTpjFeVVWVkZERERGRnJwcExMTGRlJJzU1lWdKSkpySnJMdExicFRlaODWprDjLZEvz015fUnOC3Ny
@@ -659,6 +659,18 @@
         10vBggAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="AboutWindowButtonTS.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="AboutWindowButtonTS.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="FolderShortcutDropDownMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>196, 17</value>
+  </metadata>
+  <metadata name="JsonFilesShortcutDropDownMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>416, 17</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAAAAAAAEAIADiBQEAFgAAAIlQTkcNChoKAAAADUlIRFIAAAEAAAABAAgGAAAAXHKoZgAAAAFv
