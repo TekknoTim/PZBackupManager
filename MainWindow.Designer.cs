@@ -264,7 +264,7 @@ namespace ZomboidBackupManager
             OpenDatabaseSetupTSButton.BackColor = SystemColors.ControlDarkDark;
             OpenDatabaseSetupTSButton.Font = new Font("Impact", 9F);
             OpenDatabaseSetupTSButton.ForeColor = SystemColors.ButtonHighlight;
-            OpenDatabaseSetupTSButton.Image = (Image)resources.GetObject("OpenDatabaseSetupTSButton.Image");
+            OpenDatabaseSetupTSButton.Image = Resources.AlternativeGear2Color_BW;
             OpenDatabaseSetupTSButton.ImageScaling = ToolStripItemImageScaling.None;
             OpenDatabaseSetupTSButton.ImageTransparentColor = Color.Magenta;
             OpenDatabaseSetupTSButton.Margin = new Padding(2);
@@ -299,7 +299,7 @@ namespace ZomboidBackupManager
             LoadDataBaseButton.Enabled = false;
             LoadDataBaseButton.Font = new Font("Impact", 9F);
             LoadDataBaseButton.ForeColor = SystemColors.ButtonHighlight;
-            LoadDataBaseButton.Image = (Image)resources.GetObject("LoadDataBaseButton.Image");
+            LoadDataBaseButton.Image = Resources.LoadIconCCW_B;
             LoadDataBaseButton.ImageScaling = ToolStripItemImageScaling.None;
             LoadDataBaseButton.ImageTransparentColor = Color.Magenta;
             LoadDataBaseButton.Margin = new Padding(2);
