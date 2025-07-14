@@ -55,12 +55,18 @@
             FolderPathShortCutsDropDownItemA = new ToolStripMenuItem();
             FolderPathShortCutsDropDownItemB = new ToolStripMenuItem();
             FolderPathShortCutsDropDownItemC = new ToolStripMenuItem();
+            FolderPathShortCutsDropDownItemD = new ToolStripMenuItem();
+            FolderPathShortCutsDropDownItemE = new ToolStripMenuItem();
             TS_FileShortCutDropDownButton = new ToolStripDropDownButton();
             JsonFilesShortcutDropDownMenu = new ContextMenuStrip(components);
             JsonFileShortCutsDropDownItemA = new ToolStripMenuItem();
             JsonFileShortCutsDropDownItemB = new ToolStripMenuItem();
             JsonFileShortCutsDropDownItemC = new ToolStripMenuItem();
+            JsonFileShortCutsDropDownItemD = new ToolStripMenuItem();
+            JsonFileShortCutsDropDownItemE = new ToolStripMenuItem();
+            JsonFileShortCutsDropDownItemF = new ToolStripMenuItem();
             MainPanel = new Panel();
+            ToggleExperimentalFeaturesPanel = new Panel();
             VerticalSpacerPanel = new Panel();
             AuthorPanel.SuspendLayout();
             HeadlinePanel.SuspendLayout();
@@ -252,7 +258,6 @@
             LogoPanelA.Padding = new Padding(1);
             LogoPanelA.Size = new Size(88, 88);
             LogoPanelA.TabIndex = 4;
-            LogoPanelA.Paint += LogoPanelA_Paint;
             // 
             // GithubLogoPictureBox
             // 
@@ -418,10 +423,10 @@
             // 
             // FolderShortcutDropDownMenu
             // 
-            FolderShortcutDropDownMenu.Items.AddRange(new ToolStripItem[] { FolderPathShortCutsDropDownItemA, FolderPathShortCutsDropDownItemB, FolderPathShortCutsDropDownItemC });
+            FolderShortcutDropDownMenu.Items.AddRange(new ToolStripItem[] { FolderPathShortCutsDropDownItemA, FolderPathShortCutsDropDownItemB, FolderPathShortCutsDropDownItemC, FolderPathShortCutsDropDownItemD, FolderPathShortCutsDropDownItemE });
             FolderShortcutDropDownMenu.Name = "FolderShortcutDropDownMenu";
             FolderShortcutDropDownMenu.OwnerItem = TS_FolderPathShortCutsDropDownButton;
-            FolderShortcutDropDownMenu.Size = new Size(117, 70);
+            FolderShortcutDropDownMenu.Size = new Size(183, 114);
             // 
             // FolderPathShortCutsDropDownItemA
             // 
@@ -430,7 +435,7 @@
             FolderPathShortCutsDropDownItemA.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             FolderPathShortCutsDropDownItemA.Image = Properties.Resources.FolderIcon;
             FolderPathShortCutsDropDownItemA.Name = "FolderPathShortCutsDropDownItemA";
-            FolderPathShortCutsDropDownItemA.Size = new Size(116, 22);
+            FolderPathShortCutsDropDownItemA.Size = new Size(182, 22);
             FolderPathShortCutsDropDownItemA.Text = "App";
             FolderPathShortCutsDropDownItemA.ToolTipText = "Open Application Install Directory";
             FolderPathShortCutsDropDownItemA.Click += FolderPathShortCutsDropDownItemA_Click;
@@ -442,7 +447,7 @@
             FolderPathShortCutsDropDownItemB.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             FolderPathShortCutsDropDownItemB.Image = Properties.Resources.FolderIcon;
             FolderPathShortCutsDropDownItemB.Name = "FolderPathShortCutsDropDownItemB";
-            FolderPathShortCutsDropDownItemB.Size = new Size(116, 22);
+            FolderPathShortCutsDropDownItemB.Size = new Size(182, 22);
             FolderPathShortCutsDropDownItemB.Text = "Backup";
             FolderPathShortCutsDropDownItemB.ToolTipText = "Open Backup Directory";
             FolderPathShortCutsDropDownItemB.Click += FolderPathShortCutsDropDownItemB_Click;
@@ -454,10 +459,34 @@
             FolderPathShortCutsDropDownItemC.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             FolderPathShortCutsDropDownItemC.Image = Properties.Resources.FolderIcon;
             FolderPathShortCutsDropDownItemC.Name = "FolderPathShortCutsDropDownItemC";
-            FolderPathShortCutsDropDownItemC.Size = new Size(116, 22);
+            FolderPathShortCutsDropDownItemC.Size = new Size(182, 22);
             FolderPathShortCutsDropDownItemC.Text = "Saves";
-            FolderPathShortCutsDropDownItemC.ToolTipText = "Open Saves Directory";
+            FolderPathShortCutsDropDownItemC.ToolTipText = "Open Saves Directory\r\n\r\nFull Path: %USERPROFILE%\\Zomboid\\Saves\\";
             FolderPathShortCutsDropDownItemC.Click += FolderPathShortCutsDropDownItemC_Click;
+            // 
+            // FolderPathShortCutsDropDownItemD
+            // 
+            FolderPathShortCutsDropDownItemD.AutoToolTip = true;
+            FolderPathShortCutsDropDownItemD.BackColor = Color.MistyRose;
+            FolderPathShortCutsDropDownItemD.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            FolderPathShortCutsDropDownItemD.Image = Properties.Resources.FolderIcon;
+            FolderPathShortCutsDropDownItemD.Name = "FolderPathShortCutsDropDownItemD";
+            FolderPathShortCutsDropDownItemD.Size = new Size(182, 22);
+            FolderPathShortCutsDropDownItemD.Text = "Lua";
+            FolderPathShortCutsDropDownItemD.ToolTipText = "Full Path: %USERPROFILE%\\Zomboid\\Lua\\";
+            FolderPathShortCutsDropDownItemD.Click += FolderPathShortCutsDropDownItemD_Click;
+            // 
+            // FolderPathShortCutsDropDownItemE
+            // 
+            FolderPathShortCutsDropDownItemE.AutoToolTip = true;
+            FolderPathShortCutsDropDownItemE.BackColor = Color.MistyRose;
+            FolderPathShortCutsDropDownItemE.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            FolderPathShortCutsDropDownItemE.Image = Properties.Resources.FolderIcon;
+            FolderPathShortCutsDropDownItemE.Name = "FolderPathShortCutsDropDownItemE";
+            FolderPathShortCutsDropDownItemE.Size = new Size(182, 22);
+            FolderPathShortCutsDropDownItemE.Text = "PZBackupManager";
+            FolderPathShortCutsDropDownItemE.ToolTipText = "Full Path: %USERPROFILE%\\Zomboid\\Lua\\PZBackupManager\\";
+            FolderPathShortCutsDropDownItemE.Click += FolderPathShortCutsDropDownItemE_Click;
             // 
             // TS_FileShortCutDropDownButton
             // 
@@ -481,10 +510,10 @@
             // 
             // JsonFilesShortcutDropDownMenu
             // 
-            JsonFilesShortcutDropDownMenu.Items.AddRange(new ToolStripItem[] { JsonFileShortCutsDropDownItemA, JsonFileShortCutsDropDownItemB, JsonFileShortCutsDropDownItemC });
+            JsonFilesShortcutDropDownMenu.Items.AddRange(new ToolStripItem[] { JsonFileShortCutsDropDownItemA, JsonFileShortCutsDropDownItemB, JsonFileShortCutsDropDownItemC, JsonFileShortCutsDropDownItemD, JsonFileShortCutsDropDownItemE, JsonFileShortCutsDropDownItemF });
             JsonFilesShortcutDropDownMenu.Name = "JsonFilesShortcutDropDownMenu";
             JsonFilesShortcutDropDownMenu.OwnerItem = TS_FileShortCutDropDownButton;
-            JsonFilesShortcutDropDownMenu.Size = new Size(186, 92);
+            JsonFilesShortcutDropDownMenu.Size = new Size(186, 136);
             // 
             // JsonFileShortCutsDropDownItemA
             // 
@@ -525,6 +554,39 @@
             JsonFileShortCutsDropDownItemC.ToolTipText = "Opens the readme.md file\r\nin your default text editor.";
             JsonFileShortCutsDropDownItemC.Click += JsonFileShortCutsDropDownItemC_Click;
             // 
+            // JsonFileShortCutsDropDownItemD
+            // 
+            JsonFileShortCutsDropDownItemD.BackColor = Color.MistyRose;
+            JsonFileShortCutsDropDownItemD.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            JsonFileShortCutsDropDownItemD.Image = Properties.Resources.DocumentIcon;
+            JsonFileShortCutsDropDownItemD.MergeAction = MergeAction.MatchOnly;
+            JsonFileShortCutsDropDownItemD.Name = "JsonFileShortCutsDropDownItemD";
+            JsonFileShortCutsDropDownItemD.Size = new Size(185, 22);
+            JsonFileShortCutsDropDownItemD.Text = "PZScriptHook.ini";
+            JsonFileShortCutsDropDownItemD.Click += JsonFileShortCutsDropDownItemD_Click;
+            // 
+            // JsonFileShortCutsDropDownItemE
+            // 
+            JsonFileShortCutsDropDownItemE.BackColor = Color.MistyRose;
+            JsonFileShortCutsDropDownItemE.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            JsonFileShortCutsDropDownItemE.Image = Properties.Resources.DocumentIcon;
+            JsonFileShortCutsDropDownItemE.MergeAction = MergeAction.MatchOnly;
+            JsonFileShortCutsDropDownItemE.Name = "JsonFileShortCutsDropDownItemE";
+            JsonFileShortCutsDropDownItemE.Size = new Size(185, 22);
+            JsonFileShortCutsDropDownItemE.Text = "Version.txt";
+            JsonFileShortCutsDropDownItemE.Click += JsonFileShortCutsDropDownItemE_Click;
+            // 
+            // JsonFileShortCutsDropDownItemF
+            // 
+            JsonFileShortCutsDropDownItemF.BackColor = Color.MistyRose;
+            JsonFileShortCutsDropDownItemF.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            JsonFileShortCutsDropDownItemF.Image = Properties.Resources.DocumentIcon;
+            JsonFileShortCutsDropDownItemF.MergeAction = MergeAction.MatchOnly;
+            JsonFileShortCutsDropDownItemF.Name = "JsonFileShortCutsDropDownItemF";
+            JsonFileShortCutsDropDownItemF.Size = new Size(185, 22);
+            JsonFileShortCutsDropDownItemF.Text = "BackupHistory.csv";
+            JsonFileShortCutsDropDownItemF.Click += JsonFileShortCutsDropDownItemF_Click;
+            // 
             // MainPanel
             // 
             MainPanel.AutoSize = true;
@@ -533,6 +595,7 @@
             MainPanel.BackgroundImage = Properties.Resources.SpiffoHighlightsWithBackground;
             MainPanel.BackgroundImageLayout = ImageLayout.Zoom;
             MainPanel.BorderStyle = BorderStyle.Fixed3D;
+            MainPanel.Controls.Add(ToggleExperimentalFeaturesPanel);
             MainPanel.Controls.Add(HeadlinePanel);
             MainPanel.Controls.Add(WebsiteLinkLogoPanel);
             MainPanel.Controls.Add(VerticalSpacerPanel);
@@ -544,6 +607,16 @@
             MainPanel.Name = "MainPanel";
             MainPanel.Size = new Size(539, 679);
             MainPanel.TabIndex = 8;
+            // 
+            // ToggleExperimentalFeaturesPanel
+            // 
+            ToggleExperimentalFeaturesPanel.BackColor = Color.Transparent;
+            ToggleExperimentalFeaturesPanel.ForeColor = Color.Transparent;
+            ToggleExperimentalFeaturesPanel.Location = new Point(168, 235);
+            ToggleExperimentalFeaturesPanel.Name = "ToggleExperimentalFeaturesPanel";
+            ToggleExperimentalFeaturesPanel.Size = new Size(57, 53);
+            ToggleExperimentalFeaturesPanel.TabIndex = 9;
+            ToggleExperimentalFeaturesPanel.DoubleClick += ToggleExperimentalFeaturesPanel_DoubleClick;
             // 
             // VerticalSpacerPanel
             // 
@@ -637,5 +710,11 @@
         private Panel LogoPanelB;
         private Panel VerticalSpacerPanel;
         private Panel HeadlineAndVersionPanel;
+        private Panel ToggleExperimentalFeaturesPanel;
+        private ToolStripMenuItem JsonFileShortCutsDropDownItemD;
+        private ToolStripMenuItem JsonFileShortCutsDropDownItemE;
+        private ToolStripMenuItem JsonFileShortCutsDropDownItemF;
+        private ToolStripMenuItem FolderPathShortCutsDropDownItemD;
+        private ToolStripMenuItem FolderPathShortCutsDropDownItemE;
     }
 }

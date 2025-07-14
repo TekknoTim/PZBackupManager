@@ -43,9 +43,8 @@
             TopPanel = new Panel();
             TopLeftPanel = new Panel();
             ControlAreaSubPanel = new Panel();
-            EnableGridViewMode2Button = new RadioButton();
-            EnableGridViewMode1Button = new RadioButton();
-            DisableGridViewButton = new RadioButton();
+            DisplayDatabaseDataInfoRadioButton = new RadioButton();
+            DisplayDatabaseRadioButton = new RadioButton();
             ToggleSmartBackupPanel = new Panel();
             EnableSmartBackupRadioButton = new RadioButton();
             DisableSmartBackupRadioButton = new RadioButton();
@@ -58,6 +57,7 @@
             SetupButton = new ToolStripButton();
             TSProgressbar = new ToolStripProgressBar();
             CreateButton = new ToolStripButton();
+            DeletePresetButton = new ToolStripButton();
             SavegameComboBox = new ComboBox();
             SavegameLabel = new Label();
             GamemodeComboBox = new ComboBox();
@@ -74,11 +74,9 @@
             AutoLoadDatabaseMenuOption = new ToolStripMenuItem();
             BottomTS_SeparatorB = new ToolStripSeparator();
             PreviousPageButton = new ToolStripButton();
-            ShowDatabaseInfoButton = new ToolStripButton();
-            ShowDatabaseButton = new ToolStripButton();
+            GridViewPageTextBox = new ToolStripTextBox();
             BottomTS_SeparatorA = new ToolStripSeparator();
             NextPageButton = new ToolStripButton();
-            GridViewPageLabel = new ToolStripLabel();
             CancelSetupButton = new Button();
             DoneButton = new Button();
             MainPanel.SuspendLayout();
@@ -156,83 +154,67 @@
             // ControlAreaSubPanel
             // 
             ControlAreaSubPanel.AutoSize = true;
-            ControlAreaSubPanel.BackColor = SystemColors.ControlLightLight;
+            ControlAreaSubPanel.BackColor = SystemColors.ControlDark;
             ControlAreaSubPanel.BorderStyle = BorderStyle.Fixed3D;
-            ControlAreaSubPanel.Controls.Add(EnableGridViewMode2Button);
-            ControlAreaSubPanel.Controls.Add(EnableGridViewMode1Button);
-            ControlAreaSubPanel.Controls.Add(DisableGridViewButton);
+            ControlAreaSubPanel.Controls.Add(DisplayDatabaseDataInfoRadioButton);
+            ControlAreaSubPanel.Controls.Add(DisplayDatabaseRadioButton);
             ControlAreaSubPanel.Dock = DockStyle.Top;
             ControlAreaSubPanel.Location = new Point(0, 55);
             ControlAreaSubPanel.Margin = new Padding(15);
             ControlAreaSubPanel.MaximumSize = new Size(200, 75);
             ControlAreaSubPanel.MinimumSize = new Size(200, 75);
             ControlAreaSubPanel.Name = "ControlAreaSubPanel";
-            ControlAreaSubPanel.Padding = new Padding(5);
+            ControlAreaSubPanel.Padding = new Padding(7, 5, 7, 5);
             ControlAreaSubPanel.Size = new Size(200, 75);
             ControlAreaSubPanel.TabIndex = 2;
             // 
-            // EnableGridViewMode2Button
+            // DisplayDatabaseDataInfoRadioButton
             // 
-            EnableGridViewMode2Button.AutoCheck = false;
-            EnableGridViewMode2Button.AutoSize = true;
-            EnableGridViewMode2Button.BackColor = SystemColors.ControlLight;
-            EnableGridViewMode2Button.Dock = DockStyle.Top;
-            EnableGridViewMode2Button.Font = new Font("Bahnschrift SemiCondensed", 9.75F);
-            EnableGridViewMode2Button.Location = new Point(5, 45);
-            EnableGridViewMode2Button.Margin = new Padding(10);
-            EnableGridViewMode2Button.Name = "EnableGridViewMode2Button";
-            EnableGridViewMode2Button.Padding = new Padding(15, 0, 15, 0);
-            EnableGridViewMode2Button.Size = new Size(186, 20);
-            EnableGridViewMode2Button.TabIndex = 3;
-            EnableGridViewMode2Button.Text = "Enable Large Info Grid Panel";
-            EnableGridViewMode2Button.TextAlign = ContentAlignment.MiddleCenter;
-            EnableGridViewMode2Button.TextImageRelation = TextImageRelation.TextBeforeImage;
-            EnableGridViewMode2Button.UseVisualStyleBackColor = false;
-            EnableGridViewMode2Button.MouseClick += EnableAutoCreateAllDBRadioButton_MouseClick;
+            DisplayDatabaseDataInfoRadioButton.AutoCheck = false;
+            DisplayDatabaseDataInfoRadioButton.AutoSize = true;
+            DisplayDatabaseDataInfoRadioButton.BackColor = Color.Brown;
+            DisplayDatabaseDataInfoRadioButton.Checked = true;
+            DisplayDatabaseDataInfoRadioButton.Dock = DockStyle.Bottom;
+            DisplayDatabaseDataInfoRadioButton.FlatAppearance.CheckedBackColor = Color.Black;
+            DisplayDatabaseDataInfoRadioButton.Font = new Font("Bahnschrift", 10F, FontStyle.Bold);
+            DisplayDatabaseDataInfoRadioButton.ForeColor = Color.White;
+            DisplayDatabaseDataInfoRadioButton.Location = new Point(7, 6);
+            DisplayDatabaseDataInfoRadioButton.MaximumSize = new Size(182, 30);
+            DisplayDatabaseDataInfoRadioButton.MinimumSize = new Size(182, 30);
+            DisplayDatabaseDataInfoRadioButton.Name = "DisplayDatabaseDataInfoRadioButton";
+            DisplayDatabaseDataInfoRadioButton.Padding = new Padding(15, 2, 15, 2);
+            DisplayDatabaseDataInfoRadioButton.Size = new Size(182, 30);
+            DisplayDatabaseDataInfoRadioButton.TabIndex = 1;
+            DisplayDatabaseDataInfoRadioButton.TabStop = true;
+            DisplayDatabaseDataInfoRadioButton.Text = "Display Preset Info";
+            DisplayDatabaseDataInfoRadioButton.TextAlign = ContentAlignment.MiddleCenter;
+            DisplayDatabaseDataInfoRadioButton.UseVisualStyleBackColor = true;
+            DisplayDatabaseDataInfoRadioButton.Click += DisplayDatabaseDataInfoRadioButton_Click;
             // 
-            // EnableGridViewMode1Button
+            // DisplayDatabaseRadioButton
             // 
-            EnableGridViewMode1Button.AutoCheck = false;
-            EnableGridViewMode1Button.AutoSize = true;
-            EnableGridViewMode1Button.BackColor = SystemColors.ControlLight;
-            EnableGridViewMode1Button.Dock = DockStyle.Top;
-            EnableGridViewMode1Button.Font = new Font("Bahnschrift SemiCondensed", 9.75F);
-            EnableGridViewMode1Button.Location = new Point(5, 25);
-            EnableGridViewMode1Button.Margin = new Padding(10);
-            EnableGridViewMode1Button.Name = "EnableGridViewMode1Button";
-            EnableGridViewMode1Button.Padding = new Padding(15, 0, 15, 0);
-            EnableGridViewMode1Button.Size = new Size(186, 20);
-            EnableGridViewMode1Button.TabIndex = 2;
-            EnableGridViewMode1Button.Text = "Enable Small Info Grid Panel";
-            EnableGridViewMode1Button.TextAlign = ContentAlignment.MiddleCenter;
-            EnableGridViewMode1Button.TextImageRelation = TextImageRelation.TextBeforeImage;
-            EnableGridViewMode1Button.UseVisualStyleBackColor = false;
-            EnableGridViewMode1Button.MouseClick += EnableAutoCreateSemiDBRadioButton_MouseClick;
-            // 
-            // DisableGridViewButton
-            // 
-            DisableGridViewButton.AutoCheck = false;
-            DisableGridViewButton.AutoSize = true;
-            DisableGridViewButton.BackColor = SystemColors.ControlLight;
-            DisableGridViewButton.Checked = true;
-            DisableGridViewButton.Dock = DockStyle.Top;
-            DisableGridViewButton.Font = new Font("Bahnschrift SemiCondensed", 9.75F);
-            DisableGridViewButton.Location = new Point(5, 5);
-            DisableGridViewButton.Margin = new Padding(10);
-            DisableGridViewButton.Name = "DisableGridViewButton";
-            DisableGridViewButton.Padding = new Padding(15, 0, 15, 0);
-            DisableGridViewButton.Size = new Size(186, 20);
-            DisableGridViewButton.TabIndex = 1;
-            DisableGridViewButton.Text = "Disable Info Grid Panel";
-            DisableGridViewButton.TextAlign = ContentAlignment.MiddleCenter;
-            DisableGridViewButton.TextImageRelation = TextImageRelation.TextBeforeImage;
-            DisableGridViewButton.UseVisualStyleBackColor = false;
-            DisableGridViewButton.MouseClick += DisableAutoCreateDBRadioButton_MouseClick;
+            DisplayDatabaseRadioButton.AutoCheck = false;
+            DisplayDatabaseRadioButton.AutoSize = true;
+            DisplayDatabaseRadioButton.BackColor = Color.Maroon;
+            DisplayDatabaseRadioButton.Dock = DockStyle.Bottom;
+            DisplayDatabaseRadioButton.Font = new Font("Bahnschrift", 10F, FontStyle.Bold);
+            DisplayDatabaseRadioButton.ForeColor = Color.White;
+            DisplayDatabaseRadioButton.Location = new Point(7, 36);
+            DisplayDatabaseRadioButton.MaximumSize = new Size(182, 30);
+            DisplayDatabaseRadioButton.MinimumSize = new Size(182, 30);
+            DisplayDatabaseRadioButton.Name = "DisplayDatabaseRadioButton";
+            DisplayDatabaseRadioButton.Padding = new Padding(15, 2, 15, 2);
+            DisplayDatabaseRadioButton.Size = new Size(182, 30);
+            DisplayDatabaseRadioButton.TabIndex = 0;
+            DisplayDatabaseRadioButton.Text = "Display Database";
+            DisplayDatabaseRadioButton.TextAlign = ContentAlignment.MiddleCenter;
+            DisplayDatabaseRadioButton.UseVisualStyleBackColor = true;
+            DisplayDatabaseRadioButton.Click += DisplayDatabaseRadioButton_Click;
             // 
             // ToggleSmartBackupPanel
             // 
             ToggleSmartBackupPanel.AutoSize = true;
-            ToggleSmartBackupPanel.BackColor = SystemColors.ControlLightLight;
+            ToggleSmartBackupPanel.BackColor = SystemColors.ControlDark;
             ToggleSmartBackupPanel.BorderStyle = BorderStyle.Fixed3D;
             ToggleSmartBackupPanel.Controls.Add(EnableSmartBackupRadioButton);
             ToggleSmartBackupPanel.Controls.Add(DisableSmartBackupRadioButton);
@@ -250,17 +232,18 @@
             EnableSmartBackupRadioButton.AutoCheck = false;
             EnableSmartBackupRadioButton.AutoSize = true;
             EnableSmartBackupRadioButton.BackColor = SystemColors.ControlLight;
+            EnableSmartBackupRadioButton.BackgroundImage = Properties.Resources.RadioSwitchBackgroundTexture_Green;
+            EnableSmartBackupRadioButton.BackgroundImageLayout = ImageLayout.Stretch;
+            EnableSmartBackupRadioButton.CheckAlign = ContentAlignment.MiddleCenter;
             EnableSmartBackupRadioButton.Dock = DockStyle.Top;
-            EnableSmartBackupRadioButton.Font = new Font("Bahnschrift SemiCondensed", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            EnableSmartBackupRadioButton.Location = new Point(5, 27);
+            EnableSmartBackupRadioButton.Font = new Font("Bahnschrift", 10F, FontStyle.Bold);
+            EnableSmartBackupRadioButton.Location = new Point(5, 26);
             EnableSmartBackupRadioButton.Margin = new Padding(10);
             EnableSmartBackupRadioButton.Name = "EnableSmartBackupRadioButton";
             EnableSmartBackupRadioButton.Padding = new Padding(15, 0, 15, 0);
-            EnableSmartBackupRadioButton.Size = new Size(186, 22);
+            EnableSmartBackupRadioButton.Size = new Size(186, 21);
             EnableSmartBackupRadioButton.TabIndex = 0;
-            EnableSmartBackupRadioButton.Text = "Enable Smart Backup";
-            EnableSmartBackupRadioButton.TextAlign = ContentAlignment.MiddleCenter;
-            EnableSmartBackupRadioButton.TextImageRelation = TextImageRelation.TextBeforeImage;
+            EnableSmartBackupRadioButton.Text = "ON";
             EnableSmartBackupRadioButton.UseVisualStyleBackColor = false;
             EnableSmartBackupRadioButton.MouseClick += EnableSmartBackupRadioButton_MouseClick;
             // 
@@ -269,18 +252,20 @@
             DisableSmartBackupRadioButton.AutoCheck = false;
             DisableSmartBackupRadioButton.AutoSize = true;
             DisableSmartBackupRadioButton.BackColor = SystemColors.ControlLight;
+            DisableSmartBackupRadioButton.BackgroundImage = Properties.Resources.RadioSwitchBackgroundTexture_Yellow;
+            DisableSmartBackupRadioButton.BackgroundImageLayout = ImageLayout.Stretch;
+            DisableSmartBackupRadioButton.CheckAlign = ContentAlignment.MiddleCenter;
             DisableSmartBackupRadioButton.Checked = true;
             DisableSmartBackupRadioButton.Dock = DockStyle.Top;
-            DisableSmartBackupRadioButton.Font = new Font("Bahnschrift SemiCondensed", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            DisableSmartBackupRadioButton.Font = new Font("Bahnschrift", 10F, FontStyle.Bold);
             DisableSmartBackupRadioButton.Location = new Point(5, 5);
             DisableSmartBackupRadioButton.Margin = new Padding(10);
             DisableSmartBackupRadioButton.Name = "DisableSmartBackupRadioButton";
             DisableSmartBackupRadioButton.Padding = new Padding(15, 0, 15, 0);
-            DisableSmartBackupRadioButton.Size = new Size(186, 22);
+            DisableSmartBackupRadioButton.Size = new Size(186, 21);
             DisableSmartBackupRadioButton.TabIndex = 1;
             DisableSmartBackupRadioButton.TabStop = true;
-            DisableSmartBackupRadioButton.Text = "Disable Smart Backup";
-            DisableSmartBackupRadioButton.TextAlign = ContentAlignment.MiddleCenter;
+            DisableSmartBackupRadioButton.Text = "OFF";
             DisableSmartBackupRadioButton.TextImageRelation = TextImageRelation.TextBeforeImage;
             DisableSmartBackupRadioButton.UseVisualStyleBackColor = false;
             DisableSmartBackupRadioButton.MouseClick += DisableSmartBackupRadioButton_MouseClick;
@@ -306,6 +291,7 @@
             // 
             DatabaseListBoxPanel.AutoSize = true;
             DatabaseListBoxPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            DatabaseListBoxPanel.BorderStyle = BorderStyle.Fixed3D;
             DatabaseListBoxPanel.Controls.Add(DatabaseListboxLabel);
             DatabaseListBoxPanel.Controls.Add(DatabaseListBox);
             DatabaseListBoxPanel.Dock = DockStyle.Left;
@@ -335,16 +321,17 @@
             // 
             // DatabaseListBox
             // 
+            DatabaseListBox.BorderStyle = BorderStyle.FixedSingle;
             DatabaseListBox.Dock = DockStyle.Bottom;
             DatabaseListBox.Font = new Font("Bahnschrift", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             DatabaseListBox.FormattingEnabled = true;
             DatabaseListBox.Items.AddRange(new object[] { " " });
-            DatabaseListBox.Location = new Point(2, 27);
+            DatabaseListBox.Location = new Point(2, 25);
             DatabaseListBox.Margin = new Padding(0);
             DatabaseListBox.MaximumSize = new Size(198, 95);
             DatabaseListBox.MinimumSize = new Size(198, 95);
             DatabaseListBox.Name = "DatabaseListBox";
-            DatabaseListBox.Size = new Size(198, 88);
+            DatabaseListBox.Size = new Size(198, 86);
             DatabaseListBox.TabIndex = 2;
             DatabaseListBox.SelectedIndexChanged += DatabaseListBox_SelectedIndexChanged;
             // 
@@ -352,7 +339,7 @@
             // 
             TopRightSubPanel.AutoSize = true;
             TopRightSubPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            TopRightSubPanel.BackColor = SystemColors.ControlLight;
+            TopRightSubPanel.BackColor = Color.Brown;
             TopRightSubPanel.BorderStyle = BorderStyle.Fixed3D;
             TopRightSubPanel.Controls.Add(SavegameSelectionToolstrip);
             TopRightSubPanel.Controls.Add(SavegameComboBox);
@@ -370,54 +357,84 @@
             // 
             // SavegameSelectionToolstrip
             // 
+            SavegameSelectionToolstrip.BackColor = Color.Maroon;
             SavegameSelectionToolstrip.CanOverflow = false;
             SavegameSelectionToolstrip.Dock = DockStyle.Bottom;
             SavegameSelectionToolstrip.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             SavegameSelectionToolstrip.GripStyle = ToolStripGripStyle.Hidden;
-            SavegameSelectionToolstrip.Items.AddRange(new ToolStripItem[] { SetupButton, TSProgressbar, CreateButton });
-            SavegameSelectionToolstrip.Location = new Point(5, 88);
-            SavegameSelectionToolstrip.MaximumSize = new Size(261, 20);
-            SavegameSelectionToolstrip.MinimumSize = new Size(261, 20);
+            SavegameSelectionToolstrip.Items.AddRange(new ToolStripItem[] { SetupButton, TSProgressbar, CreateButton, DeletePresetButton });
+            SavegameSelectionToolstrip.Location = new Point(5, 82);
+            SavegameSelectionToolstrip.MaximumSize = new Size(261, 26);
+            SavegameSelectionToolstrip.MinimumSize = new Size(261, 26);
             SavegameSelectionToolstrip.Name = "SavegameSelectionToolstrip";
-            SavegameSelectionToolstrip.Size = new Size(261, 20);
+            SavegameSelectionToolstrip.Size = new Size(261, 26);
             SavegameSelectionToolstrip.TabIndex = 4;
             // 
             // SetupButton
             // 
+            SetupButton.BackColor = Color.Transparent;
+            SetupButton.BackgroundImage = Properties.Resources.ButtonBackgroundTexture90x38;
+            SetupButton.BackgroundImageLayout = ImageLayout.Stretch;
             SetupButton.Font = new Font("Bahnschrift SemiCondensed", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SetupButton.Image = Properties.Resources.StarCharButton;
             SetupButton.ImageTransparentColor = Color.Magenta;
             SetupButton.MergeAction = MergeAction.MatchOnly;
             SetupButton.Name = "SetupButton";
             SetupButton.Overflow = ToolStripItemOverflow.Never;
-            SetupButton.Size = new Size(51, 17);
+            SetupButton.Size = new Size(51, 23);
             SetupButton.Text = "Setup";
             SetupButton.ToolTipText = "Click, to create a database of the\r\nselected preset.";
             SetupButton.Click += SetupButton_Click;
             // 
             // TSProgressbar
             // 
+            TSProgressbar.AutoSize = false;
+            TSProgressbar.BackColor = Color.LightCoral;
+            TSProgressbar.ForeColor = Color.Red;
+            TSProgressbar.Margin = new Padding(14, 2, 14, 1);
             TSProgressbar.MergeAction = MergeAction.MatchOnly;
             TSProgressbar.Name = "TSProgressbar";
             TSProgressbar.Overflow = ToolStripItemOverflow.Never;
-            TSProgressbar.Size = new Size(150, 17);
+            TSProgressbar.Size = new Size(125, 23);
             TSProgressbar.Step = 1;
             TSProgressbar.Style = ProgressBarStyle.Continuous;
             // 
             // CreateButton
             // 
             CreateButton.Alignment = ToolStripItemAlignment.Right;
+            CreateButton.BackColor = Color.Transparent;
+            CreateButton.BackgroundImage = Properties.Resources.ButtonBackgroundTexture90x38;
+            CreateButton.BackgroundImageLayout = ImageLayout.Stretch;
             CreateButton.Font = new Font("Bahnschrift SemiCondensed", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             CreateButton.Image = Properties.Resources.SquareWithPlusIconImage;
             CreateButton.ImageTransparentColor = Color.Magenta;
-            CreateButton.MergeAction = MergeAction.MatchOnly;
+            CreateButton.MergeAction = MergeAction.Replace;
+            CreateButton.MergeIndex = 0;
             CreateButton.Name = "CreateButton";
-            CreateButton.Overflow = ToolStripItemOverflow.Never;
             CreateButton.RightToLeft = RightToLeft.Yes;
-            CreateButton.Size = new Size(55, 17);
+            CreateButton.Size = new Size(55, 23);
             CreateButton.Text = "Create";
             CreateButton.ToolTipText = "Click, to create an empty preset,\r\nfor the savegame selected above.";
             CreateButton.Click += CreateButton_Click;
+            // 
+            // DeletePresetButton
+            // 
+            DeletePresetButton.Alignment = ToolStripItemAlignment.Right;
+            DeletePresetButton.BackColor = Color.Transparent;
+            DeletePresetButton.BackgroundImage = Properties.Resources.ButtonBackgroundTexture90x38;
+            DeletePresetButton.BackgroundImageLayout = ImageLayout.Stretch;
+            DeletePresetButton.Font = new Font("Bahnschrift SemiCondensed", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            DeletePresetButton.Image = Properties.Resources.TrashbinIconImage;
+            DeletePresetButton.ImageTransparentColor = Color.Magenta;
+            DeletePresetButton.MergeAction = MergeAction.Replace;
+            DeletePresetButton.MergeIndex = 1;
+            DeletePresetButton.Name = "DeletePresetButton";
+            DeletePresetButton.RightToLeft = RightToLeft.Yes;
+            DeletePresetButton.Size = new Size(54, 23);
+            DeletePresetButton.Text = "Delete";
+            DeletePresetButton.ToolTipText = "Click, to create an empty preset,\r\nfor the savegame selected above.";
+            DeletePresetButton.Visible = false;
+            DeletePresetButton.Click += DeletePresetButton_Click;
             // 
             // SavegameComboBox
             // 
@@ -427,6 +444,7 @@
             SavegameComboBox.Name = "SavegameComboBox";
             SavegameComboBox.Size = new Size(261, 22);
             SavegameComboBox.TabIndex = 1;
+            SavegameComboBox.SelectedIndexChanged += SavegameComboBox_SelectedIndexChanged;
             // 
             // SavegameLabel
             // 
@@ -612,7 +630,6 @@
             DatabaseDisplayGridView.ShowRowErrors = false;
             DatabaseDisplayGridView.Size = new Size(688, 334);
             DatabaseDisplayGridView.TabIndex = 1;
-            DatabaseDisplayGridView.CellClick += DatabaseDisplayGridView_CellClick;
             // 
             // BottomPanel
             // 
@@ -650,18 +667,19 @@
             // 
             // BottomOptionToolStripBar
             // 
-            BottomOptionToolStripBar.BackgroundImage = Properties.Resources.RedBar;
+            BottomOptionToolStripBar.BackColor = Color.Transparent;
+            BottomOptionToolStripBar.BackgroundImage = Properties.Resources.RedBarAlternative;
             BottomOptionToolStripBar.BackgroundImageLayout = ImageLayout.Stretch;
-            BottomOptionToolStripBar.Dock = DockStyle.Fill;
+            BottomOptionToolStripBar.Dock = DockStyle.Bottom;
             BottomOptionToolStripBar.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             BottomOptionToolStripBar.GripStyle = ToolStripGripStyle.Hidden;
             BottomOptionToolStripBar.ImageScalingSize = new Size(32, 32);
-            BottomOptionToolStripBar.Items.AddRange(new ToolStripItem[] { MaxDataGridRowsComboBox, TS_SmartBackupSettingsButton, BottomTS_SeparatorB, PreviousPageButton, ShowDatabaseInfoButton, ShowDatabaseButton, BottomTS_SeparatorA, NextPageButton, GridViewPageLabel });
-            BottomOptionToolStripBar.Location = new Point(3, 3);
+            BottomOptionToolStripBar.Items.AddRange(new ToolStripItem[] { MaxDataGridRowsComboBox, TS_SmartBackupSettingsButton, BottomTS_SeparatorB, PreviousPageButton, GridViewPageTextBox, BottomTS_SeparatorA, NextPageButton });
+            BottomOptionToolStripBar.Location = new Point(3, 0);
             BottomOptionToolStripBar.MaximumSize = new Size(456, 42);
             BottomOptionToolStripBar.MinimumSize = new Size(456, 42);
             BottomOptionToolStripBar.Name = "BottomOptionToolStripBar";
-            BottomOptionToolStripBar.Padding = new Padding(2, 0, 2, 0);
+            BottomOptionToolStripBar.Padding = new Padding(5, 2, 5, 2);
             BottomOptionToolStripBar.Size = new Size(456, 42);
             BottomOptionToolStripBar.TabIndex = 4;
             BottomOptionToolStripBar.Text = "Max. Rows / Page";
@@ -670,9 +688,12 @@
             // 
             MaxDataGridRowsComboBox.AutoSize = false;
             MaxDataGridRowsComboBox.AutoToolTip = true;
+            MaxDataGridRowsComboBox.BackColor = Color.MistyRose;
             MaxDataGridRowsComboBox.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            MaxDataGridRowsComboBox.ForeColor = SystemColors.ControlText;
             MaxDataGridRowsComboBox.Items.AddRange(new object[] { "1", "2", "5", "10", "20", "50", "100", "150", "200", "250", "500" });
             MaxDataGridRowsComboBox.Margin = new Padding(5, 0, 1, 0);
+            MaxDataGridRowsComboBox.MaxDropDownItems = 11;
             MaxDataGridRowsComboBox.MergeAction = MergeAction.MatchOnly;
             MaxDataGridRowsComboBox.Name = "MaxDataGridRowsComboBox";
             MaxDataGridRowsComboBox.Overflow = ToolStripItemOverflow.Never;
@@ -684,23 +705,21 @@
             // 
             // TS_SmartBackupSettingsButton
             // 
-            TS_SmartBackupSettingsButton.BackColor = Color.Transparent;
-            TS_SmartBackupSettingsButton.BackgroundImageLayout = ImageLayout.Center;
-            TS_SmartBackupSettingsButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            TS_SmartBackupSettingsButton.BackgroundImage = Properties.Resources.ButtonBackgroundTexture90x38;
+            TS_SmartBackupSettingsButton.BackgroundImageLayout = ImageLayout.Stretch;
             TS_SmartBackupSettingsButton.DropDown = SmartBackupSettingsMenuStrip;
             TS_SmartBackupSettingsButton.Font = new Font("Bahnschrift SemiCondensed", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            TS_SmartBackupSettingsButton.ForeColor = Color.White;
             TS_SmartBackupSettingsButton.Image = Properties.Resources.Gear2Color_BW;
             TS_SmartBackupSettingsButton.ImageScaling = ToolStripItemImageScaling.None;
             TS_SmartBackupSettingsButton.ImageTransparentColor = Color.Magenta;
-            TS_SmartBackupSettingsButton.Margin = new Padding(0, 0, 3, 0);
+            TS_SmartBackupSettingsButton.Margin = new Padding(5, 0, 3, 0);
             TS_SmartBackupSettingsButton.MergeAction = MergeAction.MatchOnly;
             TS_SmartBackupSettingsButton.Name = "TS_SmartBackupSettingsButton";
             TS_SmartBackupSettingsButton.Overflow = ToolStripItemOverflow.Never;
             TS_SmartBackupSettingsButton.Padding = new Padding(5, 0, 0, 0);
             TS_SmartBackupSettingsButton.RightToLeft = RightToLeft.Yes;
             TS_SmartBackupSettingsButton.ShowDropDownArrow = false;
-            TS_SmartBackupSettingsButton.Size = new Size(41, 42);
+            TS_SmartBackupSettingsButton.Size = new Size(90, 38);
             TS_SmartBackupSettingsButton.Text = "Settings";
             TS_SmartBackupSettingsButton.ToolTipText = "Some General Settings";
             // 
@@ -717,7 +736,7 @@
             SmartBackupSettingsMenuStrip.RightToLeft = RightToLeft.Yes;
             SmartBackupSettingsMenuStrip.ShowCheckMargin = true;
             SmartBackupSettingsMenuStrip.ShowImageMargin = false;
-            SmartBackupSettingsMenuStrip.Size = new Size(177, 26);
+            SmartBackupSettingsMenuStrip.Size = new Size(216, 28);
             // 
             // AutoLoadDatabaseMenuOption
             // 
@@ -725,16 +744,16 @@
             AutoLoadDatabaseMenuOption.AutoToolTip = true;
             AutoLoadDatabaseMenuOption.BackColor = Color.Maroon;
             AutoLoadDatabaseMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            AutoLoadDatabaseMenuOption.Font = new Font("Bahnschrift SemiCondensed", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            AutoLoadDatabaseMenuOption.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             AutoLoadDatabaseMenuOption.ForeColor = Color.White;
             AutoLoadDatabaseMenuOption.ImageScaling = ToolStripItemImageScaling.None;
             AutoLoadDatabaseMenuOption.ImageTransparentColor = Color.Maroon;
             AutoLoadDatabaseMenuOption.MergeAction = MergeAction.MatchOnly;
             AutoLoadDatabaseMenuOption.Name = "AutoLoadDatabaseMenuOption";
-            AutoLoadDatabaseMenuOption.RightToLeft = RightToLeft.No;
-            AutoLoadDatabaseMenuOption.Size = new Size(176, 22);
-            AutoLoadDatabaseMenuOption.Text = "Auto-Load Database";
-            AutoLoadDatabaseMenuOption.ToolTipText = "Automatic Loads the Database Data\r\nof a Savegame, when you select it\r\nin a List or Drop down.\r\n\r\n(Of course only, if a database was\r\nalready created for that savegame)\r\n\r\n\r\n";
+            AutoLoadDatabaseMenuOption.RightToLeft = RightToLeft.Yes;
+            AutoLoadDatabaseMenuOption.Size = new Size(215, 24);
+            AutoLoadDatabaseMenuOption.Text = "Auto-Load On Click";
+            AutoLoadDatabaseMenuOption.ToolTipText = "Automatic Loads the Database Data\r\nof a Preset, when you select it\r\nin a List or Drop down.\r\n\r\n(Also includes auto-loading in the\r\nmain window)\r\n\r\n\r\n";
             AutoLoadDatabaseMenuOption.Click += AutoLoadDatabaseMenuOption_Click;
             // 
             // BottomTS_SeparatorB
@@ -753,38 +772,30 @@
             PreviousPageButton.ImageScaling = ToolStripItemImageScaling.None;
             PreviousPageButton.ImageTransparentColor = Color.Magenta;
             PreviousPageButton.Name = "PreviousPageButton";
-            PreviousPageButton.Size = new Size(36, 39);
+            PreviousPageButton.Size = new Size(36, 35);
             PreviousPageButton.Text = "Next Page";
             PreviousPageButton.Click += PreviousPageButton_Click;
             // 
-            // ShowDatabaseInfoButton
+            // GridViewPageTextBox
             // 
-            ShowDatabaseInfoButton.Alignment = ToolStripItemAlignment.Right;
-            ShowDatabaseInfoButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            ShowDatabaseInfoButton.Image = Properties.Resources.ArrowLeftDownIcon;
-            ShowDatabaseInfoButton.ImageScaling = ToolStripItemImageScaling.None;
-            ShowDatabaseInfoButton.ImageTransparentColor = Color.Magenta;
-            ShowDatabaseInfoButton.MergeAction = MergeAction.Replace;
-            ShowDatabaseInfoButton.MergeIndex = 1;
-            ShowDatabaseInfoButton.Name = "ShowDatabaseInfoButton";
-            ShowDatabaseInfoButton.Size = new Size(36, 39);
-            ShowDatabaseInfoButton.ToolTipText = "Go back to previous view.";
-            ShowDatabaseInfoButton.Visible = false;
-            ShowDatabaseInfoButton.Click += ShowDatabaseInfoButton_Click;
-            // 
-            // ShowDatabaseButton
-            // 
-            ShowDatabaseButton.Alignment = ToolStripItemAlignment.Right;
-            ShowDatabaseButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            ShowDatabaseButton.Image = Properties.Resources.ArrowRightUpIcon;
-            ShowDatabaseButton.ImageScaling = ToolStripItemImageScaling.None;
-            ShowDatabaseButton.ImageTransparentColor = Color.Magenta;
-            ShowDatabaseButton.MergeAction = MergeAction.Replace;
-            ShowDatabaseButton.MergeIndex = 0;
-            ShowDatabaseButton.Name = "ShowDatabaseButton";
-            ShowDatabaseButton.Size = new Size(36, 39);
-            ShowDatabaseButton.ToolTipText = "Display Database";
-            ShowDatabaseButton.Click += ShowDatabaseButton_Click;
+            GridViewPageTextBox.Alignment = ToolStripItemAlignment.Right;
+            GridViewPageTextBox.AutoSize = false;
+            GridViewPageTextBox.AutoToolTip = true;
+            GridViewPageTextBox.BackColor = Color.MistyRose;
+            GridViewPageTextBox.Font = new Font("Bahnschrift", 10.5F, FontStyle.Bold);
+            GridViewPageTextBox.ForeColor = SystemColors.ControlText;
+            GridViewPageTextBox.Margin = new Padding(1, 0, 5, 0);
+            GridViewPageTextBox.MaxLength = 8;
+            GridViewPageTextBox.MergeAction = MergeAction.MatchOnly;
+            GridViewPageTextBox.Name = "GridViewPageTextBox";
+            GridViewPageTextBox.Overflow = ToolStripItemOverflow.Never;
+            GridViewPageTextBox.Size = new Size(100, 24);
+            GridViewPageTextBox.Text = " 0  / 0 ";
+            GridViewPageTextBox.TextBoxTextAlign = HorizontalAlignment.Center;
+            GridViewPageTextBox.ToolTipText = "Current Displayed Page\r\n\r\n(Enter Target Page &\r\nPress Enter, To Jump\r\nTo Entered Page)";
+            GridViewPageTextBox.Leave += GridViewPageTextBox_Leave;
+            GridViewPageTextBox.KeyDown += GridViewPageTextBox_KeyDown;
+            GridViewPageTextBox.MouseDown += GridViewPageTextBox_MouseDown;
             // 
             // BottomTS_SeparatorA
             // 
@@ -806,35 +817,16 @@
             NextPageButton.MergeAction = MergeAction.MatchOnly;
             NextPageButton.Name = "NextPageButton";
             NextPageButton.Overflow = ToolStripItemOverflow.Never;
-            NextPageButton.Size = new Size(36, 39);
+            NextPageButton.Size = new Size(36, 35);
             NextPageButton.Text = "Next Page";
             NextPageButton.Click += NextPageButton_Click;
-            // 
-            // GridViewPageLabel
-            // 
-            GridViewPageLabel.Alignment = ToolStripItemAlignment.Right;
-            GridViewPageLabel.AutoSize = false;
-            GridViewPageLabel.AutoToolTip = true;
-            GridViewPageLabel.BackgroundImageLayout = ImageLayout.Center;
-            GridViewPageLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            GridViewPageLabel.Font = new Font("Bahnschrift", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            GridViewPageLabel.ForeColor = Color.White;
-            GridViewPageLabel.ImageScaling = ToolStripItemImageScaling.None;
-            GridViewPageLabel.MergeAction = MergeAction.MatchOnly;
-            GridViewPageLabel.Name = "GridViewPageLabel";
-            GridViewPageLabel.Overflow = ToolStripItemOverflow.Never;
-            GridViewPageLabel.RightToLeft = RightToLeft.No;
-            GridViewPageLabel.Size = new Size(80, 42);
-            GridViewPageLabel.Text = "[0/0]";
-            GridViewPageLabel.TextDirection = ToolStripTextDirection.Horizontal;
-            GridViewPageLabel.ToolTipText = "Current Displayed Page";
             // 
             // CancelSetupButton
             // 
             CancelSetupButton.BackColor = SystemColors.Control;
             CancelSetupButton.DialogResult = DialogResult.Cancel;
             CancelSetupButton.Dock = DockStyle.Left;
-            CancelSetupButton.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            CancelSetupButton.Font = new Font("Bahnschrift", 11F, FontStyle.Bold);
             CancelSetupButton.Location = new Point(1, 1);
             CancelSetupButton.Margin = new Padding(0);
             CancelSetupButton.MaximumSize = new Size(125, 45);
@@ -852,7 +844,7 @@
             DoneButton.BackColor = SystemColors.Control;
             DoneButton.DialogResult = DialogResult.OK;
             DoneButton.Dock = DockStyle.Right;
-            DoneButton.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            DoneButton.Font = new Font("Bahnschrift", 11F, FontStyle.Bold);
             DoneButton.Location = new Point(588, 1);
             DoneButton.Margin = new Padding(0);
             DoneButton.MaximumSize = new Size(125, 45);
@@ -867,25 +859,24 @@
             // 
             // SmartBackupSetupWindow
             // 
-            AcceptButton = DoneButton;
-            AutoScaleDimensions = new SizeF(7F, 14F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(734, 561);
             Controls.Add(MainPanel);
             DoubleBuffered = true;
             Font = new Font("Bahnschrift", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            KeyPreview = true;
             MaximizeBox = false;
             MaximumSize = new Size(750, 600);
             MinimizeBox = false;
-            MinimumSize = new Size(500, 350);
+            MinimumSize = new Size(750, 600);
             Name = "SmartBackupSetupWindow";
             Padding = new Padding(2);
             ShowInTaskbar = false;
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Smart Backup Setup";
+            TopMost = true;
             MainPanel.ResumeLayout(false);
             MainPanel.PerformLayout();
             OptionCategorySubPanel.ResumeLayout(false);
@@ -928,9 +919,6 @@
         private Panel BottomPanel;
         private Button DoneButton;
         private Panel ControlAreaSubPanel;
-        private RadioButton DisableGridViewButton;
-        private RadioButton EnableGridViewMode1Button;
-        private RadioButton EnableGridViewMode2Button;
         private Panel DatabaseSetupPanel;
         private Panel OptionCategorySubPanel;
         private DataGridView DatabaseInfoGridView;
@@ -951,18 +939,19 @@
         private Label DatabaseListboxLabel;
         private DataGridView DatabaseDisplayGridView;
         private Button CancelSetupButton;
+        private ContextMenuStrip SmartBackupSettingsMenuStrip;
+        private ToolStripMenuItem AutoLoadDatabaseMenuOption;
+        private RadioButton DisplayDatabaseRadioButton;
+        private RadioButton DisplayDatabaseDataInfoRadioButton;
         private Panel BottomSubPanel;
         private ToolStrip BottomOptionToolStripBar;
         private ToolStripComboBox MaxDataGridRowsComboBox;
         private ToolStripDropDownButton TS_SmartBackupSettingsButton;
-        private ContextMenuStrip SmartBackupSettingsMenuStrip;
-        private ToolStripMenuItem AutoLoadDatabaseMenuOption;
+        private ToolStripSeparator BottomTS_SeparatorB;
+        private ToolStripButton PreviousPageButton;
         private ToolStripSeparator BottomTS_SeparatorA;
         private ToolStripButton NextPageButton;
-        private ToolStripButton PreviousPageButton;
-        private ToolStripButton ShowDatabaseButton;
-        private ToolStripButton ShowDatabaseInfoButton;
-        private ToolStripLabel GridViewPageLabel;
-        private ToolStripSeparator BottomTS_SeparatorB;
+        private ToolStripTextBox GridViewPageTextBox;
+        private ToolStripButton DeletePresetButton;
     }
 }

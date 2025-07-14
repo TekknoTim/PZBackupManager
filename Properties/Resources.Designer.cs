@@ -218,6 +218,15 @@ namespace ZomboidBackupManager.Properties
             }
         }
 
+        internal static System.Drawing.Bitmap SpliffingSpliffoWithBackground
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("SpliffingSpliffoWithBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         internal static System.Drawing.Bitmap SteamLogo128
         {
             get
@@ -307,6 +316,71 @@ namespace ZomboidBackupManager.Properties
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        internal static System.Drawing.Bitmap AlternativeGear2Color_BW
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("AlternativeGear2Color_BW", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap TrashbinIconImage
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("TrashbinIconImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap RedBarAlternative
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RedBarAlternative", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap ButtonBackgroundTexture90x38
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("ButtonBackgroundTexture90x38", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+        internal static System.Drawing.Bitmap RadioSwitchBackgroundTexture
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RadioSwitchBackgroundTexture", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap RadioSwitchBackgroundTexture_Green
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RadioSwitchBackgroundTexture_Green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        internal static System.Drawing.Bitmap RadioSwitchBackgroundTexture_Yellow
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("RadioSwitchBackgroundTexture_Yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
 
         internal static System.Drawing.Image PZBackupManagerLogo
         {
