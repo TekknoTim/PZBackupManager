@@ -970,6 +970,27 @@ namespace ZomboidBackupManager
             return "Invalid Size";
         }
 
+        public static bool DirectoryContainsBackupFiles(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                return false;
+            }
+            string[] files = Directory.GetFiles(path);
+            if (files.Length <= 1)
+            {
+                return false;
+            }
+            foreach (var file in files)
+            {
+                if (file.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".db", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".lua", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static string GetUnlistedJsonDataFilePath(string savegame)
         {
             return currentBaseBackupFolderPATH + @"\" + savegame + @"\data.json";

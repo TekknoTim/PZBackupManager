@@ -36,8 +36,6 @@ namespace ZomboidBackupManager
 
         public Dictionary<string, DatabaseData>? databaseDataList;
 
-        public bool IsDataGridViewExpanded { get { return SmartBackupDatabasePanel.Size.Height > 150; } }
-
         private float ListBoxFontSize = 12f;
         private bool ListBoxFontsBolt = true;
 
@@ -119,21 +117,21 @@ namespace ZomboidBackupManager
             ResetBackupThumbnailAndData();
             LoadGamemodes();
             SetBackupFolderPathTextbox();
-            SetupSavegameHeadlineLabel();
+            SetupSavegameLabelsAndBoxes();
             SetupBackupModeInfoPanel();
             if (!Configuration.smartBackupModeEnabled)
             {
+                AutoDeleteBackupMenuOption.Visible = true;
                 GamemodeComboBox.Visible = true;
                 SetSavegameRemote();
                 SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
-                HandleDatabaseGridViewMode(false);
             }
             else
             {
+                AutoDeleteBackupMenuOption.Visible = false;
                 GamemodeComboBox.Visible = false;
                 ImportDatabaseDataList();
                 LoadDatabaseDataNames();
-                LoadSmartBackupModeData();
             }
             HandleSmartBackupModeElements();
             EnableExperimentalFeatures(expFeaturesEnabled);
@@ -188,15 +186,17 @@ namespace ZomboidBackupManager
             HasBaseBackupValuePictureBox.Enabled = bEnabled;
         }
 
-        private void SetupSavegameHeadlineLabel()
+        private void SetupSavegameLabelsAndBoxes()
         {
             if (Configuration.smartBackupModeEnabled)
             {
                 SavegameHeadlineLabel.Text = "Select Preset";
+                SavegameListBox.Text = "Create a database preset first!";
             }
             else
             {
                 SavegameHeadlineLabel.Text = "Select Savegame";
+                SavegameListBox.Text = "Select a gamemode first";
             }
         }
 
@@ -208,62 +208,35 @@ namespace ZomboidBackupManager
                 {
                     LoadDataBaseButton.Visible = false;
                 }
+                if (OpenDatabaseSetupTSButton.Visible)
+                {
+                    OpenDatabaseSetupTSButton.Visible = false;
+                }
                 return;
             }
             if (!LoadDataBaseButton.Visible)
             {
                 LoadDataBaseButton.Visible = true;
             }
+            if (OpenDatabaseSetupTSButton.Visible)
+            {
+                OpenDatabaseSetupTSButton.Visible = true;
+            }
+            bool bEnabled;
             string itemName = GetSelectedDatabaseName();
             if (!string.IsNullOrWhiteSpace(itemName))
             {
                 Configuration.SetLoadedBackupFolder(itemName);
-            }
-            bool bEnabled = SelectedSavegameHasDatabaseAndIsLoaded();
-            HandleDatabaseGridViewMode(true);
-            BackupButton.Enabled = bEnabled;
-            LoadDataBaseButton.Enabled = !bEnabled;
-            SetupBackupModeInfoPanel();
-        }
-
-        private void HandleDatabaseGridViewMode(bool bEnabled)
-        {
-            int mode = Configuration.databaseGridViewMode;
-            if (bEnabled)
-            {
-                if (mode == 2)
-                {
-                    if (!SmartBackupDatabasePanel.Visible)
-                    {
-                        SmartBackupDatabasePanel.Visible = true;
-                    }
-                    SetDataGridViewExpanded(true);
-                }
-                else if (mode == 1)
-                {
-                    if (!SmartBackupDatabasePanel.Visible)
-                    {
-                        SmartBackupDatabasePanel.Visible = true;
-                    }
-                    SetDataGridViewExpanded(false);
-                }
-                else
-                {
-                    if (SmartBackupDatabasePanel.Visible)
-                    {
-                        SmartBackupDatabasePanel.Visible = false;
-                    }
-                    SetDataGridViewExpanded(false);
-                }
+                bEnabled = SelectedSavegameHasDatabaseAndIsLoaded();
+                BackupButton.Enabled = bEnabled;
+                LoadDataBaseButton.Enabled = !bEnabled;
+                SetupBackupModeInfoPanel();
             }
             else
             {
-                if (SmartBackupDatabasePanel.Visible)
-                {
-                    SmartBackupDatabasePanel.Visible = false;
-                }
-                SetDataGridViewExpanded(false);
+                LoadDataBaseButton.Enabled = false;
             }
+            SetupBackupModeInfoPanel();
         }
 
         private void SetInteractablesEnabled(bool bSet = true)
@@ -517,15 +490,7 @@ namespace ZomboidBackupManager
                 BackupButton.Enabled = false;
                 SetAutoDeleteInfoLabelEn(false);
             }
-            LoadSmartBackupModeData();
-            if (!Configuration.smartBackupModeEnabled)
-            {
-                if (SmartBackupDatabasePanel.Visible)
-                {
-                    SmartBackupDatabasePanel.Visible = false;
-                }
-            }
-            else
+            if (Configuration.smartBackupModeEnabled)
             {
                 HandleSmartBackupModeElements();
                 SetSavegameLabelValues();
@@ -562,7 +527,7 @@ namespace ZomboidBackupManager
                 }
             }
             else
-            { 
+            {
                 return;
             }
             if (data.DatabaseLoaded)
@@ -944,11 +909,44 @@ namespace ZomboidBackupManager
                 MessageBox.Show("Can't restore! Please select a valid backup first!");
                 return;
             }
-            ProgressbarPanel.Visible = true;
-            SetInteractablesEnabled(false);
-            Restore restore = new Restore();
-            restore.OnStatusChanged += Restore_OnStatusChanged;
-            await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel);
+            if (Configuration.smartBackupModeEnabled)
+            {
+                if (databaseDataList != null && databaseDataList.Count > 0)
+                {
+                    DatabaseData? data = GetSelectedDatabaseData();
+                    if (data != null)
+                    {
+                        List<SmartBackupData>? smartDataList = GetSmartBackupDataListFromJson() ?? null;
+                        if (smartDataList == null || smartDataList.Count == 0)
+                        {
+                            return;
+                        }
+                        SmartRestoreProcess process = new SmartRestoreProcess(smartDataList, data.BaseBackupDir);
+                        process.SmartRestoreProcessStatus += MainWindow_OnSmartRestoreProcessStatus;
+                        process.StartSmartBackupProcess(data.SavegamePath, BackupListBox.SelectedIndex);
+                    }
+                }
+            }
+            else
+            {
+                ProgressbarPanel.Visible = true;
+                SetInteractablesEnabled(false);
+                Restore restore = new Restore();
+                restore.OnStatusChanged += Restore_OnStatusChanged;
+                await restore.DoRestore(currentLoadedSavegame, GetFullLoadedSavegamePath(), BackupListBox.SelectedIndex, ProgressBarA, ProgressbarLabel);
+            }
+        }
+
+        public void MainWindow_OnSmartRestoreProcessStatus(object? sender, Status e)
+        {
+            if (Configuration.showMsgWhenBackupProcessDone)
+            {
+                MessageBox.Show($"SmartBackupProcessStatus Changed To = {e}");
+            }
+            LoadAndDisplayBackups();
+            SetBackupLabelValues();
+            ProgressbarPanel.Visible = false;
+            SetInteractablesEnabled(true);
         }
 
         private void MainWindow_SmartBackupProcessDone(object? sender, string s)
@@ -1054,7 +1052,7 @@ namespace ZomboidBackupManager
 
         private void SetBackupLabelValues()
         {
-            string path = string.Empty;
+            string path;
             BackupData? data = null;
             SmartBackupData? smartData = null;
 
@@ -1099,7 +1097,7 @@ namespace ZomboidBackupManager
                 else
                 {
                     size = s.Substring(0, 5);
-                    size = size + @" MB";
+                    size += @" MB";
                 }
             }
             else
@@ -1716,11 +1714,6 @@ namespace ZomboidBackupManager
 
         }
 
-        private void SmartBackupSetupWindow_OnChangeAutoSetupID(object? sender, int id)
-        {
-            SetDatabaseGridViewMode(id);
-        }
-
 
         //=================================================================================================================
         //--------------------------------------------[ Zip Archive Functions ]--------------------------------------------
@@ -1818,104 +1811,6 @@ namespace ZomboidBackupManager
             return string.Empty;
         }
 
-        private void ExpandDataGridView()
-        {
-            if (!Configuration.smartBackupModeEnabled || !SmartBackupDatabasePanel.Visible)
-            {
-                if (SmartBackupDatabasePanel.Visible)
-                {
-                    SmartBackupDatabasePanel.Visible = false;
-                    return;
-                }
-            }
-            SetDataGridViewExpanded(!IsDataGridViewExpanded);
-
-        }
-
-        private void SetDataGridViewExpanded(bool bSet = true)
-        {
-            if (bSet)
-            {
-                SavegameListBox.SetBounds(20, 450, SavegameListBox.MinimumSize.Width, SavegameListBox.MinimumSize.Height);
-                SmartBackupDatabasePanel.SetBounds(20, 520, SmartBackupDatabasePanel.MaximumSize.Width, SmartBackupDatabasePanel.MaximumSize.Height);
-            }
-            else
-            {
-                SmartBackupDatabasePanel.SetBounds(20, 662, SmartBackupDatabasePanel.MinimumSize.Width, SmartBackupDatabasePanel.MinimumSize.Height);
-                SavegameListBox.SetBounds(20, 450, SavegameListBox.MaximumSize.Width, SavegameListBox.MaximumSize.Height);
-            }
-        }
-
-        private void SetupDataGridView(DatabaseData data)
-        {
-            string databasePath = GetDatabasePath(currentLoadedSavegame);
-            bool bDBExists = File.Exists(databasePath);
-            DatabaseGridView dbGridView = new DatabaseGridView(data);
-            Dictionary<string, string> gridviewList = dbGridView.GetStringList();
-            List<string> pNames = gridviewList.Keys.ToList();
-            List<string> pValues = gridviewList.Values.ToList();
-
-            SmartBackupDataGridView.Rows.Clear();
-            SmartBackupDataGridView.Columns.Clear();
-
-            SmartBackupDataGridView.ColumnCount = 1;
-            SmartBackupDataGridView.Columns[0].Name = "Value";
-
-            string[] rowA = new string[] { pValues[0] };
-            string[] rowB = new string[] { pValues[1] };
-            string[] rowC = new string[] { pValues[2] };
-            string[] rowD = new string[] { pValues[3] };
-            string[] rowE = new string[] { pValues[4] };
-            string[] rowF = new string[] { pValues[5] };
-            string[] rowG = new string[] { pValues[6] };
-            string[] rowH = new string[] { pValues[7] };
-            string[] rowI = new string[] { pValues[8] };
-            string[] rowJ = new string[] { pValues[9] };
-            string[] rowK = new string[] { pValues[10] };
-
-            SmartBackupDataGridView.Rows.Add(rowA);
-            SmartBackupDataGridView.Rows.Add(rowB);
-            SmartBackupDataGridView.Rows.Add(rowC);
-            SmartBackupDataGridView.Rows.Add(rowD);
-            SmartBackupDataGridView.Rows.Add(rowE);
-            SmartBackupDataGridView.Rows.Add(rowF);
-            SmartBackupDataGridView.Rows.Add(rowG);
-            SmartBackupDataGridView.Rows.Add(rowH);
-            SmartBackupDataGridView.Rows.Add(rowI);
-            SmartBackupDataGridView.Rows.Add(rowJ);
-            SmartBackupDataGridView.Rows.Add(rowK);
-
-            SmartBackupDataGridView.TopLeftHeaderCell.Value = "Property";
-            foreach (DataGridViewRow row in SmartBackupDataGridView.Rows)
-            {
-                row.HeaderCell.Value = pNames[row.Index];
-            }
-            SmartBackupDataGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
-            SmartBackupDataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            SmartBackupDataGridView.Invalidate();
-        }
-
-        private void RefreshDatabaseGridView()
-        {
-            if (databaseDataList == null || databaseDataList.Count == 0)
-            {
-                MessageBox.Show("DatabaseList Empty");
-                return;
-            }
-            bool result = databaseDataList.TryGetValue(currentLoadedSavegame, out DatabaseData? data);
-            if (!result)
-            {
-                return;
-            }
-            if (data == null)
-            {
-                return;
-            }
-            ExportDatabaseDataList();
-            SetupDataGridView(data);
-            return;
-        }
-
         private (bool, string) LoadOrCreateDatabase(string savegame)
         {
             Thread.Sleep(500);
@@ -1938,82 +1833,8 @@ namespace ZomboidBackupManager
             }
             string strResult = data.LoadDatabase(true);
             WriteDatabaseDataToJson(databaseDataList);
-            SetupDataGridView(data);
             Thread.Sleep(100);
             return (true, strResult);
-        }
-
-        private void SmartBackupDatabasePanel_MouseClick(object sender, MouseEventArgs e)
-        {
-            //ExpandDataGridView();
-        }
-
-        private void LoadSmartBackupModeData()
-        {
-            if (databaseGridViewMode == 0 || !Configuration.expFeaturesEnabled || !Configuration.smartBackupModeEnabled)
-            {
-                PrintDebug("[MainWindow.cs] - [LoadSmartBackupModeData] - [SmartBackupMode not enabled or databaseGridViewMode is 0]");
-                return;
-            }
-            if (!SmartBackupDatabasePanel.Visible)
-            {
-                SmartBackupDatabasePanel.Visible = true;
-            }
-            if (databaseDataList != null && databaseDataList.Count > 0)
-            {
-                DatabaseData? data = GetSelectedDatabaseData();
-                if (data != null)
-                {
-                    SetupDataGridView(data);
-                }
-                else
-                {
-                    string savegame = currentLoadedSavegame;
-                    if (string.IsNullOrWhiteSpace(savegame)) { return; }
-                    DatabaseData newData = new DatabaseData(savegame, currentLoadedGamemode, Configuration.GetFullLoadedSavegamePath(), Configuration.currentLoadedBackupFolderPATH, Configuration.GetDatabasePath(savegame));
-                    bool bResult = databaseDataList.TryAdd(savegame, newData);
-                    if (!bResult)
-                    {
-                        PrintDebug($"[MainWindow.cs] - [LoadSmartBackupModeData] - [databaseDataList.TryAdd = {bResult}] - [Key is already existing in List!]");
-                        return;
-                    }
-                    SetupDataGridView(newData);
-                    WriteDatabaseDataToJson(databaseDataList);
-                }
-            }
-            else
-            {
-                ImportDatabaseDataList();
-                if (databaseDataList == null || databaseDataList.Count == 0)
-                {
-                    databaseDataList = new Dictionary<string, DatabaseData>();
-                    string savegame = currentLoadedSavegame;
-                    if (string.IsNullOrWhiteSpace(savegame)) { return; }
-                    DatabaseData data = new DatabaseData(savegame, currentLoadedGamemode, Configuration.GetFullLoadedSavegamePath(), Configuration.currentLoadedBackupFolderPATH, Configuration.GetDatabasePath(savegame));
-                    bool bAdded = databaseDataList.TryAdd(savegame, data);
-                    if (bAdded)
-                    {
-                        SetupDataGridView(data);
-                        WriteDatabaseDataToJson(databaseDataList);
-                    }
-                    else
-                    {
-                        DatabaseData? uData = GetSelectedDatabaseData();
-                        if (uData != null)
-                        {
-                            PrintDebug($"[MainWindow.cs] - [LoadSmartBackupModeData] - [Failed to add new DatabaseData for savegame: {savegame}]", 2);
-                            SetupDataGridView(uData);
-                        }
-                    }
-                }
-            }
-        }
-
-        private DatabaseData? GetNewDatabaseData(string savegame, string gamemode)
-        {
-            if (savegame == null) { return null; }
-            DatabaseData data = new DatabaseData(savegame, gamemode, Configuration.GetFullSavegameFolderPath(gamemode, savegame), currentBaseBackupFolderPATH + @"\" + savegame, Configuration.GetDatabasePath(savegame));
-            return data;
         }
 
         private void WriteDatabaseDataToJson(Dictionary<string, DatabaseData> data)
@@ -2073,9 +1894,7 @@ namespace ZomboidBackupManager
         {
             List<string> gamemodes = GamemodeComboBox.Items.Cast<string>().ToList();
             List<string> savegames = SavegameListBox.Items.Cast<string>().ToList();
-            int iWasGridMode = Configuration.databaseGridViewMode;
             SmartBackupSetupWindow smartBackWin = new SmartBackupSetupWindow(gamemodes, savegames, databaseDataList);
-            smartBackWin.OnChangeDataGridViewMode += SmartBackWin_OnChangeDataGridViewMode;
             DialogResult dResult = smartBackWin.ShowDialog();
             if (dResult == DialogResult.Cancel)
             {
@@ -2090,21 +1909,8 @@ namespace ZomboidBackupManager
                 ReloadForm();
                 return;
             }
-            if (Configuration.databaseGridViewMode != iWasGridMode)
-            {
-                HandleDatabaseGridViewMode(Configuration.smartBackupModeEnabled);
-                if (Configuration.databaseGridViewMode != 0)
-                {
-                    LoadSmartBackupModeData();
-                }
-            }
             LoadDatabaseDataNames();
             HandleSmartBackupModeElements();
-        }
-
-        private void SmartBackWin_OnChangeDataGridViewMode(object? sender, int e)
-        {
-            Configuration.SetDatabaseGridViewMode(e);
         }
 
         private void BackupsPictureBox_Click(object sender, EventArgs e)
@@ -2152,8 +1958,12 @@ namespace ZomboidBackupManager
                 HandleSmartBackupModeElements();
                 SetSavegameLabelValues();
                 ResetBackupThumbnailAndData();
-                RefreshDatabaseGridView();
             }
+        }
+
+        private void OpenDatabaseSetupTSButton_Click(object sender, EventArgs e)
+        {
+            SmartBackupMenuOption_Click(sender, e);
         }
     }
 }

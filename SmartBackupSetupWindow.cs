@@ -18,7 +18,10 @@ namespace ZomboidBackupManager
 {
     public partial class SmartBackupSetupWindow : Form
     {
+        private bool isEditingCurrentPage = false;
+
         private bool wasSmartModeEnabled;
+        public bool WasSmartModeEnabled { get { return wasSmartModeEnabled; } }
 
         private List<string> gamemodes;
         private List<string> savegames;
@@ -30,9 +33,6 @@ namespace ZomboidBackupManager
 
         private int currentPage = 1;
 
-        public bool WasSmartModeEnabled { get { return wasSmartModeEnabled; } }
-        public event EventHandler<int>? OnChangeDataGridViewMode;
-
         public SmartBackupSetupWindow(List<string> gm, List<string> sg, Dictionary<string, DatabaseData>? db)
         {
             InitializeComponent();
@@ -41,9 +41,7 @@ namespace ZomboidBackupManager
             GamemodeComboBox.DataSource = gamemodes;
             LoadSavegamesInSelectedGamemode();
             wasSmartModeEnabled = Configuration.smartBackupModeEnabled;
-            SetGridViewRadioButtonsEnabled(Configuration.smartBackupModeEnabled);
             SetRadioButtonsState(Configuration.smartBackupModeEnabled);
-            SetAutoSetupRadioButtonsState(Configuration.databaseGridViewMode);
             SetPanelsVisibile(Configuration.smartBackupModeEnabled);
             SetSmartBackupAutoload(Configuration.smartBackupAutoLoadEnabled, false);
             if (db == null || db.Count <= 0)
@@ -55,6 +53,9 @@ namespace ZomboidBackupManager
                 dBList = db;
                 RefreshDatabaseListbox();
             }
+            SetupButton.Enabled = false;
+            CreateButton.Enabled = false;
+            DeletePresetButton.Visible = false;
         }
 
         private void LoadSavegamesInSelectedGamemode()
@@ -97,49 +98,13 @@ namespace ZomboidBackupManager
         {
             TopRightMainPanel.Visible = bSet;
             DatabaseSetupPanel.Visible = bSet;
+            ControlAreaSubPanel.Visible = bSet;
         }
 
         private void SetRadioButtonsState(bool bSet)
         {
             EnableSmartBackupRadioButton.Checked = bSet;
             DisableSmartBackupRadioButton.Checked = !bSet;
-        }
-
-        private void SetAutoSetupRadioButtonsState(int id)
-        {
-
-            if (id == 0)
-            {
-                DisableGridViewButton.Checked = true;
-                EnableGridViewMode1Button.Checked = false;
-                EnableGridViewMode2Button.Checked = false;
-            }
-            else if (id == 1)
-            {
-                DisableGridViewButton.Checked = false;
-                EnableGridViewMode1Button.Checked = true;
-                EnableGridViewMode2Button.Checked = false;
-            }
-            else if (id == 2)
-            {
-                DisableGridViewButton.Checked = false;
-                EnableGridViewMode1Button.Checked = false;
-                EnableGridViewMode2Button.Checked = true;
-            }
-            else
-            {
-                DisableGridViewButton.Checked = true;
-                EnableGridViewMode1Button.Checked = false;
-                EnableGridViewMode2Button.Checked = false;
-            }
-            OnChangeDataGridViewMode?.Invoke(this, id);
-        }
-
-        private void SetGridViewRadioButtonsEnabled(bool bEnabled)
-        {
-            DisableGridViewButton.Enabled = bEnabled;
-            EnableGridViewMode1Button.Enabled = bEnabled;
-            EnableGridViewMode2Button.Enabled = bEnabled;
         }
 
         private bool ToggleSmartBackupMode()
@@ -151,38 +116,60 @@ namespace ZomboidBackupManager
             return smartModeEnabled;
         }
 
+        private void ClearComboBoxes()
+        {
+            GamemodeComboBox.SelectedItem = null;
+            SavegameComboBox.SelectedItem = null;
+            SwitchCreateButton(false);
+        }
+
+        private void ClearDatabaseListBox()
+        {
+            DatabaseListBox.SelectedItem = null;
+            SwitchCreateButton(true);
+        }
+
+        private void SwitchCreateButton(bool bDefault = false)
+        {
+            CreateButton.Visible = bDefault;
+            DeletePresetButton.Visible = !bDefault;
+        }
+
         private void DisableSmartBackupRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
             bool bEnabled = ToggleSmartBackupMode();
-            SetGridViewRadioButtonsEnabled(bEnabled);
             //MessageBox.Show($"Smart Backup Mode Enabled = {bEnabled}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void EnableSmartBackupRadioButton_MouseClick(object sender, MouseEventArgs e)
         {
             bool bEnabled = ToggleSmartBackupMode();
-            SetGridViewRadioButtonsEnabled(bEnabled);
             //MessageBox.Show($"Smart Backup Mode Enabled = {bEnabled}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void DisableAutoCreateDBRadioButton_MouseClick(object sender, MouseEventArgs e)
-        {
-            SetAutoSetupRadioButtonsState(0);
-        }
-
-        private void EnableAutoCreateSemiDBRadioButton_MouseClick(object sender, MouseEventArgs e)
-        {
-            SetAutoSetupRadioButtonsState(1);
-        }
-
-        private void EnableAutoCreateAllDBRadioButton_MouseClick(object sender, MouseEventArgs e)
-        {
-            SetAutoSetupRadioButtonsState(2);
         }
 
         private void GamemodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (GamemodeComboBox.SelectedItem == null)
+            {
+                PrintDebug("[SmartBackupSetupWindow.cs] - [GamemodeComboBox_SelectedIndexChanged] - [Selected Item = null]", 1);
+                return;
+            }
+            ClearDatabaseListBox();
             LoadSavegamesInSelectedGamemode();
+            CreateButton.Enabled = false;
+            SetupButton.Enabled = false;
+        }
+
+        private void SavegameComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (SavegameComboBox.SelectedItem == null)
+            {
+                PrintDebug("[SmartBackupSetupWindow.cs] - [SavegameComboBox_SelectedIndexChanged] - [Selected Item = null]", 1);
+                return;
+            }
+            SetupButton.Enabled = false;
+            CreateButton.Enabled = true;
+            ClearDatabaseListBox();
         }
 
         private void CreateButton_Click(object sender, EventArgs e)
@@ -194,10 +181,7 @@ namespace ZomboidBackupManager
                 PrintDebug("[MainWindow] - [CreateButton_Click] - [Aborted] - Data is null!");
                 return;
             }
-            if (dBList == null)
-            {
-                dBList = new Dictionary<string, DatabaseData>();
-            }
+            dBList ??= new Dictionary<string, DatabaseData>();
             if (string.IsNullOrWhiteSpace(data.Savegame) || string.IsNullOrWhiteSpace(data.Gamemode))
             {
                 PrintDebug("[MainWindow] - [CreateButton_Click] - [Aborted] - Savegame was null or empty!");
@@ -220,6 +204,8 @@ namespace ZomboidBackupManager
             PrintDebug($"[MainWindow] - [CreateButton_Click] - [New DatabaseData created for {data.Savegame} in {data.Gamemode}]");
             ExportDatabaseDataList();
             RefreshDatabaseListbox();
+            DatabaseListBox.SelectedIndex = DatabaseListBox.Items.Count - 1; // Select the last added item
+            DatabaseListBox.Select();
         }
 
         private bool IsValidSavegameSelected()
@@ -269,11 +255,27 @@ namespace ZomboidBackupManager
             DatabaseListBox.Items.AddRange(dBList.Keys.ToArray());
         }
 
+        private bool RemoveDataFromDatabaseDataList(string savegame)
+        {
+            if (dBList == null || dBList.Count == 0)
+            {
+                PrintDebug("[MainWindow.cs] - [RemoveDataFromDatabaseDataList] - [No data found in json file or file is empty]", 1);
+                return false;
+            }
+            bool bResult = dBList.TryGetValue(savegame, out DatabaseData? data);
+            if (bResult && data != null)
+            {
+                return dBList.Remove(savegame);
+            }
+            return bResult;
+        }
+
+
         private void ExportDatabaseDataList()
         {
             if (dBList == null)
             {
-                PrintDebug($"[MainWindow] - [ExportDatabaseDataList] - [Can't export empty list to json file]", 1);
+                PrintDebug($"[MainWindow.cs][ExportDatabaseDataList] - [Can't export empty list to json file]", 1);
                 return;
             }
             WriteDatabaseDataToJson(dBList);
@@ -390,7 +392,7 @@ namespace ZomboidBackupManager
                 int pageCount = GetPageCount(database.Count);
                 int j = GetGridViewStartIndexOfPage(currentPage, maxDataGridRows, database.Count);
                 int count = 0;
-                for (int i = j; i < maxDataGridRows * currentPage; i++)
+                for (int i = j; i <= maxDataGridRows * currentPage; i++)
                 {
                     var kvp = database.ElementAtOrDefault(i);
                     if (count >= maxDataGridRows)
@@ -398,15 +400,24 @@ namespace ZomboidBackupManager
                         break;
                     }
                     DatabaseDisplayGridView.Rows.Add(kvp.Key, kvp.Value.FilePath ?? "ERROR", kvp.Value.Size.ToString() ?? "ERROR", kvp.Value.LastModifiedUtc.ToString() ?? "ERROR");
+                    DatabaseDisplayGridView.Rows[count].HeaderCell.Value = i.ToString();
                     count++;
                 }
             }
             finally
             {
+
+                DatabaseDisplayGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                DatabaseDisplayGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
                 DatabaseDisplayGridView.ResumeLayout();
             }
 
             DatabaseDisplayGridView.Refresh();
+        }
+
+        private void SetCurrentPageTextLabelToDefault()
+        {
+            GridViewPageTextBox.Text = $" 1 / 1 ";
         }
 
         private void SetCurrentPageTextLabel(int pageCount)
@@ -414,10 +425,10 @@ namespace ZomboidBackupManager
             if (pageCount <= 0)
             {
                 PrintDebug("[SmartBackupSetupWindow.cs] - [SetCurrentPageTextLabel] - [No pages available]", 1);
-                GridViewPageLabel.Text = $"[0/0]";
+                GridViewPageTextBox.Text = $"[0/0]";
                 return;
             }
-            GridViewPageLabel.Text = $"[{currentPage}/{pageCount - 1}]";
+            GridViewPageTextBox.Text = $" {currentPage} / {pageCount - 1} ";
         }
 
         private int GetGridViewStartIndexOfPage(int iPage, int iEntriesPerPage, int iAllEntries)
@@ -450,11 +461,30 @@ namespace ZomboidBackupManager
 
         private void DatabaseListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (DatabaseInfoGridView.Visible)
+            if (DatabaseListBox.SelectedItem == null)
+            {
+                PrintDebug("[SmartBackupSetupWindow.cs] - [DatabaseListBox_SelectedIndexChanged] - [No valid item selected]", 1);
+                return;
+            }
+            ClearComboBoxes();
+            SelectDatabaseData();
+            ReloadCurrentGridView();
+            CreateButton.Enabled = false;
+            SetupButton.Enabled = true;
+        }
+
+        private void ReloadCurrentGridView()
+        {
+            if (DisplayDatabaseDataInfoRadioButton.Checked)
             {
                 ReloadDatabaseGridView();
             }
+            else
+            {
+                LoadDatabaseToGridView();
+            }
         }
+
 
         private void LoadDatabaseToGridView()
         {
@@ -476,6 +506,7 @@ namespace ZomboidBackupManager
                 PrintDebug("[SmartBackupSetupWindow.cs] - [DatabaseListBox_SelectedIndexChanged] - [No data found for selected database]", 1);
                 return;
             }
+            SetCurrentPageTextLabelToDefault();
             SetupDataGridView(data);
         }
 
@@ -488,17 +519,32 @@ namespace ZomboidBackupManager
                     string itemName = GetSelectedDatabaseName();
                     if (dBList.TryGetValue(itemName, out DatabaseData? data))
                     {
-                        PrintDebug("[SmartBackupSetupWindow.cs] - [DatabaseListBox_SelectedIndexChanged] - [Data Grid View Loaded]");
+                        PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseData] - [Data Grid View Loaded]");
                         return data;
                     }
                     else
                     {
-                        PrintDebug("[SmartBackupSetupWindow.cs] - [DatabaseListBox_SelectedIndexChanged] - [Database not found in list]", 1);
+                        PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseData] - [Database not found in list]", 1);
+                        if (DatabaseInfoGridView.Visible && DatabaseInfoGridView.Rows.Count > 0)
+                        {
+                            string? SavegameValue = DatabaseInfoGridView[0, 0].Value?.ToString() ?? string.Empty;
+                            if (string.IsNullOrEmpty(SavegameValue))
+                            {
+                                PrintDebug($"[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseData] - [Got Savegamename from GridView = {SavegameValue}]", 1);
+
+                                if (dBList.TryGetValue(SavegameValue, out data))
+                                {
+                                    PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseData] - [Data Grid View Loaded]");
+                                    return data;
+                                }
+                            }
+                            
+                        }
                     }
                 }
                 else
                 {
-                    PrintDebug("[SmartBackupSetupWindow.cs] - [DatabaseListBox_SelectedIndexChanged] - [No valid item selected]", 1);
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseData] - [No valid item selected]", 1);
                 }
             }
             return null;
@@ -509,6 +555,15 @@ namespace ZomboidBackupManager
             if (DatabaseListBox.SelectedItem == null || string.IsNullOrEmpty(DatabaseListBox.SelectedItem.ToString()))
             {
                 PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseName] - [No item selected in DatabaseListBox]", 1);
+                if (DatabaseListBox.Items.Count > 0)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseName] - [Items available in DatabaseListBox]");
+                    DatabaseListBox.SelectedIndex = 0; // Select the first item if available
+                }
+                else
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseName] - [No items available in DatabaseListBox]", 1);
+                }
                 return string.Empty;
             }
             string? itemName = DatabaseListBox.SelectedItem.ToString();
@@ -521,19 +576,6 @@ namespace ZomboidBackupManager
             {
                 PrintDebug($"[SmartBackupSetupWindow.cs] - [GetSelectedDatabaseName] - [itemName = {itemName}]");
                 return itemName;
-            }
-        }
-
-        private void DatabaseDisplayGridView_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) { return; }
-            object? clickedCellValue = DatabaseDisplayGridView[0, e.RowIndex].Value;
-            if (clickedCellValue != null)
-            {
-                if (e.RowIndex == 0)
-                {
-                    ReloadDatabaseGridView();
-                }
             }
         }
 
@@ -664,33 +706,13 @@ namespace ZomboidBackupManager
                         }
                     }
                 }
-                else if (e.RowIndex == 11)
-                {
-                    DisplayDatabase();
-                    return;
-                }
             }
 
             bool isLoaded = SelectedSavegameHasDatabaseAndIsLoaded();
             ReloadDatabaseGridView();
         }
 
-        private void DisplayDatabase()
-        {
-            DatabaseData? data = GetSelectedDatabaseData();
-            if (data != null)
-            {
-                if (data.HasDatabase)
-                {
-                    if (data.DatabaseLoaded)
-                    {
-                        LoadDatabaseToGridView();
-                    }
-                }
-            }
-        }
-
-        private bool SelectedSavegameHasDatabaseAndIsLoaded()
+        private bool SelectedSavegameHasDatabaseAndIsLoaded(bool bTryLoad = true)
         {
             if (dBList == null || dBList.Count == 0)
             {
@@ -701,7 +723,7 @@ namespace ZomboidBackupManager
             if (data != null)
             {
                 bool bLoaded = data.DatabaseLoaded;
-                if (!bLoaded)
+                if (!bLoaded && bTryLoad)
                 {
                     string sResult = data.LoadDatabase(false);
                     if (sResult.Equals("Loaded"))
@@ -709,18 +731,30 @@ namespace ZomboidBackupManager
                         return true;
                     }
                 }
+                else
+                {
+                    return true;
+                }
             }
             return false;
         }
 
-        private bool CreateNewDatabaseForSelectedItem()
+        private bool CreateNewDatabaseForSelectedItem(bool bSkipMsgBox = false)
         {
-            DialogResult result = MessageBox.Show($"Do you want to create a database for this savegame? \n\nSavegame = {GetSelectedDatabaseName()}", "Create Database", MessageBoxButtons.YesNo);
-            if (result == DialogResult.Yes)
+            DialogResult result = DialogResult.Continue;
+            if (!bSkipMsgBox)
+            {
+                result = MessageBox.Show($"Do you want to create a database for this savegame? \n\nSavegame = {GetSelectedDatabaseName()}", "Create Database", MessageBoxButtons.YesNo);
+            }
+            if (result == DialogResult.Yes || result == DialogResult.Continue)
             {
                 DatabaseData? data = GetSelectedDatabaseData();
                 if (data != null)
                 {
+                    if (data.HasDatabase)
+                    {
+                        data.ClearDatabase();
+                    }
                     string sResult = data.LoadDatabase(true);
                     PrintDebug($"[SmartBackupDataSetupWindow.cs] - [SmartBackupDataGridView_CellClick] - [LoadDatabase(true)] - [Database {sResult}]");
                     if (sResult.Equals("Created"))
@@ -760,7 +794,25 @@ namespace ZomboidBackupManager
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Setup Information: ");
             sb.AppendLine();
-            bool bResult = CreateNewDatabaseForSelectedItem();
+            bool bOverride = false;
+            if (SelectedSavegameHasDatabaseAndIsLoaded(false))
+            {
+                sb.AppendLine($"[STEP 1] - [FAILED] - DatabaseData already exists for selected savegame!");
+                sb.AppendLine();
+                sb.AppendLine($"Do you want to override the existing preset?");
+                DialogResult dResult = MessageBox.Show(sb.ToString(), "Database Already Exists!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dResult != DialogResult.Yes)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [SetupButton_Click] - [User chose NOT to override existing database entry]"); 
+                    return;
+                }
+                else
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [SetupButton_Click] - [User chose to override existing database entry]");
+                    bOverride = true;
+                }
+            }
+            bool bResult = CreateNewDatabaseForSelectedItem(bOverride);
             if (!bResult)
             {
                 sb.AppendLine($"[STEP 1][FAILED] - DatabaseData not found!");
@@ -780,7 +832,9 @@ namespace ZomboidBackupManager
             sb.AppendLine($"[STEP 2][SUCCESS] - Initial Base Backup Created");
             sb.AppendLine();
             sb.AppendLine($"[DONE] - >[SUCCESS] - Smart Backup Setup Completed");
+            ExportDatabaseDataList();
             MessageBox.Show(sb.ToString(), "Setup Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ReloadCurrentGridView();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -820,37 +874,12 @@ namespace ZomboidBackupManager
             {
                 maxDataGridRows = maxRows;
                 PrintDebug($"[SmartBackupSetupWindow.cs] - [setMaxDataGridRowsButton_Click] - [Max Data Grid Rows set to {maxDataGridRows}]");
+                ReloadCurrentGridView();
             }
             else
             {
                 PrintDebug("[SmartBackupSetupWindow.cs] - [setMaxDataGridRowsButton_Click] - [Invalid number of rows. Please enter a valid integer]", 2);
             }
-        }
-
-        private void SetDatabaseViewMode()
-        {
-            if (!DatabaseDisplayGridView.Visible)
-            {
-                ShowDatabaseButton.Visible = true;
-                ShowDatabaseInfoButton.Visible = false;
-            }
-            else
-            {
-                ShowDatabaseInfoButton.Visible = true;
-                ShowDatabaseButton.Visible = false;
-            }
-        }
-
-        private void ShowDatabaseButton_Click(object sender, EventArgs e)
-        {
-            LoadDatabaseToGridView();
-            SetDatabaseViewMode();
-        }
-
-        private void ShowDatabaseInfoButton_Click(object sender, EventArgs e)
-        {
-            ReloadDatabaseGridView();
-            SetDatabaseViewMode();
         }
 
         private void NextPageButton_Click(object sender, EventArgs e)
@@ -865,59 +894,256 @@ namespace ZomboidBackupManager
 
         private void NextPage()
         {
-            if (dBList == null || dBList.Count == 0)
+            if (DatabaseDisplayGridView.Visible)
             {
-                PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No databases loaded]", 1);
-                return;
-            }
-            DatabaseData? data = GetSelectedDatabaseData();
-            if (data == null)
-            {
-                PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No data found for selected database]", 1);
-                return;
-            }
-            int pageCount = GetPageCount(data.DBSize);
-            currentPage++;
-            if (currentPage < pageCount)
-            {
-                SetCurrentPageTextLabel(pageCount);
-                LoadDatabaseToGridView();
-            }
-            else
-            {
-                currentPage = 1;
-                SetCurrentPageTextLabel(pageCount);
-                LoadDatabaseToGridView();
-                PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [Already on last page]", 1);
+                if (dBList == null || dBList.Count == 0)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No databases loaded]", 1);
+                    return;
+                }
+                DatabaseData? data = GetSelectedDatabaseData();
+                if (data == null)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No data found for selected database]", 1);
+                    return;
+                }
+                int pageCount = GetPageCount(data.DBSize);
+                currentPage++;
+                if (currentPage < pageCount)
+                {
+                    SetCurrentPageTextLabel(pageCount);
+                    LoadDatabaseToGridView();
+                }
+                else
+                {
+                    currentPage = 1;
+                    SetCurrentPageTextLabel(pageCount);
+                    LoadDatabaseToGridView();
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [Already on last page]", 1);
+                }
             }
         }
 
         private void PrevPage()
         {
-            if (dBList == null || dBList.Count == 0)
+            if (DatabaseDisplayGridView.Visible)
             {
-                PrintDebug("[SmartBackupSetupWindow.cs] - [PrevPage] - [No databases loaded]", 1);
+                if (dBList == null || dBList.Count == 0)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [PrevPage] - [No databases loaded]", 1);
+                    return;
+                }
+                DatabaseData? data = GetSelectedDatabaseData();
+                if (data == null)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No data found for selected database]", 1);
+                    return;
+                }
+                int pageCount = GetPageCount(data.DBSize);
+                currentPage--;
+                if (currentPage > 0)
+                {
+                    SetCurrentPageTextLabel(pageCount);
+                    LoadDatabaseToGridView();
+                }
+                else
+                {
+                    currentPage = pageCount - 1;
+                    SetCurrentPageTextLabel(pageCount);
+                    LoadDatabaseToGridView();
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [PrevPage] - [Already on last page]", 1);
+                }
+            }
+        }
+
+        private void SetGridViewModeRadioButtons()
+        {
+            DisplayDatabaseRadioButton.Checked = !DisplayDatabaseRadioButton.Checked;
+            DisplayDatabaseDataInfoRadioButton.Checked = !DisplayDatabaseDataInfoRadioButton.Checked;
+        }
+
+        private void DisplayDatabaseDataInfoRadioButton_Click(object sender, EventArgs e)
+        {
+            SetGridViewModeRadioButtons();
+            ReloadCurrentGridView();
+        }
+
+        private void DisplayDatabaseRadioButton_Click(object sender, EventArgs e)
+        {
+            SetGridViewModeRadioButtons();
+            ReloadCurrentGridView();
+        }
+
+        private void GridViewPageTextBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                isEditingCurrentPage = true;
+                GridViewPageTextBox.Text = string.Empty; // Clear the text box on left click
+                GridViewPageTextBox.Select();
+            }
+        }
+
+        private void GridViewPageTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (isEditingCurrentPage)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.SuppressKeyPress = true; // Prevent the beep sound
+                    if (int.TryParse(GridViewPageTextBox.Text, out int newPage))
+                    {
+                        DatabaseData? data = GetSelectedDatabaseData();
+                        if (data != null)
+                        {
+                            int pageCount = GetPageCount(data.DBSize);
+                            if (newPage > 0 && newPage < pageCount)
+                            {
+                                currentPage = newPage;
+                                SetCurrentPageTextLabel(pageCount);
+                                LoadDatabaseToGridView();
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Invalid page number. Please enter a number between 1 and {pageCount - 1}.");
+                            }
+                        }
+                        isEditingCurrentPage = false;
+                    }
+                }
+
+            }
+        }
+
+        private void GridViewPageTextBox_Leave(object sender, EventArgs e)
+        {
+            isEditingCurrentPage = false;
+        }
+
+
+        private void SelectDatabaseData()
+        {
+            DatabaseData? data = GetSelectedDatabaseData();
+            if (data == null)
+            {
+                PrintDebug("[MainWindow.cs] - [SelectDatabaseData] - [No data selected]");
+                return;
+            }
+            string? savegame = data.Savegame;
+            string? gamemode = data.Gamemode;
+
+            bool bResult = LoadDatabaseData(savegame, gamemode);
+            PrintDebug($"[MainWindow.cs] - [SelectDatabaseData] - [LoadDatabaseData bResult = {bResult}]");
+
+            if (Configuration.smartBackupAutoLoadEnabled && !data.DatabaseLoaded)
+            {
+                PrintDebug("[MainWindow.cs] - [SelectDatabaseData] - [Autoloading database]");
+                string sResult = data.LoadDatabase(true);
+                if (sResult.Equals("Created"))
+                {
+                    data.LoadDatabase(false);
+                }
+            }
+            else
+            {
+                return;
+            }
+            if (data.DatabaseLoaded)
+            {
+                PrintDebug($"[MainWindow.cs] - [SelectDatabaseData] - [Database loaded successfully for savegame: {savegame}, gamemode: {gamemode}]");
+                Configuration.SetLoadedBackupFolder(savegame);
+            }
+            else
+            {
+                PrintDebug("[MainWindow.cs] - [SelectDatabaseData] - [Failed to load database]");
+            }
+        }
+
+        private async void DeletePresetButton_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogRes = MessageBox.Show("This will delete the database and the initial base backup, as well as ALL SmartBackups for this savegame. \n\nDo you really want to continue?", "Delete Preset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (dialogRes != DialogResult.Yes)
+            {
+                PrintDebug("[MainWindow.cs] - [DeletePresetButton_Click] - [User cancelled the deletion]");
                 return;
             }
             DatabaseData? data = GetSelectedDatabaseData();
             if (data == null)
             {
-                PrintDebug("[SmartBackupSetupWindow.cs] - [NextPage] - [No data found for selected database]", 1);
+                PrintDebug("[MainWindow.cs] - [DeletePresetButton_Click] - [No data selected]");
                 return;
             }
-            int pageCount = GetPageCount(data.DBSize);
-            currentPage--;
-            if (currentPage > 0)
+            bool bResult = false;
+            PrintDebug($"[SmartBackupSetupWindow.cs] - [DeletePresetButton_Click] - [HasDatabase = {data.HasDatabase}] - [HasBaseBackup = {data.HasBaseBackup}]");
+            if (data.HasDatabase)
             {
-                SetCurrentPageTextLabel(pageCount);
-                LoadDatabaseToGridView();
+                bResult = data.ClearDatabase();
+                if (!bResult)
+                {
+                    if (data.HasDatabase)
+                    {
+                        MessageBox.Show("Failed to clear the database! \n\nDo you want to continue though?", "Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    }
+                }
+                bResult = false;
             }
-            else
+            PrintDebug($"[SmartBackupSetupWindow.cs] - [DeletePresetButton_Click] - [HasBaseBackup = {data.HasBaseBackup}]");
+            if (data.HasBaseBackup)
             {
-                currentPage = pageCount - 1;
-                SetCurrentPageTextLabel(pageCount);
-                LoadDatabaseToGridView();
-                PrintDebug("[SmartBackupSetupWindow.cs] - [PrevPage] - [Already on last page]", 1);
+                TSProgressbar.Visible = true;
+                bResult = await data.DisposeInitialBaseBackup(null, null, TSProgressbar);
+                if (!bResult)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [DeletePresetButton_Click] - [User cancelled the deletion after failed initial backup disposal]");
+                    dialogRes = MessageBox.Show("Failed to dispose the initial backup! Do you want to continue though?", "Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (dialogRes != DialogResult.Yes)
+                    {
+                        PrintDebug("[SmartBackupSetupWindow.cs] - [DeletePresetButton_Click] - [User cancelled the deletion after failed initial backup disposal]");
+                        ExportDatabaseDataList();
+                        RefreshDatabaseListbox();
+                        ReloadCurrentGridView();
+                        TSProgressbar.Visible = false;
+                        return;
+                    }
+                }
+                bResult = false;
+            }
+            MessageBox.Show($"Delete results: \n\n1. Database Deleted = {!data.HasDatabase} \n2.Base Backup Deleted = {!data.HasBaseBackup}", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (!data.HasDatabase && !data.HasBaseBackup)
+            {
+                dialogRes = MessageBox.Show($"Everything got deleted successfully! \n\nDo you want to remove this preset from the list as well?", "Delete All?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogRes != DialogResult.Yes)
+                {
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [DeletePresetButton_Click] - [User cancelled the deletion before deleting the preset as well.]");
+                    ExportDatabaseDataList();
+                    RefreshDatabaseListbox();
+                    ReloadCurrentGridView();
+                    TSProgressbar.Visible = false;
+                    return;
+                }
+                bResult = false;
+                bResult = RemoveDataFromDatabaseDataList(data.Savegame);
+                if (!bResult)
+                {
+                    MessageBox.Show($"Failed to remove [Savegame = {data.Savegame}] the database from the list!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    ExportDatabaseDataList();
+                    PrintDebug("[MainWindow.cs] - [DeletePresetButton_Click] - [Preset deleted successfully]");
+                    MessageBox.Show("Preset & all Data deleted successfully?", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearDatabaseListBox();
+                    ClearComboBoxes();
+                    SetCurrentPageTextLabelToDefault();
+                }
+                RefreshDatabaseListbox();
+                ReloadCurrentGridView();
+                if (DatabaseListBox.Items.Count > 0)
+                {
+                    DatabaseListBox.SelectedIndex = 0;
+                }
+                DatabaseListBox.Select();
+                TSProgressbar.Visible = false;
             }
         }
     }

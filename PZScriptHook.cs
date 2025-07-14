@@ -101,6 +101,7 @@ namespace ZomboidBackupManager
                 List<string> data = new List<string>();
                 data.Add(@"command=");
                 data.Add(@"savegame=");
+                data.Add(@"backup=");
                 FileStream stream = System.IO.File.Create(Configuration.absoluteHookFilePATH);
                 stream.Close();
                 File.WriteAllLines(Configuration.absoluteHookFilePATH, data.ToArray());
@@ -186,7 +187,7 @@ namespace ZomboidBackupManager
             }
             GamemodesComboBox.Enabled = false;
             SavegameComboBox.Enabled = false;
-            ResetHookCommandInFile();
+            ResetHookCommandFile();
             BeginPolling();
             PrintDebug("[PZScriptHook.cs] - [Tracking started]");
             PrintStatusLog("[Tracking started]");
@@ -207,9 +208,15 @@ namespace ZomboidBackupManager
             StartStopButton.Text = "Start Tracking";
         }
 
-        private void ResetHookCommandInFile()
+        private void ResetHookCommandFile()
         {
+            if (lastContent.Length < 3)
+            {
+                lastContent = new string[3];
+            }
             lastContent[0] = emptyCommand;
+            lastContent[1] = @"savegame=";
+            lastContent[2] = @"backup=";
             File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
             fileWatcher.EnableRaisingEvents = true;
             PrintStatusLog("[Reset] --> Done! - Tracking Unsuspended!");
@@ -276,6 +283,10 @@ namespace ZomboidBackupManager
             {
                 SwitchSavegame();
             }
+            else if (command == @"o")
+            {
+                ExecuteOpenCommand();
+            }
             else
             {
                 PrintStatusLog($"Unknown cmd detected! --> [{command}]");
@@ -337,6 +348,15 @@ namespace ZomboidBackupManager
             SendDoneCommand();
         }
 
+        private void ExecuteOpenCommand()
+        {
+            PrintStatusLog("Executing [Open] command...");
+            UnMinimize();
+            this.TopMost = true;
+            this.CenterToScreen();
+            ResetHookCommandFile();
+        }
+
         private void ExecuteTestCommand()
         {
             PrintStatusLog("Executing [test] command...");
@@ -344,7 +364,7 @@ namespace ZomboidBackupManager
             TestCommandWindow testWindow = new TestCommandWindow();
             testWindow.TopMost = true;
             testWindow.ShowDialog();
-            ResetHookCommandInFile();
+            ResetHookCommandFile();
         }
 
         private void SendConfirmCommand()
@@ -402,8 +422,21 @@ namespace ZomboidBackupManager
             SendAbortCommand();
         }
 
+        public void WriteBackupFolderNameToFile(string folderName)
+        {
+            PrintStatusLog("Writing [BackupFolder] to hook file...");
+            if (lastContent.Length < 3)
+            {
+                ResetHookCommandFile();
+            }
+            lastContent[2] = @"backup=" + folderName;
+            File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
+        }
+
         private void PrintStatusLog(string txt = "")
         {
+            string debugMsg = $"[PZScriptHook.cs] - [StatusLog] - [{txt}]";
+            Configuration.PrintDebug(debugMsg);
             int i = txtLog.Items.Count;
             if (i > 999)
             {
@@ -452,7 +485,7 @@ namespace ZomboidBackupManager
         private void PZScriptHook_Shown(object sender, EventArgs e)
         {
             LoadSavegamesInSelectedGamemode();
-            if (IsAnySavegameLoadedCurrently())
+            if (IsAnySavegameLoadedCurrently() && currentLoadedSavegameIndex > 0 && currentLoadedSavegameIndex < SavegameComboBox.Items.Count)
             {
                 SavegameComboBox.SelectedIndex = currentLoadedSavegameIndex;
 

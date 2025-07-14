@@ -133,11 +133,17 @@
   <data name="LoadIconCCW_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\LoadIconCCW_B.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="RadioSwitchBackgroundTexture_Yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RadioSwitchBackgroundTexture_Yellow.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ArrowLeftIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ArrowLeftIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SpiffoHighlightsWithBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SpiffoHighlightsWithBackground.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AlternativeGear2Color_BW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AlternativeGear2Color_BW.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DocumentIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\documentIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -175,8 +181,14 @@
   <data name="CheckmarkFilled24" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CheckmarkFilled24.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SpliffingSpliffoWithBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SpliffingSpliffoWithBackground.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="DoneButtonIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DoneButtonIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RedBarAlternative" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedBarAlternative.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SquareWithPlusIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SquareWithPlusIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -199,11 +211,17 @@
   <data name="ThumbnailPlaceholder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Properties\src\ThumbnailPlaceholder.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="InfoIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\infoIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ArrowLeftDownIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ArrowLeftDownIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="RedBar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\RedBar.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="InfoIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\infoIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="RadioSwitchBackgroundTexture" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RadioSwitchBackgroundTexture.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TrashbinIconImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TrashbinIconImage.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -214,7 +232,10 @@
   <data name="CheckmarkFilled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CheckmarkFilled.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ArrowLeftDownIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ArrowLeftDownIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ButtonBackgroundTexture90x38" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ButtonBackgroundTexture90x38.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RadioSwitchBackgroundTexture_Green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RadioSwitchBackgroundTexture_Green.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

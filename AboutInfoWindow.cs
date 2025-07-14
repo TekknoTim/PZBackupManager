@@ -23,6 +23,20 @@ namespace ZomboidBackupManager
             PZBackupManagerLogoPictureBox.DoubleBuffered(true);
             SteamLogoPictureBox.DoubleBuffered(true);
             GithubLogoPictureBox.DoubleBuffered(true);
+            SetFormBackgroundImage(Configuration.expFeaturesEnabled);
+        }
+
+        private void SetFormBackgroundImage(bool bDefault = true)
+        {
+            if (!bDefault)
+            {
+                MainPanel.BackgroundImage = Properties.Resources.SpiffoHighlightsWithBackground;
+            }
+            else
+            {
+                MainPanel.BackgroundImage = Properties.Resources.SpliffingSpliffoWithBackground;
+            }
+            MainPanel.Refresh();
         }
 
         private void OkButton_Click(object sender, EventArgs e)
@@ -104,10 +118,16 @@ namespace ZomboidBackupManager
             Process.Start(startInfo);
         }
 
+        // config.ini
         private void JsonFileShortCutsDropDownItemA_Click(object sender, EventArgs e)
         {
             this.TopMost = false;
             string path = Configuration.GetConfigINIFilePath();
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - A] - [File not found = {path}]");
+                return;
+            }
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = path;
             startInfo.UseShellExecute = true;
@@ -115,10 +135,16 @@ namespace ZomboidBackupManager
             this.WindowState = FormWindowState.Minimized;
         }
 
+        // databaselist.json
         private void JsonFileShortCutsDropDownItemB_Click(object sender, EventArgs e)
         {
             this.TopMost = false;
             string path = Configuration.databaseDataListFile;
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - B] - [File not found = {path}]");
+                return;
+            }
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = path;
             startInfo.UseShellExecute = true;
@@ -126,10 +152,67 @@ namespace ZomboidBackupManager
             this.WindowState = FormWindowState.Minimized;
         }
 
+        // Readme.md
         private void JsonFileShortCutsDropDownItemC_Click(object sender, EventArgs e)
         {
             this.TopMost = false;
             string path = Application.StartupPath + @"Readme.md";
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - C] - [File not found = {path}]");
+                return;
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = path;
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo);
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        // PZScriptHook.ini
+        private void JsonFileShortCutsDropDownItemD_Click(object sender, EventArgs e)
+        {
+            this.TopMost = false;
+            string path = Configuration.absoluteHookFilePATH;
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - D] - [File not found = {path}]");
+                return;
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = path;
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo);
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        // Version.txt
+        private void JsonFileShortCutsDropDownItemE_Click(object sender, EventArgs e)
+        {
+            this.TopMost = false;
+            string path = Configuration.absoluteModVersionFilePATH;
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - E] - [File not found = {path}]");
+                return;
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = path;
+            startInfo.UseShellExecute = true;
+            Process.Start(startInfo);
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        // Backup_History.csv
+        private void JsonFileShortCutsDropDownItemF_Click(object sender, EventArgs e)
+        {
+            this.TopMost = false;
+            string path = Configuration.absoluteBackupHistoryFilePATH;
+            if (!System.IO.File.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [File-ShortCutDropDownItem - F] - [File not found = {path}]");
+                return;
+            }
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = path;
             startInfo.UseShellExecute = true;
@@ -152,9 +235,33 @@ namespace ZomboidBackupManager
             Process.Start("explorer.exe", Configuration.absoluteSavegamePATH);
         }
 
-        private void LogoPanelA_Paint(object sender, PaintEventArgs e)
+        private void FolderPathShortCutsDropDownItemD_Click(object sender, EventArgs e)
         {
+            string? path = Path.GetDirectoryName(Configuration.absoluteHookFilePATH);
+            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [Folder-ShortCutDropDownItem - D] - [File not found = {path}]");
+                return;
+            }
+            Process.Start("explorer.exe", path);
+        }
 
+        private void FolderPathShortCutsDropDownItemE_Click(object sender, EventArgs e)
+        {
+            string? path = Path.GetDirectoryName(Configuration.absoluteModVersionFilePATH);
+            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+            {
+                PrintDebug($"[AboutInfoWindow.cs] - [Folder-ShortCutDropDownItem - E] - [File not found = {path}]");
+                return;
+            }
+            Process.Start("explorer.exe", path);
+        }
+
+        private void ToggleExperimentalFeaturesPanel_DoubleClick(object sender, EventArgs e)
+        {
+            Configuration.expFeaturesEnabled = !Configuration.expFeaturesEnabled;
+            SetFormBackgroundImage(Configuration.expFeaturesEnabled);
+            Configuration.SaveConfig();
         }
     }
 }
