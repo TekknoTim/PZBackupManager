@@ -33,16 +33,16 @@ namespace ZomboidBackupManager
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             GamemodeComboBox = new ComboBox();
             SelectSavegameLabel = new Label();
             SelectSavegamePanel = new Panel();
-            SmartBackupDatabasePanel = new Panel();
-            SmartBackupDataGridView = new DataGridView();
+            DatabasePresetTSPanel = new Panel();
+            DatabaseToolStrip = new ToolStrip();
+            OpenDatabaseSetupTSButton = new ToolStripButton();
+            TSSeparator3 = new ToolStripSeparator();
+            LoadDataBaseButton = new ToolStripButton();
+            TSSeparator4 = new ToolStripSeparator();
             SavegameHeadlineLabel = new Label();
             SavegameListBox = new ListBox();
             ThumbnailPictureBox = new PictureBox();
@@ -97,7 +97,6 @@ namespace ZomboidBackupManager
             TSSeparator1 = new ToolStripSeparator();
             BackupButton = new ToolStripButton();
             TSSeparator2 = new ToolStripSeparator();
-            LoadDataBaseButton = new ToolStripButton();
             AutoDeleteInfoLabel = new Label();
             BackupInfoPanel = new Panel();
             BackupDataInfoPanel = new Panel();
@@ -155,8 +154,8 @@ namespace ZomboidBackupManager
             ListenToPZToolStripButton = new ToolStripButton();
             MinimizeButtonToolTip = new ToolTip(components);
             SelectSavegamePanel.SuspendLayout();
-            SmartBackupDatabasePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)SmartBackupDataGridView).BeginInit();
+            DatabasePresetTSPanel.SuspendLayout();
+            DatabaseToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
             SavegameInfoPanel.SuspendLayout();
             BackupModeInfoPanel.SuspendLayout();
@@ -187,10 +186,10 @@ namespace ZomboidBackupManager
             // 
             GamemodeComboBox.BackColor = SystemColors.ControlLightLight;
             GamemodeComboBox.Font = new Font("Bahnschrift", 13F);
-            GamemodeComboBox.Location = new Point(18, 114);
+            GamemodeComboBox.Location = new Point(20, 114);
             GamemodeComboBox.Margin = new Padding(18, 3, 3, 3);
             GamemodeComboBox.Name = "GamemodeComboBox";
-            GamemodeComboBox.Size = new Size(535, 29);
+            GamemodeComboBox.Size = new Size(530, 29);
             GamemodeComboBox.TabIndex = 0;
             GamemodeComboBox.Text = "Select Gamemode";
             GamemodeComboBox.SelectedIndexChanged += GamemodeComboBox_SelectedIndexChanged;
@@ -214,7 +213,7 @@ namespace ZomboidBackupManager
             // 
             SelectSavegamePanel.BackColor = SystemColors.ControlLight;
             SelectSavegamePanel.BorderStyle = BorderStyle.FixedSingle;
-            SelectSavegamePanel.Controls.Add(SmartBackupDatabasePanel);
+            SelectSavegamePanel.Controls.Add(DatabasePresetTSPanel);
             SelectSavegamePanel.Controls.Add(SelectSavegameLabel);
             SelectSavegamePanel.Controls.Add(SavegameHeadlineLabel);
             SelectSavegamePanel.Controls.Add(SavegameListBox);
@@ -227,79 +226,106 @@ namespace ZomboidBackupManager
             SelectSavegamePanel.Size = new Size(575, 800);
             SelectSavegamePanel.TabIndex = 2;
             // 
-            // SmartBackupDatabasePanel
+            // DatabasePresetTSPanel
             // 
-            SmartBackupDatabasePanel.BackColor = SystemColors.ControlDarkDark;
-            SmartBackupDatabasePanel.BorderStyle = BorderStyle.Fixed3D;
-            SmartBackupDatabasePanel.Controls.Add(SmartBackupDataGridView);
-            SmartBackupDatabasePanel.Location = new Point(20, 518);
-            SmartBackupDatabasePanel.Margin = new Padding(5, 5, 5, 15);
-            SmartBackupDatabasePanel.MaximumSize = new Size(530, 264);
-            SmartBackupDatabasePanel.MinimumSize = new Size(530, 121);
-            SmartBackupDatabasePanel.Name = "SmartBackupDatabasePanel";
-            SmartBackupDatabasePanel.Padding = new Padding(5);
-            SmartBackupDatabasePanel.Size = new Size(530, 264);
-            SmartBackupDatabasePanel.TabIndex = 26;
-            SmartBackupDatabasePanel.MouseClick += SmartBackupDatabasePanel_MouseClick;
+            DatabasePresetTSPanel.BackColor = SystemColors.ControlLight;
+            DatabasePresetTSPanel.BackgroundImageLayout = ImageLayout.Center;
+            DatabasePresetTSPanel.BorderStyle = BorderStyle.Fixed3D;
+            DatabasePresetTSPanel.Controls.Add(DatabaseToolStrip);
+            DatabasePresetTSPanel.Location = new Point(20, 645);
+            DatabasePresetTSPanel.MaximumSize = new Size(530, 74);
+            DatabasePresetTSPanel.MinimumSize = new Size(530, 74);
+            DatabasePresetTSPanel.Name = "DatabasePresetTSPanel";
+            DatabasePresetTSPanel.Padding = new Padding(10, 5, 10, 5);
+            DatabasePresetTSPanel.Size = new Size(530, 74);
+            DatabasePresetTSPanel.TabIndex = 26;
             // 
-            // SmartBackupDataGridView
+            // DatabaseToolStrip
             // 
-            SmartBackupDataGridView.AllowUserToAddRows = false;
-            SmartBackupDataGridView.AllowUserToDeleteRows = false;
-            SmartBackupDataGridView.AllowUserToResizeColumns = false;
-            SmartBackupDataGridView.AllowUserToResizeRows = false;
-            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle13.WrapMode = DataGridViewTriState.False;
-            SmartBackupDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle13;
-            SmartBackupDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            SmartBackupDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            SmartBackupDataGridView.BackgroundColor = Color.FromArgb(192, 255, 255);
-            SmartBackupDataGridView.BorderStyle = BorderStyle.Fixed3D;
-            SmartBackupDataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
-            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = Color.FromArgb(255, 192, 192);
-            dataGridViewCellStyle14.Font = new Font("Bahnschrift", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle14.ForeColor = Color.Black;
-            dataGridViewCellStyle14.SelectionBackColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle14.SelectionForeColor = Color.Yellow;
-            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.True;
-            SmartBackupDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle14;
-            SmartBackupDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            SmartBackupDataGridView.Dock = DockStyle.Fill;
-            SmartBackupDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
-            SmartBackupDataGridView.Location = new Point(5, 5);
-            SmartBackupDataGridView.MultiSelect = false;
-            SmartBackupDataGridView.Name = "SmartBackupDataGridView";
-            SmartBackupDataGridView.ReadOnly = true;
-            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = Color.FromArgb(255, 192, 192);
-            dataGridViewCellStyle15.Font = new Font("Bahnschrift", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle15.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle15.NullValue = "ERROR";
-            dataGridViewCellStyle15.SelectionBackColor = Color.FromArgb(64, 64, 64);
-            dataGridViewCellStyle15.SelectionForeColor = Color.Yellow;
-            dataGridViewCellStyle15.WrapMode = DataGridViewTriState.False;
-            SmartBackupDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
-            SmartBackupDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle16.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle16.WrapMode = DataGridViewTriState.False;
-            SmartBackupDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle16;
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.BackColor = Color.FromArgb(64, 64, 64);
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.ForeColor = Color.Yellow;
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.NullValue = "Unknown";
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(255, 255, 192);
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.Black;
-            SmartBackupDataGridView.RowTemplate.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
-            SmartBackupDataGridView.RowTemplate.ReadOnly = true;
-            SmartBackupDataGridView.RowTemplate.Resizable = DataGridViewTriState.False;
-            SmartBackupDataGridView.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            SmartBackupDataGridView.Size = new Size(516, 250);
-            SmartBackupDataGridView.TabIndex = 0;
-            SmartBackupDataGridView.TabStop = false;
-            SmartBackupDataGridView.CellContentClick += SmartBackupDataGridView_CellContentClick;
+            DatabaseToolStrip.AllowMerge = false;
+            DatabaseToolStrip.AutoSize = false;
+            DatabaseToolStrip.BackColor = SystemColors.ControlDark;
+            DatabaseToolStrip.CanOverflow = false;
+            DatabaseToolStrip.Dock = DockStyle.Fill;
+            DatabaseToolStrip.Font = new Font("Bahnschrift", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            DatabaseToolStrip.GripMargin = new Padding(5);
+            DatabaseToolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            DatabaseToolStrip.ImageScalingSize = new Size(32, 32);
+            DatabaseToolStrip.Items.AddRange(new ToolStripItem[] { OpenDatabaseSetupTSButton, TSSeparator3, LoadDataBaseButton, TSSeparator4 });
+            DatabaseToolStrip.Location = new Point(10, 5);
+            DatabaseToolStrip.Name = "DatabaseToolStrip";
+            DatabaseToolStrip.Padding = new Padding(0);
+            DatabaseToolStrip.Size = new Size(506, 60);
+            DatabaseToolStrip.TabIndex = 0;
+            // 
+            // OpenDatabaseSetupTSButton
+            // 
+            OpenDatabaseSetupTSButton.AutoSize = false;
+            OpenDatabaseSetupTSButton.BackColor = SystemColors.ControlDarkDark;
+            OpenDatabaseSetupTSButton.Font = new Font("Impact", 9F);
+            OpenDatabaseSetupTSButton.ForeColor = SystemColors.ButtonHighlight;
+            OpenDatabaseSetupTSButton.Image = Resources.AlternativeGear2Color_BW;
+            OpenDatabaseSetupTSButton.ImageScaling = ToolStripItemImageScaling.None;
+            OpenDatabaseSetupTSButton.ImageTransparentColor = Color.Magenta;
+            OpenDatabaseSetupTSButton.Margin = new Padding(2);
+            OpenDatabaseSetupTSButton.MergeAction = MergeAction.MatchOnly;
+            OpenDatabaseSetupTSButton.MergeIndex = 3;
+            OpenDatabaseSetupTSButton.Name = "OpenDatabaseSetupTSButton";
+            OpenDatabaseSetupTSButton.Overflow = ToolStripItemOverflow.Never;
+            OpenDatabaseSetupTSButton.Padding = new Padding(1, 1, 5, 1);
+            OpenDatabaseSetupTSButton.Size = new Size(100, 56);
+            OpenDatabaseSetupTSButton.Text = "Database Setup";
+            OpenDatabaseSetupTSButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            OpenDatabaseSetupTSButton.ToolTipText = "Create and/or Load Database for\r\nthe Savegame selected in the box\r\nto the left.";
+            OpenDatabaseSetupTSButton.Click += OpenDatabaseSetupTSButton_Click;
+            // 
+            // TSSeparator3
+            // 
+            TSSeparator3.AutoSize = false;
+            TSSeparator3.BackColor = Color.White;
+            TSSeparator3.ForeColor = SystemColors.AppWorkspace;
+            TSSeparator3.Margin = new Padding(5, 0, 5, 0);
+            TSSeparator3.MergeAction = MergeAction.MatchOnly;
+            TSSeparator3.Name = "TSSeparator3";
+            TSSeparator3.Overflow = ToolStripItemOverflow.Never;
+            TSSeparator3.Padding = new Padding(5, 0, 5, 0);
+            TSSeparator3.Size = new Size(25, 55);
+            // 
+            // LoadDataBaseButton
+            // 
+            LoadDataBaseButton.Alignment = ToolStripItemAlignment.Right;
+            LoadDataBaseButton.AutoSize = false;
+            LoadDataBaseButton.BackColor = SystemColors.ControlDarkDark;
+            LoadDataBaseButton.Enabled = false;
+            LoadDataBaseButton.Font = new Font("Impact", 9F);
+            LoadDataBaseButton.ForeColor = SystemColors.ButtonHighlight;
+            LoadDataBaseButton.Image = Resources.LoadIconCCW_B;
+            LoadDataBaseButton.ImageScaling = ToolStripItemImageScaling.None;
+            LoadDataBaseButton.ImageTransparentColor = Color.Magenta;
+            LoadDataBaseButton.Margin = new Padding(2);
+            LoadDataBaseButton.MergeAction = MergeAction.MatchOnly;
+            LoadDataBaseButton.MergeIndex = 3;
+            LoadDataBaseButton.Name = "LoadDataBaseButton";
+            LoadDataBaseButton.Overflow = ToolStripItemOverflow.Never;
+            LoadDataBaseButton.Padding = new Padding(1, 1, 5, 1);
+            LoadDataBaseButton.Size = new Size(100, 56);
+            LoadDataBaseButton.Text = "Load Database";
+            LoadDataBaseButton.TextImageRelation = TextImageRelation.ImageAboveText;
+            LoadDataBaseButton.ToolTipText = "Create and/or Load Database for\r\nthe Savegame selected in the box\r\nto the left.";
+            LoadDataBaseButton.Click += LoadDataBaseButton_Click;
+            // 
+            // TSSeparator4
+            // 
+            TSSeparator4.Alignment = ToolStripItemAlignment.Right;
+            TSSeparator4.AutoSize = false;
+            TSSeparator4.BackColor = Color.DarkGray;
+            TSSeparator4.ForeColor = Color.Black;
+            TSSeparator4.Margin = new Padding(5, 0, 5, 0);
+            TSSeparator4.MergeAction = MergeAction.MatchOnly;
+            TSSeparator4.Name = "TSSeparator4";
+            TSSeparator4.Overflow = ToolStripItemOverflow.Never;
+            TSSeparator4.Padding = new Padding(5, 0, 5, 0);
+            TSSeparator4.Size = new Size(25, 55);
             // 
             // SavegameHeadlineLabel
             // 
@@ -323,10 +349,10 @@ namespace ZomboidBackupManager
             SavegameListBox.Location = new Point(20, 450);
             SavegameListBox.Margin = new Padding(15);
             SavegameListBox.MaximumSize = new Size(530, 194);
-            SavegameListBox.MinimumSize = new Size(530, 69);
+            SavegameListBox.MinimumSize = new Size(530, 194);
             SavegameListBox.Name = "SavegameListBox";
             SavegameListBox.ScrollAlwaysVisible = true;
-            SavegameListBox.Size = new Size(530, 61);
+            SavegameListBox.Size = new Size(530, 194);
             SavegameListBox.TabIndex = 24;
             SavegameListBox.SelectedIndexChanged += SavegameListBox_SelectedIndexChanged;
             // 
@@ -926,12 +952,13 @@ namespace ZomboidBackupManager
             // 
             // BackupRestoreTSPanel
             // 
-            BackupRestoreTSPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackupRestoreTSPanel.BackColor = SystemColors.ControlLight;
             BackupRestoreTSPanel.BackgroundImageLayout = ImageLayout.Center;
             BackupRestoreTSPanel.BorderStyle = BorderStyle.Fixed3D;
             BackupRestoreTSPanel.Controls.Add(BackupRestoreToolStrip);
             BackupRestoreTSPanel.Location = new Point(15, 645);
+            BackupRestoreTSPanel.MaximumSize = new Size(530, 74);
+            BackupRestoreTSPanel.MinimumSize = new Size(530, 74);
             BackupRestoreTSPanel.Name = "BackupRestoreTSPanel";
             BackupRestoreTSPanel.Padding = new Padding(10, 5, 10, 5);
             BackupRestoreTSPanel.Size = new Size(530, 74);
@@ -948,7 +975,7 @@ namespace ZomboidBackupManager
             BackupRestoreToolStrip.GripMargin = new Padding(5);
             BackupRestoreToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             BackupRestoreToolStrip.ImageScalingSize = new Size(32, 32);
-            BackupRestoreToolStrip.Items.AddRange(new ToolStripItem[] { RestoreButton, TSSeparator1, BackupButton, TSSeparator2, LoadDataBaseButton });
+            BackupRestoreToolStrip.Items.AddRange(new ToolStripItem[] { RestoreButton, TSSeparator1, BackupButton, TSSeparator2 });
             BackupRestoreToolStrip.Location = new Point(10, 5);
             BackupRestoreToolStrip.Name = "BackupRestoreToolStrip";
             BackupRestoreToolStrip.Padding = new Padding(0);
@@ -1027,28 +1054,6 @@ namespace ZomboidBackupManager
             TSSeparator2.Overflow = ToolStripItemOverflow.Never;
             TSSeparator2.Padding = new Padding(5, 0, 5, 0);
             TSSeparator2.Size = new Size(25, 55);
-            // 
-            // LoadDataBaseButton
-            // 
-            LoadDataBaseButton.Alignment = ToolStripItemAlignment.Right;
-            LoadDataBaseButton.AutoSize = false;
-            LoadDataBaseButton.BackColor = SystemColors.ControlDarkDark;
-            LoadDataBaseButton.Font = new Font("Closeness", 9.749999F);
-            LoadDataBaseButton.ForeColor = SystemColors.ButtonHighlight;
-            LoadDataBaseButton.Image = Resources.LoadIconCCW_B;
-            LoadDataBaseButton.ImageScaling = ToolStripItemImageScaling.None;
-            LoadDataBaseButton.ImageTransparentColor = Color.Magenta;
-            LoadDataBaseButton.Margin = new Padding(2);
-            LoadDataBaseButton.MergeAction = MergeAction.MatchOnly;
-            LoadDataBaseButton.MergeIndex = 3;
-            LoadDataBaseButton.Name = "LoadDataBaseButton";
-            LoadDataBaseButton.Overflow = ToolStripItemOverflow.Never;
-            LoadDataBaseButton.Padding = new Padding(1, 1, 5, 1);
-            LoadDataBaseButton.Size = new Size(75, 56);
-            LoadDataBaseButton.Text = "LOAD DB";
-            LoadDataBaseButton.TextImageRelation = TextImageRelation.ImageAboveText;
-            LoadDataBaseButton.ToolTipText = "Create and/or Load Database for\r\nthe Savegame selected in the box\r\nto the left.";
-            LoadDataBaseButton.Click += LoadDataBaseButton_Click;
             // 
             // AutoDeleteInfoLabel
             // 
@@ -1749,8 +1754,9 @@ namespace ZomboidBackupManager
             Load += MainWindow_Load;
             SelectSavegamePanel.ResumeLayout(false);
             SelectSavegamePanel.PerformLayout();
-            SmartBackupDatabasePanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)SmartBackupDataGridView).EndInit();
+            DatabasePresetTSPanel.ResumeLayout(false);
+            DatabaseToolStrip.ResumeLayout(false);
+            DatabaseToolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).EndInit();
             SavegameInfoPanel.ResumeLayout(false);
             BackupModeInfoPanel.ResumeLayout(false);
@@ -1889,10 +1895,7 @@ namespace ZomboidBackupManager
         private RadioButton NormalWindowModeRadioButton;
         private Label SavegameHeadlineLabel;
         private ListBox SavegameListBox;
-        private ToolStripButton LoadDataBaseButton;
         private ToolStripMenuItem SmartBackupMenuOption;
-        private Panel SmartBackupDatabasePanel;
-        private DataGridView SmartBackupDataGridView;
         private ToolStripMenuItem DataCleanerMenuOption;
         private PictureBox IsDatabaseLoadedValuePictureBox;
         private Label IsDatabaseLoadedTextLabel;
@@ -1901,5 +1904,11 @@ namespace ZomboidBackupManager
         private Label ActiveBackupModeTextLabel;
         private PictureBox HasBaseBackupValuePictureBox;
         private Label HasBaseBackupTextLabel;
+        private Panel DatabasePresetTSPanel;
+        private ToolStrip DatabaseToolStrip;
+        private ToolStripSeparator TSSeparator3;
+        private ToolStripSeparator TSSeparator4;
+        private ToolStripButton LoadDataBaseButton;
+        private ToolStripButton OpenDatabaseSetupTSButton;
     }
 }

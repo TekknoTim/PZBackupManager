@@ -21,7 +21,7 @@ namespace ZomboidBackupManager
         public float ConfigVersion { get; set; }
         public string? AbsoluteSavegamePATH { get; set; }
         public string? BaseBackupFolderPATH { get; set; }
-        public bool showMessageWhenBackupProcessDone { get; set; }
+        public bool ShowMessageWhenBackupProcessDone { get; set; }
         public bool SelectLastLoadedOnStart { get; set; }
         public bool SaveBackupsAsZip {  get; set; }
         public bool KeepBackupFolder { get; set; }
@@ -40,12 +40,12 @@ namespace ZomboidBackupManager
         public bool EnableDebugLog { get; set; }
         public int LogFileMax { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, int dbGridViewMode, bool enDebugLog, int logFileMaximum)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, bool enDebugLog, int logFileMaximum)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
             BaseBackupFolderPATH = baseBkpPATH;
-            showMessageWhenBackupProcessDone = showMsg;
+            ShowMessageWhenBackupProcessDone = showMsg;
             SelectLastLoadedOnStart = selectLastLoadedOnStart;
             SaveBackupsAsZip = saveAsZip;
             KeepBackupFolder = keepBackupFolder;
@@ -60,7 +60,6 @@ namespace ZomboidBackupManager
             ExperimentalFeatures = expFeatures;
             SmartBackupModeEn = smartBaModeEn;
             SmartBackupAutoLoadEn = smartBaAutoloadEn;
-            DatabaseGridViewMode = dbGridViewMode;
             EnableDebugLog = enDebugLog;
             LogFileMax = logFileMaximum;
         }
@@ -82,7 +81,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, databaseGridViewMode,enableDebugLog, logFileMax);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, enableDebugLog, logFileMax);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -168,7 +167,7 @@ namespace ZomboidBackupManager
                 {
                     absoluteSavegamePATH = cfg.AbsoluteSavegamePATH;
                     currentBaseBackupFolderPATH = cfg.BaseBackupFolderPATH;
-                    showMsgWhenBackupProcessDone = cfg.showMessageWhenBackupProcessDone;
+                    showMsgWhenBackupProcessDone = cfg.ShowMessageWhenBackupProcessDone;
                     autoSelectSavegameOnStart = cfg.SelectLastLoadedOnStart;
                     saveBackupsAsZipFile = cfg.SaveBackupsAsZip;
                     keepBackupFolderAfterZip = cfg.KeepBackupFolder;
@@ -181,7 +180,6 @@ namespace ZomboidBackupManager
                     logFileMax = cfg.LogFileMax;
                     smartBackupModeEnabled = cfg.SmartBackupModeEn;
                     smartBackupAutoLoadEnabled = cfg.SmartBackupAutoLoadEn;
-                    databaseGridViewMode = cfg.DatabaseGridViewMode;
                 }
             }
         }
@@ -234,8 +232,8 @@ namespace ZomboidBackupManager
         //General Properties:
         private static readonly float version = 2506.21f;
         public static readonly string appVersion = "v0.6.0";
-        public static bool initRunning = false;
-        
+        public static bool initRunning;
+
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
         public static readonly string cleanUpHelperFile = Application.StartupPath + @"\AutoCleanupHelp.txt";
         public static readonly string placeholderThumbnail = Application.StartupPath + @"\placeholder.png";
@@ -252,7 +250,8 @@ namespace ZomboidBackupManager
         //Private Path Properties:
         private static readonly string relativeHookFilePATH = @"\Zomboid\lua\PZBaManagerHook.ini";
         private static readonly string relativeHookStatsFilePATH = @"\Zomboid\lua\PZBackupManager\PZBaManagerStatusData.txt";
-        private static readonly string relativeModVersionFilePATH = @"\Zomboid\lua\PZBackupManager\version.txt";
+        private static readonly string relativeModVersionFilePATH = @"\Zomboid\lua\PZBackupManager\Version.txt";
+        private static readonly string relativeBackupHistoryFilePATH = @"\Zomboid\lua\PZBackupManager\Backup_History.csv";
         private static readonly string relativeSavegamePATH = @"\Zomboid\Saves\";
         private static readonly string baseBackupFolderPATH = Application.StartupPath + @"Backups";
 
@@ -268,6 +267,7 @@ namespace ZomboidBackupManager
         public static string absoluteHookFilePATH = userProfilePATH + relativeHookFilePATH;
         public static string absoluteHookStatsFilePATH = userProfilePATH + relativeHookStatsFilePATH;
         public static string absoluteModVersionFilePATH = userProfilePATH + relativeModVersionFilePATH;
+        public static string absoluteBackupHistoryFilePATH = userProfilePATH + relativeBackupHistoryFilePATH;
         public static string currentBaseBackupFolderPATH = Application.StartupPath + @"Backups";
 
         public static string currentLoadedSavegame = string.Empty;
@@ -284,7 +284,6 @@ namespace ZomboidBackupManager
         public static bool expFeaturesEnabled = false;
         public static bool smartBackupModeEnabled = false;
         public static bool smartBackupAutoLoadEnabled = false;
-        public static int databaseGridViewMode = 0;
         public static bool enableDebugLog = false;
         public static int logFileMax = 4;
 
@@ -420,18 +419,6 @@ namespace ZomboidBackupManager
                 PrintDebug("[Configuration.cs] - [SetSmartBackupMode] - [Smart Backup Mode disabled!]");
                 ChangeBackupFolderPath(currentBaseBackupFolderPATH);
             }
-        }
-
-        public static void SetDatabaseGridViewMode(int id)
-        {
-            PrintDebug($"[Configuration.cs] - [SetDatabaseGridViewMode] - [DatabaseGridViewMode = {databaseGridViewMode}]");
-            if (id < 0 || id > 2)
-            {
-                PrintDebug($"[Configuration.cs] - [SetDatabaseGridViewMode] - [Invalid ID!]");
-                return;
-            }
-            databaseGridViewMode = id;
-            SaveConfig();
         }
 
         public static bool IsAnySavegameLoadedCurrently()

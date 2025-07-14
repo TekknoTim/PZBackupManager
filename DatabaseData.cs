@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.JsonData;
 
@@ -18,7 +19,9 @@ namespace ZomboidBackupManager
         public bool DatabaseLoaded { get { return Database != null; } }
         [JsonIgnore]
         public bool HasDatabase { get { return File.Exists(DatabasePath); } }
-        [JsonIgnore]
+
+        public bool HasBaseBackup { get { return FunctionLibrary.DirectoryContainsBackupFiles(Path.GetDirectoryName(DatabasePath) ?? string.Empty); } }
+
         public string BaseBackupDir { get { return Path.GetDirectoryName(DatabasePath) ?? string.Empty; } }
         // Public - Properties:
         public string Savegame { get; set; }
@@ -26,7 +29,7 @@ namespace ZomboidBackupManager
         public string SavegamePath { get; set; }
         public string BackupFolderPath { get; set; }
         public string DatabasePath { get; set; }
-        public bool HasBaseBackup { get; set; }
+        
         // MetaData - Properties:
         public int DBSize { get; set; }
         public DateTime? DBDateCreated { get; set; }
@@ -44,7 +47,6 @@ namespace ZomboidBackupManager
             SavegamePath = savegamePath;
             BackupFolderPath = backupPath;
             DatabasePath = databasePath;
-            HasBaseBackup = false;
             DBSize = 0;
             DBDateCreated = null;
             DBDateEdited = null;
@@ -82,19 +84,40 @@ namespace ZomboidBackupManager
         {
             Backup backup = new Backup();
             bool bResult = await backup.DoInitialBaseBackup(this, statusLabel, progressBar, tsProgressBar);
-            HasBaseBackup = bResult;
-            return bResult;
+            if (!bResult)
+            {
+                PrintDebug($"[DatabaseData] - [CreateInitialBaseBackup] - [Failed to create initial base backup for savegame = {Savegame}]", 2);
+                return false;
+            }
+            else
+            {
+                if (!HasBaseBackup)
+                {
+                    PrintDebug($"[DatabaseData] - [CreateInitialBaseBackup] - [bRuslt was true, but [HasBaseBackup = {HasBaseBackup}]", 2);
+                    return false; // Backup was not created successfully
+                }
+                PrintDebug($"[DatabaseData] - [CreateInitialBaseBackup] - [Initial base backup created successfully for savegame = {Savegame}]");
+                return true; // Backup was created successfully
+            }
         }
 
-        public void ClearDatabase()
+        public async Task<bool> DisposeInitialBaseBackup(System.Windows.Forms.Label? statusLabel = null, System.Windows.Forms.ProgressBar? progressBar = null, ToolStripProgressBar? tsProgressBar = null)
+        {
+            Delete delete = new Delete();
+            await delete.DoDeleteBaseSmartBackup(this, statusLabel, progressBar, tsProgressBar);
+            PrintDebug($"[DatabaseData] - [DisposeInitialBaseBackup] - [HasBaseBackup = {HasBaseBackup}]");
+            return !HasBaseBackup; // Returns true if the base backup was successfully disposed of
+        }
+
+
+        public bool ClearDatabase()
         {
             PrintDebug($"[DatabaseData] - [ClearDatabase] - [Clearing database for savegame = {Savegame}]");
             database = null;
-            HasBaseBackup = false;
             DBSize = 0;
             DBDateCreated = DateTime.MinValue;
             DBDateEdited = DateTime.MinValue;
-            DeleteDatabase(DatabasePath);
+            return DeleteDatabase(DatabasePath);
         }
 
         public Dictionary<string, FileRecord>? GetDatabase()
@@ -252,7 +275,7 @@ namespace ZomboidBackupManager
                 File.Delete(path);
                 return true;
             }
-            return false;
+            return true;
         }
 
         private Dictionary<string, FileRecord> BuildFileDatabase(string directoryPath)

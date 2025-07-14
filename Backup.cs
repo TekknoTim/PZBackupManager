@@ -167,8 +167,8 @@ namespace ZomboidBackupManager
                 }
 
             });
-
-            string backupFolderPath = currentLoadedBackupFolderPATH + @"\" + GetDefaultBackupFolderName(GetLastBackupFolderNumber() + 1);
+            string backupFolderName = GetDefaultBackupFolderName(GetLastBackupFolderNumber() + 1);
+            string backupFolderPath = currentLoadedBackupFolderPATH + @"\" + backupFolderName;
 
             await backupProcess.BackupDirectoryAsync(GetFullLoadedSavegamePath(), backupFolderPath, progress);
 
@@ -177,7 +177,7 @@ namespace ZomboidBackupManager
             PrintStatusLog(statusLog, "Writing JSON File...");
             WriteBackupDataToJson(currentLoadedSavegame, backupFolderPath, null);
             await Task.Delay(500);
-
+            scriptHook.WriteBackupFolderNameToFile(backupFolderName);
             PrintStatusLog(statusLog, "Backup Process Finished!");
 
             ChangeCurrentStatus(Status.DONE);
@@ -211,14 +211,13 @@ namespace ZomboidBackupManager
                     tsProgressBar.Value = percent;
                 }
             });
-            string backupFolderPath = Configuration.GetInitialBaseBackupPath(data.Savegame);
+            string backupFolderPath = data.BaseBackupDir;
             await backupProcess.BackupDirectoryAsync(data.SavegamePath, backupFolderPath, progress);
             if (statusLabel != null)
             {
                 statusLabel.Text = "Copying Files Done!";
             }
             await Task.Delay(500);
-            data.HasBaseBackup = true;
             if (statusLabel != null)
             {
                 statusLabel.Text = "Initial Base Backup Created!";

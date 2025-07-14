@@ -120,14 +120,14 @@
   <metadata name="MinimizeButtonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="DatabaseToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>975, 15</value>
+  </metadata>
   <metadata name="EditBackupsContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>174, 6</value>
   </metadata>
   <metadata name="RenameContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>344, 10</value>
-  </metadata>
-  <metadata name="BackupRestoreToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>975, 15</value>
   </metadata>
   <metadata name="BackupRestoreToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>975, 15</value>
@@ -194,8 +194,8 @@ isn't matching your savegame version)</value>
   <metadata name="Toolstrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>498, 10</value>
   </metadata>
-  <metadata name="Toolstrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>498, 10</value>
+  <metadata name="GeneralSettingsContextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>587, 10</value>
   </metadata>
   <data name="SettingsDropDownButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -211,9 +211,6 @@ isn't matching your savegame version)</value>
         lAfSZsLBLanpXTbD+c577lXLnvY2spOxmaiq52a4bLl90J0Ggz/FYI3hul4eswAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="GeneralSettingsContextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>587, 10</value>
-  </metadata>
   <metadata name="EditBackupsToolbarMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>803, 15</value>
   </metadata>
@@ -291,9 +288,6 @@ isn't matching your savegame version)</value>
         tDy2JP+1f83+1RgMfgMImgVfegQZEAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="MinimizeButtonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>68</value>
   </metadata>
