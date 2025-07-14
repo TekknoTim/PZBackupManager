@@ -1,4 +1,14 @@
 PZ Backup Manager Changelog:
+[v0.6.0] - [14.07.2025] - [Debug & ScriptHook Enhancements]
+ 1. - Added: Debug Logger: Prints out debug information to a file. Can be enabled by changing "DebugLog" to true, in the config.json.
+ 2. - Added: Folder & File Shortcuts, to open directories or files directly from the "About Window"
+ 3. - Added: A "trick" to enable experimental features within the app. (Double click the racoons nose on the "About Window" picture.)
+ 4. - Added: A new ScriptHook Command (command=o), to unminimize and show up the manager, when minimized or added to taskbar. (Must be connected to the Mod min version 0.7)
+ 5. - Added: The Scripthook now prints the backupfolder name to the ini file as well. (Will be used in the mods statistics feature)
+ 6. - Changed: Moved the Data Cleaner to the settings drop down menu.
+ 7. - Added: Experimental: A lot of experimental stuff which isn't finished yet, and will only be accessable when experimental features are enabled.
+	  More info's about that are coming in the next update.
+
 [v0.0.62] - [15.05.2025] - [Windows loading issue fixes]
  1. - Fixed: Errors when using & closing either the ScriptHookWindow or BackupDataCleanerWindow.
  2. - Fixed: The backup done confirmation messagebox was showing the wrong number of the new backup.
