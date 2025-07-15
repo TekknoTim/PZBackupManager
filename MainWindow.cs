@@ -1087,7 +1087,9 @@ namespace ZomboidBackupManager
                 }
                 else
                 {
-                    folderName = Path.GetRelativePath(Configuration.currentBaseBackupFolderPATH, path);
+                    DirectoryInfo dirData = new DirectoryInfo(path);
+                    folderName = dirData.Name;
+                    //folderName = Path.GetRelativePath(Configuration.currentBaseBackupFolderPATH, path);
                 }
                 s = data?.Size;
                 if (string.IsNullOrEmpty(s))
