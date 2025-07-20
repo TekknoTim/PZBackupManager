@@ -1,4 +1,7 @@
 PZ Backup Manager Changelog:
+[v0.6.1] - [20.07.2025] - [Last update fixes]
+ 1. - Fixed: The Backupfolder wasn't correctly displayed in the backup data info panel. (eg. before = "saveNo1/Backup_14" ; after = "Backup_14")
+
 [v0.6.0] - [14.07.2025] - [Debug & ScriptHook Enhancements]
  1. - Added: Debug Logger: Prints out debug information to a file. Can be enabled by changing "DebugLog" to true, in the config.json.
  2. - Added: Folder & File Shortcuts, to open directories or files directly from the "About Window"

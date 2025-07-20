@@ -1124,7 +1124,6 @@ namespace ZomboidBackupManager
                 BackupNameValueLabel.Text = data?.Name ?? "[Unknown]";
                 BackupIndexValueLabel.Text = data?.Index.ToString() ?? "[Unknown]";
                 BackupFolderValueLabel.Text = folderName;
-                //MessageBox.Show("TEST TEST TEST!");
                 HasZipValuePictureBox.Image = IsBackupZipped(BackupListBox.SelectedIndex) ? Properties.Resources.CheckmarkFilled : Properties.Resources.Checkmark;
                 HasLooseValuePictureBox.Image = IsBackupSavedLoose(BackupListBox.SelectedIndex) ? Properties.Resources.CheckmarkFilled : Properties.Resources.Checkmark;
                 BackupDateInfoValueLabel.Text = data?.Date ?? "[Unknown]";
