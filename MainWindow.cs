@@ -39,6 +39,8 @@ namespace ZomboidBackupManager
         private float ListBoxFontSize = 12f;
         private bool ListBoxFontsBolt = true;
 
+        private string currentLoadedDataGridViewSavegame = string.Empty;
+
         public MainWindow(float fListBoxFontSize = 12f, bool bListBoxFontsBolt = true)
         {
             InitializeComponent();
@@ -1965,6 +1967,40 @@ namespace ZomboidBackupManager
         private void OpenDatabaseSetupTSButton_Click(object sender, EventArgs e)
         {
             SmartBackupMenuOption_Click(sender, e);
+        }
+
+        private void BackupHistoryCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!File.Exists(Configuration.absoluteBackupHistoryFilePATH))
+            {
+                BackupHistoryDataGridView.Visible = false;
+                BackupHistoryCheckBox.Enabled = false;
+                PrintDebug("[MainWindow.cs] - [BackupHistoryCheckBox_CheckedChanged] - [Backup history file not found!] - [Checkbox disabled]", 1);
+                MessageBox.Show($"Backup history file not found! \nMake sure, following file is existing! \n{Configuration.absoluteBackupHistoryFilePATH}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            BackupHistoryDataGridView.Visible = BackupHistoryCheckBox.Checked;
+        }
+
+        private void BackupHistoryDataGridView_VisibleChanged(object sender, EventArgs e)
+        {
+            if (BackupHistoryDataGridView.Visible)
+            {
+                if (currentLoadedSavegame == null)
+                {
+                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedSavegame is null]", 1);
+                    currentLoadedDataGridViewSavegame = string.Empty;
+                    return;
+                }
+                if (currentLoadedDataGridViewSavegame.Equals(currentLoadedSavegame))
+                {
+                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedDataGridViewSavegame is already loaded]");
+                    return;
+                }
+                BackupHistoryUtil.SetupBackupHistoryGridView(currentLoadedSavegame, BackupHistoryDataGridView);
+                currentLoadedDataGridViewSavegame = currentLoadedSavegame;
+                BackupHistoryDataGridView.Refresh();
+            }
         }
     }
 }
