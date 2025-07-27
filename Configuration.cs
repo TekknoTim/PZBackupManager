@@ -229,6 +229,7 @@ namespace ZomboidBackupManager
         public static readonly string appVersion = "v0.7.0";
         public static bool initRunning;
 
+
         private static readonly string appConfig = Application.StartupPath + @"\config.json";
         public static readonly string cleanUpHelperFile = Application.StartupPath + @"\AutoCleanupHelp.txt";
         public static readonly string placeholderThumbnail = Application.StartupPath + @"\placeholder.png";
