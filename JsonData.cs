@@ -64,9 +64,9 @@ namespace ZomboidBackupManager
             return newJsonData;
         }
 
-        public static BackupData NewBackupData(int index, string name, string path = "", string zipPath = "")
+        public static BackupData NewBackupData(int index, string name, string path = "", string zipPath = "", string guid = "")
         {
-            return new BackupData(index, name, path,zipPath , GetCurrentDate(), GetCurrentTime(), GetDirSizeInMegaBytes(path));
+            return new BackupData(index, name, path, zipPath , GetCurrentDate(), GetCurrentTime(), GetDirSizeInMegaBytes(path), guid);
         }
 
         public static SmartBackupData NewSmartBackupData(int index, string name, string path, List<string>? changedFiles = null, string zipPath = "")
@@ -102,11 +102,11 @@ namespace ZomboidBackupManager
             }
         }
 
-        public static JsonData AddNewBackup(JsonData jsonData, string path = "", string zipPath = "")
+        public static JsonData AddNewBackup(JsonData jsonData, string path = "", string zipPath = "", string guid = "")
         {
             int i = GetLastBackupDataIndex(jsonData);
             string name = GetDefaultBackupFolderName(GetLastBackupFolderNumber());
-            BackupData backupData = NewBackupData(i + 1, name, path, zipPath);
+            BackupData backupData = NewBackupData(i + 1, name, path, zipPath, guid);
             return AddBackup(jsonData, backupData, null);
         }
 
@@ -184,7 +184,7 @@ namespace ZomboidBackupManager
             System.IO.File.WriteAllText(jsonDataFilePath, json);
         }
 
-        public static void WriteBackupDataToJson(string SavegameName, string fullBackupFolderPath, List<string>? changedFiles)
+        public static void WriteBackupDataToJson(string SavegameName, string fullBackupFolderPath, List<string>? changedFiles, string? guid)
         {
             JsonData? outputData = null;
             JsonData? data = ReadJsonDataFromJson(GetUnlistedJsonDataFilePath(SavegameName));
@@ -193,10 +193,13 @@ namespace ZomboidBackupManager
                 //MessageBox.Show("ReadJsonDataFromJson == null");
                 data = NewJsonData(SavegameName);
             }
-
+            if (string.IsNullOrEmpty(guid))
+            {
+                guid = string.Empty;
+            }
             if(changedFiles == null)
             {
-                outputData = AddNewBackup(data, fullBackupFolderPath);
+                outputData = AddNewBackup(data, fullBackupFolderPath, string.Empty ,guid);
             }
             else
             {
@@ -275,16 +278,18 @@ namespace ZomboidBackupManager
         public int Index { get; set; }
         public string? Name { get; set; }
         public string? Path { get; }
+        public string? Id { get; set; }
         public string? ZipPath { get; set; }
         public string? Date { get; }
         public string? Time { get; }
         public string? Size { get; }
 
-        public BackupData(int index, string name, string path,string zipPath, string date, string time, string size)
+        public BackupData(int index, string name, string path,string zipPath, string date, string time, string size, string? id)
         {
             Index = index;
             Name = name;
             Path = path;
+            Id = id;
             ZipPath = zipPath;
             Date = date;
             Time = time;

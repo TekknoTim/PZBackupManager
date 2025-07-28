@@ -568,6 +568,7 @@
             DatabaseInfoGridView.Size = new Size(688, 334);
             DatabaseInfoGridView.TabIndex = 0;
             DatabaseInfoGridView.CellClick += SmartBackupDataGridView_CellClick;
+            DatabaseInfoGridView.CellContentClick += DatabaseInfoGridView_CellContentClick;
             // 
             // DatabaseDisplayGridView
             // 

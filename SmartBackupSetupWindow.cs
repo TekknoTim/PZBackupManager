@@ -538,7 +538,7 @@ namespace ZomboidBackupManager
                                     return data;
                                 }
                             }
-                            
+
                         }
                     }
                 }
@@ -803,7 +803,7 @@ namespace ZomboidBackupManager
                 DialogResult dResult = MessageBox.Show(sb.ToString(), "Database Already Exists!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (dResult != DialogResult.Yes)
                 {
-                    PrintDebug("[SmartBackupSetupWindow.cs] - [SetupButton_Click] - [User chose NOT to override existing database entry]"); 
+                    PrintDebug("[SmartBackupSetupWindow.cs] - [SetupButton_Click] - [User chose NOT to override existing database entry]");
                     return;
                 }
                 else
@@ -1145,6 +1145,11 @@ namespace ZomboidBackupManager
                 DatabaseListBox.Select();
                 TSProgressbar.Visible = false;
             }
+        }
+
+        private void DatabaseInfoGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 

@@ -132,7 +132,7 @@ namespace ZomboidBackupManager
             statusLabel.Text = "Copying Files Done!";
             await Task.Delay(1000);
             statusLabel.Text = "Writing JSON File...";
-            WriteBackupDataToJson(savegameName, backupFolderPath, null);
+            WriteBackupDataToJson(savegameName, backupFolderPath, null, null);
             await Task.Delay(500);
             statusLabel.Text = "Done!";
 
@@ -174,10 +174,11 @@ namespace ZomboidBackupManager
 
             PrintStatusLog(statusLog, "Copying Files Done!");
             await Task.Delay(1000);
+            string id = Guid.NewGuid().ToString();
             PrintStatusLog(statusLog, "Writing JSON File...");
-            WriteBackupDataToJson(currentLoadedSavegame, backupFolderPath, null);
+            WriteBackupDataToJson(currentLoadedSavegame, backupFolderPath, null, id);
             await Task.Delay(500);
-            scriptHook.WriteBackupFolderNameToFile(backupFolderName);
+            scriptHook.WriteBackupFolderNameToFile(backupFolderName + @"|" + id);
             PrintStatusLog(statusLog, "Backup Process Finished!");
 
             ChangeCurrentStatus(Status.DONE);
@@ -257,7 +258,7 @@ namespace ZomboidBackupManager
                 statusLabel.Text = $"Writing JSON File For Savegame = {savegame}";
             }
 
-            WriteBackupDataToJson(savegame, backupFolderPath, allFiles);
+            WriteBackupDataToJson(savegame, backupFolderPath, allFiles, null);
             await Task.Delay(500);
             if (statusLabel != null)
             {

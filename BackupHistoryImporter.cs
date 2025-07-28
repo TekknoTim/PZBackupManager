@@ -13,20 +13,11 @@ namespace ZomboidBackupManager
         public string FilePath { get { return Configuration.absoluteBackupHistoryFilePATH; } }
         public string Savegame { get; set; }
 
-        private Dictionary<int, int> _posToNewPos = new Dictionary<int, int>(); // Value position mapping
-        private const int maxValues = 6; // Maximum number of values expected in a line
-           
-
+        private const int maxValues = 7; // Maximum number of values expected in a line
 
         public BackupHistoryImporter(string savegame)
         {
             Savegame = savegame;
-            _posToNewPos.Add(5, 0);
-            _posToNewPos.Add(3, 1);
-            _posToNewPos.Add(0, 2);
-            _posToNewPos.Add(4, 3);
-            _posToNewPos.Add(1, 4);
-            _posToNewPos.Add(2, 5);
         }
 
         public List<string> Import()
@@ -59,144 +50,80 @@ namespace ZomboidBackupManager
             return history;
         }
 
-        public List<string> GetRawValues(string line)
+        public bool DataExists()
         {
-            List<string> outputList = new List<string>();
-            try
+            if (File.Exists(FilePath))
             {
-                string[] values = line.Split(new[] { ',' }, StringSplitOptions.None);
-                foreach (string value in values)
+                string[] lines = File.ReadAllLines(FilePath);
+                foreach (string line in lines)
                 {
-                    if (value.Contains(Savegame))
+                    if (line.Split(',')[0].Equals(Savegame))
                     {
-                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [GetRawValues] - [Skipping Value] - [Value = {value}]");
+                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [DataExists] - [Data exists for {Savegame}]");
+                        return true;
                     }
                     else
                     {
-                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [GetRawValues] - [Adding Value] - [Value = {value}]");
-                        outputList.Add(value);
+                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [DataExists] - [Data doesn't exist for {Savegame}]",1);
                     }
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [GetRawValues] - [Message: {ex}]",2);
+                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [DataExists] - [Backup_History.csv not found!]", 1);
             }
-            return outputList;
+            return false;
         }
 
-        public string[] ReorderValues(List<string> values)
+        public void SetTargetSavegame(string savegame)
         {
-            int count = 0;
-            string[] outputList = new string[maxValues];
-            foreach (string value in values)
-            {
-                int pos = _posToNewPos[count];
-                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [ReorderValues] - [Adding Value = {value} - From Index = {count} - To Positon {pos}]");
-                outputList[pos] = value;
-                count++;
-            }
-            return outputList;
+            Savegame = savegame;
+            Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [SetTargetSavegame] - [New savegame set to = {savegame}]");
         }
-    }
 
-    public static class BackupHistoryUtil
-    {
-        public static string TrimGamehourString(string gameHourString, int lengthAfterDecimalPoint = 2)
+        public int FindIDAndGetRowIndex(string idToFind)
         {
-            string output = string.Empty;
-            if (string.IsNullOrWhiteSpace(gameHourString))
+            List<string> lines = this.Import();
+            foreach (string line in lines)
             {
-                output = "Initial";
-            }
-            else if (gameHourString.Contains('.'))
-            {
-                string[] parts = gameHourString.Split('.');
-                if (parts.Length > 1)
-                {
-                    parts[1] = parts[1].Substring(0, lengthAfterDecimalPoint);
-                    output = string.Join(".", parts);
-                    //output = parts[0] + "." + parts[1];
+                string id = GetIDFromLine(line);
+                int count = 0;
+                if (!string.IsNullOrEmpty(id))
+                { 
+                    if (id.Equals(idToFind))
+                    {
+                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [FindID] - [Found ID: {id}] - [In Line No. {count + 1}]");
+                        return count;
+                    }
+                    else
+                    {
+                        Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [FindID] - [ID {id} does not match {idToFind} in line no. {count + 1}]",1);
+                    }
+                    count++;
                 }
             }
-            else
-            {
-                output = gameHourString + "." + new string('0', lengthAfterDecimalPoint);
-            }
-            return output;
+            return -1; // Return -1 if ID is not found
         }
 
-        public static double? StringToDouble(string input)
+        private string GetIDFromLine(string line)
         {
-            if (double.TryParse(input, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double result))
+            string folderAndID = line.Split(new[] { ',' }, StringSplitOptions.None)[5]; 
+            if (string.IsNullOrEmpty(folderAndID))
             {
-                return result;
+                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [GetID] - [Folder and ID is empty for line: {line}]", 2);
+                return string.Empty;
+            }
+            string? id = null;
+            string[] splitted = folderAndID.Split('|');
+            if (splitted.Length > 1)
+            {
+                id = splitted[1];
             }
             else
             {
-                return null;
+                id = string.Empty;
             }
+            return id;
         }
-
-        public static string FormatWorldAge(string totalHoursString)
-        {
-            double? totalHours = StringToDouble(totalHoursString);
-            if (totalHours == null)
-                return "ERROR";
-
-            int totalMinutes = (int)Math.Floor(totalHours.Value * 60);
-            int days = totalMinutes / (24 * 60);
-            int hours = (totalMinutes % (24 * 60)) / 60;
-            int minutes = totalMinutes % 60;
-
-            string result = "";
-
-            // Format days
-            if (days > 0)
-            {
-                result += (days < 10 ? "0" : "") + days + " day/s - ";
-            }
-            else
-            {
-                result += "00 day/s - ";
-            }
-
-            // Format hours
-            if (hours > 0)
-            {
-                result += (hours < 10 ? "0" : "") + hours + "h - ";
-            }
-            else
-            {
-                result += "00h - ";
-            }
-
-            // Format minutes
-            if (minutes > 0)
-            {
-                result += (minutes < 10 ? "0" : "") + minutes + "min ";
-            }
-            else
-            {
-                result += "00min ";
-            }
-
-            return result;
-        }
-
-        public static void SetupBackupHistoryGridView(string savegame, DataGridView gridView)
-        {
-            BackupHistoryImporter importer = new BackupHistoryImporter(savegame);
-            List<string> history = importer.Import();
-            gridView.Rows.Clear();
-            foreach (string line in history)
-            {
-                List<string> rawValues = importer.GetRawValues(line);
-                string[] reorderedValues = importer.ReorderValues(rawValues).ToArray();
-                gridView.Rows.Add(reorderedValues[0], reorderedValues[1].Replace('_', ' ').Trim(), reorderedValues[2], reorderedValues[3], FormatWorldAge(reorderedValues[4]), TrimGamehourString(reorderedValues[4], 2), TrimGamehourString(reorderedValues[5], 1));
-            }
-        }
-
-
     }
 }
