@@ -1580,7 +1580,8 @@ namespace ZomboidBackupManager
 
         private void SettingsDropDownButton_Click(object sender, EventArgs e)
         {
-            CompressZipSettingMenuOption.Checked = saveBackupsAsZipFile;
+            CompressZipSettingMenuOption.Checked = Configuration.saveBackupsAsZipFile;
+            ToggleBackupHistoryMenuOption.Checked = Configuration.enableBackupHistory;
         }
 
         private void StartMultiSelectToolTipButton_Click(object sender, EventArgs e)
@@ -2125,6 +2126,21 @@ namespace ZomboidBackupManager
             BackupHistoryDataGridView.ClearSelection();
             BackupHistoryDataGridView.Rows[idx].Selected = true;
 
+        }
+
+        private void ToggleBackupHistoryMenuOption_Click(object sender, EventArgs e)
+        {
+            Configuration.enableBackupHistory = !Configuration.enableBackupHistory;
+            ToggleBackupHistoryMenuOption.Checked = Configuration.enableBackupHistory;
+            Configuration.SaveConfig();
+            if (Configuration.enableBackupHistory)
+            {
+                SetBackupHistoryCheckBox();
+            }
+            else
+            {
+                BackupHistoryCheckBox.Enabled = false;
+            }
         }
     }
 }

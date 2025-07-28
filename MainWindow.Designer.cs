@@ -91,10 +91,10 @@ namespace ZomboidBackupManager
             RenameEnterTextOption = new ToolStripTextBox();
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
-            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
             CreateZipEditBackupMenuOption = new ToolStripMenuItem();
+            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             ProgressbarPanel = new Panel();
             ProgressBarA = new ProgressBar();
             ProgressbarLabel = new Label();
@@ -143,6 +143,8 @@ namespace ZomboidBackupManager
             KeepFolderSettingMenuOption = new ToolStripMenuItem();
             AutoSelectSGSettingMenuOption = new ToolStripMenuItem();
             ShowMsgSettingMenuOption = new ToolStripMenuItem();
+            StatisticsMenuOption = new ToolStripMenuItem();
+            ToggleBackupHistoryMenuOption = new ToolStripMenuItem();
             AutoDeleteBackupMenuOption = new ToolStripMenuItem();
             ChangeDirectoryMenuOption = new ToolStripMenuItem();
             DataCleanerMenuOption = new ToolStripMenuItem();
@@ -837,7 +839,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameContextMenuItem;
+            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -890,19 +892,6 @@ namespace ZomboidBackupManager
             ConfrimRenameOption.Text = "  Rename";
             ConfrimRenameOption.Click += ConfrimRenameOption_Click;
             // 
-            // RenameBackupsToolbarMenuOption
-            // 
-            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
-            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
-            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
-            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
-            RenameBackupsToolbarMenuOption.MergeIndex = 0;
-            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
-            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
-            RenameBackupsToolbarMenuOption.Text = "Rename";
-            // 
             // StopMultiSelectMenuItem
             // 
             StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
@@ -931,6 +920,19 @@ namespace ZomboidBackupManager
             CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
             CreateZipEditBackupMenuOption.Size = new Size(175, 24);
             CreateZipEditBackupMenuOption.Text = "Create Zip";
+            // 
+            // RenameBackupsToolbarMenuOption
+            // 
+            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
+            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
+            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
+            RenameBackupsToolbarMenuOption.MergeIndex = 0;
+            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
+            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
+            RenameBackupsToolbarMenuOption.Text = "Rename";
             // 
             // ProgressbarPanel
             // 
@@ -1548,7 +1550,7 @@ namespace ZomboidBackupManager
             // SettingsDropDownButton
             // 
             SettingsDropDownButton.BackColor = SystemColors.Control;
-            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, DataCleanerMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
+            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, StatisticsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, DataCleanerMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
             SettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SettingsDropDownButton.Image = (Image)resources.GetObject("SettingsDropDownButton.Image");
             SettingsDropDownButton.ImageTransparentColor = Color.Magenta;
@@ -1636,6 +1638,29 @@ namespace ZomboidBackupManager
             ShowMsgSettingMenuOption.Size = new Size(319, 24);
             ShowMsgSettingMenuOption.Text = "Show message when action done";
             ShowMsgSettingMenuOption.CheckedChanged += ShowMsgSettingMenuOption_CheckedChanged;
+            // 
+            // StatisticsMenuOption
+            // 
+            StatisticsMenuOption.BackColor = SystemColors.ControlDarkDark;
+            StatisticsMenuOption.DropDownItems.AddRange(new ToolStripItem[] { ToggleBackupHistoryMenuOption });
+            StatisticsMenuOption.ForeColor = SystemColors.Control;
+            StatisticsMenuOption.Name = "StatisticsMenuOption";
+            StatisticsMenuOption.Size = new Size(205, 24);
+            StatisticsMenuOption.Text = "Statistics";
+            // 
+            // ToggleBackupHistoryMenuOption
+            // 
+            ToggleBackupHistoryMenuOption.BackColor = SystemColors.ControlDarkDark;
+            ToggleBackupHistoryMenuOption.Checked = true;
+            ToggleBackupHistoryMenuOption.CheckState = CheckState.Checked;
+            ToggleBackupHistoryMenuOption.ForeColor = SystemColors.Control;
+            ToggleBackupHistoryMenuOption.ImageScaling = ToolStripItemImageScaling.None;
+            ToggleBackupHistoryMenuOption.Name = "ToggleBackupHistoryMenuOption";
+            ToggleBackupHistoryMenuOption.RightToLeft = RightToLeft.Yes;
+            ToggleBackupHistoryMenuOption.Size = new Size(227, 24);
+            ToggleBackupHistoryMenuOption.Text = "Load Backup History";
+            ToggleBackupHistoryMenuOption.TextImageRelation = TextImageRelation.TextBeforeImage;
+            ToggleBackupHistoryMenuOption.Click += ToggleBackupHistoryMenuOption_Click;
             // 
             // AutoDeleteBackupMenuOption
             // 
@@ -2091,5 +2116,7 @@ namespace ZomboidBackupManager
         private DataGridViewTextBoxColumn GametimeColumn;
         private DataGridViewTextBoxColumn GamehourColumn;
         private DataGridViewTextBoxColumn DeltaColumn;
+        private ToolStripMenuItem StatisticsMenuOption;
+        private ToolStripMenuItem ToggleBackupHistoryMenuOption;
     }
 }
