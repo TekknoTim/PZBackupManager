@@ -20,17 +20,33 @@ namespace ZomboidBackupManager
             Savegame = savegame;
         }
 
-        public List<string> Import()
+        public List<string> Import(bool fullFileContents = false)
         {
             List<string> history = new List<string>();
             try
             {
                 if (File.Exists(FilePath))
                 {
+                    bool hasSkippedFirst = false;
                     string[] lines = File.ReadAllLines(FilePath);
+                    Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import Lines Length] = [Count = {lines.Length}]");
                     foreach (string line in lines)
                     {
-                        if (line.Split(',')[0].Equals(Savegame))
+                        if (fullFileContents)
+                        {
+                            if (hasSkippedFirst)
+                            {
+                                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import] - [Adding Line] - [Line = {line}]");
+                                history.Add(line);
+                            }
+                            else
+                            {
+                                hasSkippedFirst = true;
+                                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import] - [Skipping Line] - [hasSkippedFirst = {hasSkippedFirst}]");
+                                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import] - [Skipping Line] - [Line = {line}]");
+                            }
+                        }
+                        else if (line.Split(',')[0].Equals(Savegame))
                         {
                             Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import] - [Adding Line] - [Line = {line}]");
                             history.Add(line);
@@ -48,6 +64,21 @@ namespace ZomboidBackupManager
                 Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Import] - [Message: {ex}]", 2);
             }
             return history;
+        }
+
+        public bool Export(List<string> lines)
+        {
+            if (lines == null || lines.Count == 0)
+            {
+                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Export] - [No lines to export]", 1);
+                return false;
+            }
+            List<string> output = ["Savegame,Biome,GameHour,Difference,Source,FolderName|GUID,Index"];
+            output.AddRange(lines);
+            Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Export output Count] = [output = {output.Count}]");
+            File.WriteAllLines(FilePath, output);
+            Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [Export Done!]");
+            return true;
         }
 
         public bool DataExists()
@@ -81,9 +112,31 @@ namespace ZomboidBackupManager
             Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [SetTargetSavegame] - [New savegame set to = {savegame}]");
         }
 
+        /*
+        public bool RemoveLineInFileByID(string idToRemove)
+        {
+            if (string.IsNullOrEmpty(idToRemove))
+            {
+                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [RemoveLineInFileByID] - [Invalid ID -> idToRemove = {idToRemove}]", 2);
+                return false;
+            }   
+            int idx = FindIDAndGetRowIndex(idToRemove);
+            if (idx == -1)
+            {
+                Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [RemoveLineInFileByID] - [idx was -1]", 1);
+                return false;
+            }
+            List<string> lines = this.Import(true);
+            Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [RemoveLineInFileByID] - [BEFORE] - [Imported lines size = lines.Count = {lines.Count}]");
+            lines.RemoveAt(idx);
+            Configuration.PrintDebug($"[BackupHistoryImporter.cs] - [RemoveLineInFileByID] - [AFTER] - [Imported lines size = lines.Count = {lines.Count}]");
+            return this.Export(lines);
+        }
+        */
+
         public int FindIDAndGetRowIndex(string idToFind)
         {
-            List<string> lines = this.Import();
+            List<string> lines = this.Import(true);
             foreach (string line in lines)
             {
                 string id = GetIDFromLine(line);

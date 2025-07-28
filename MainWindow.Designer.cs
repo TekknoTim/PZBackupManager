@@ -45,9 +45,9 @@ namespace ZomboidBackupManager
             SelectSavegamePanel = new Panel();
             BackupHistoryDataGridView = new DataGridView();
             NumColumn = new DataGridViewTextBoxColumn();
+            FolderColumn = new DataGridViewTextBoxColumn();
             SourceColumn = new DataGridViewTextBoxColumn();
             BiomColumn = new DataGridViewTextBoxColumn();
-            FolderColumn = new DataGridViewTextBoxColumn();
             GametimeColumn = new DataGridViewTextBoxColumn();
             GamehourColumn = new DataGridViewTextBoxColumn();
             DeltaColumn = new DataGridViewTextBoxColumn();
@@ -91,10 +91,10 @@ namespace ZomboidBackupManager
             RenameEnterTextOption = new ToolStripTextBox();
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
+            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
             CreateZipEditBackupMenuOption = new ToolStripMenuItem();
-            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             ProgressbarPanel = new Panel();
             ProgressBarA = new ProgressBar();
             ProgressbarLabel = new Label();
@@ -268,7 +268,7 @@ namespace ZomboidBackupManager
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             BackupHistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             BackupHistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            BackupHistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { NumColumn, SourceColumn, BiomColumn, FolderColumn, GametimeColumn, GamehourColumn, DeltaColumn });
+            BackupHistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { NumColumn, FolderColumn, SourceColumn, BiomColumn, GametimeColumn, GamehourColumn, DeltaColumn });
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = SystemColors.Window;
             dataGridViewCellStyle4.Font = new Font("Bahnschrift", 9F);
@@ -321,6 +321,16 @@ namespace ZomboidBackupManager
             NumColumn.Resizable = DataGridViewTriState.False;
             NumColumn.Width = 40;
             // 
+            // FolderColumn
+            // 
+            FolderColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            FolderColumn.HeaderText = "Folder";
+            FolderColumn.Name = "FolderColumn";
+            FolderColumn.ReadOnly = true;
+            FolderColumn.Resizable = DataGridViewTriState.False;
+            FolderColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+            FolderColumn.Width = 47;
+            // 
             // SourceColumn
             // 
             SourceColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -344,16 +354,6 @@ namespace ZomboidBackupManager
             BiomColumn.Resizable = DataGridViewTriState.False;
             BiomColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             BiomColumn.Width = 41;
-            // 
-            // FolderColumn
-            // 
-            FolderColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            FolderColumn.HeaderText = "Folder";
-            FolderColumn.Name = "FolderColumn";
-            FolderColumn.ReadOnly = true;
-            FolderColumn.Resizable = DataGridViewTriState.False;
-            FolderColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-            FolderColumn.Width = 47;
             // 
             // GametimeColumn
             // 
@@ -839,7 +839,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
+            RenameContextMenu.OwnerItem = RenameContextMenuItem;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -892,6 +892,19 @@ namespace ZomboidBackupManager
             ConfrimRenameOption.Text = "  Rename";
             ConfrimRenameOption.Click += ConfrimRenameOption_Click;
             // 
+            // RenameBackupsToolbarMenuOption
+            // 
+            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
+            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
+            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
+            RenameBackupsToolbarMenuOption.MergeIndex = 0;
+            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
+            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
+            RenameBackupsToolbarMenuOption.Text = "Rename";
+            // 
             // StopMultiSelectMenuItem
             // 
             StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
@@ -920,19 +933,6 @@ namespace ZomboidBackupManager
             CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
             CreateZipEditBackupMenuOption.Size = new Size(175, 24);
             CreateZipEditBackupMenuOption.Text = "Create Zip";
-            // 
-            // RenameBackupsToolbarMenuOption
-            // 
-            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
-            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
-            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
-            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
-            RenameBackupsToolbarMenuOption.MergeIndex = 0;
-            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
-            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
-            RenameBackupsToolbarMenuOption.Text = "Rename";
             // 
             // ProgressbarPanel
             // 
@@ -2109,14 +2109,14 @@ namespace ZomboidBackupManager
         private ToolStripButton OpenDatabaseSetupTSButton;
         private DataGridView BackupHistoryDataGridView;
         private CheckBox BackupHistoryCheckBox;
+        private ToolStripMenuItem StatisticsMenuOption;
+        private ToolStripMenuItem ToggleBackupHistoryMenuOption;
         private DataGridViewTextBoxColumn NumColumn;
+        private DataGridViewTextBoxColumn FolderColumn;
         private DataGridViewTextBoxColumn SourceColumn;
         private DataGridViewTextBoxColumn BiomColumn;
-        private DataGridViewTextBoxColumn FolderColumn;
         private DataGridViewTextBoxColumn GametimeColumn;
         private DataGridViewTextBoxColumn GamehourColumn;
         private DataGridViewTextBoxColumn DeltaColumn;
-        private ToolStripMenuItem StatisticsMenuOption;
-        private ToolStripMenuItem ToggleBackupHistoryMenuOption;
     }
 }

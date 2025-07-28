@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.LinkLabel;
 using static ZomboidBackupManager.Configuration;
 using static ZomboidBackupManager.FunctionLibrary;
 
@@ -97,7 +98,7 @@ namespace ZomboidBackupManager
             gridView.Rows.Clear();
             foreach (BackupStatistics stat in statisticsList)
             {
-                gridView.Rows.Add(stat.Index, stat.Source, stat.Biom, stat.Folder, stat.Gametime, stat.Gamehour, stat.Delta);
+                gridView.Rows.Add(stat.Index, stat.Folder, stat.Source, stat.Biom, stat.Gametime, stat.Gamehour, stat.Delta);
             }
         }
 
@@ -114,6 +115,54 @@ namespace ZomboidBackupManager
             Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [ImportAndBuildBackupStatisticsList] - [statsList size = {statsList.Count}]");
             importer = null; // Clear the importer to free resources
             return statsList;
+        }
+
+        public static void RemoveBackupHistoryEntry(string savegame, string id)
+        {
+            BackupHistoryImporter? importer = new BackupHistoryImporter(savegame);
+            List<string> fileContent = importer.Import(true);
+            List<string> updatedFileContent = new List<string>();
+            List<string> adjustedFileContent = new List<string>();
+            foreach (string line in fileContent)
+            {
+                if (!line.Contains(id))
+                {
+                    updatedFileContent.Add(line);
+                }
+            }
+            adjustedFileContent = AdjustIndexValueInFileForSavegame(savegame, updatedFileContent);
+
+
+            if (importer.Export(adjustedFileContent))
+            {
+                Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Successfully removed entry with ID: {id}]", 1);
+            }
+            else
+            {
+                Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Failed to remove entry with ID: {id}]", 2);
+            }
+            importer = null; // Clear the importer to free resources
+        }
+
+        private static List<string> AdjustIndexValueInFileForSavegame(string savegame, List<string> lines)
+        {
+            List<string> outputLines = new List<string>();
+            int count = 1;                              //IN THIS CASE, THE INDEX ISN'T ZERO BASED! BEGINNING AT 1!
+            foreach (string line in lines)
+            {
+                string tempLine = line;
+                if (line.Split(',')[0].Equals(savegame))
+                {
+                    tempLine = line.Substring(0, line.Length - 1);
+                    tempLine += count.ToString();
+                    Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [AdjustIndexValueInFileForSavegame] - [count = {count}] - [lineEnding = {tempLine.Substring(tempLine.Length - 1)}]");
+                    count++;
+                }
+                outputLines.Add(tempLine);
+            }
+            Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [AdjustIndexValueInFileForSavegame] - [DONE] - [Old Line Count = {lines.Count}]");
+            Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [AdjustIndexValueInFileForSavegame] - [DONE] - [New Line Count = {outputLines.Count}]");
+            return outputLines;
         }
 
         public static bool BackupHistoryDataExists(string savegame)
@@ -153,9 +202,9 @@ namespace ZomboidBackupManager
         public string Savegame { get; set; }
         public string Id { get; set; }
         public string Index { get; set; }
+        public string Folder { get; set; }
         public string Source { get; set; }
         public string Biom { get; set; }
-        public string Folder { get; set; }
         public string Gametime { get; set; }
         public string Gamehour { get; set; }
         public string Delta { get; set; }
@@ -168,12 +217,12 @@ namespace ZomboidBackupManager
             Savegame = rawValues[0] ?? "Error";
             Id = GetIDFromLine(line) ?? string.Empty;
             Index = rawValues.Last() ?? "-1";
+            Folder = rawValues[valueCount - 2].Split('|').First() ?? "Error";
             Source = TrimSourceString(rawValues[valueCount - 3]) ?? "Unknown";
             Biom = rawValues[1] ?? "Unknown";
-            Folder = rawValues[valueCount - 2].Split('|').First() ?? "Error";
             Gametime = FormatWorldAge(rawValues[2]) ?? "Error";
             Gamehour = TrimGamehourString(rawValues[2], 2) ?? "Error";
-            if (valueCount < Configuration.maxHistoryValuesPerLine)
+            if (!ContainsNumeric(rawValues[3]))
             {
                 Delta = "Initial";
             }
@@ -181,6 +230,16 @@ namespace ZomboidBackupManager
             {
                 Delta = TrimGamehourString(rawValues[3], 1) ?? "Error";
             }
+        }
+
+        private static bool ContainsNumeric(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            return value.Any(char.IsNumber);
         }
 
         private static string? TrimSourceString(string rawValue)

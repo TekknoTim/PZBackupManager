@@ -1274,11 +1274,25 @@ namespace ZomboidBackupManager
                     return;
                 }
             }
+            string id = string.Empty;
+            if (Configuration.enableBackupHistory)
+            {
+                id = GetIDFromBackupData(idx);
+            }
+            Configuration.PrintDebug($"[MainWindow.cs] - [DeleteSingleBackup] - [GetIDFromBackupData] - [id = {id}]");
             Delete delete = new Delete();
-            await delete.DoDelete(BackupListBox.SelectedIndex, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
+            await delete.DoDelete(idx, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
+            if (!string.IsNullOrEmpty(id))
+            {
+                BackupHistoryUtil.RemoveBackupHistoryEntry(Configuration.currentLoadedSavegame, id);
+            }
             LoadAndDisplayBackups();
             SetSavegameLabelValues();
             SetBackupLabelValues();
+            if (BackupHistoryDataGridView.Visible)
+            {
+                SetGridViewSelectionOnListBoxSelectionChanged();
+            }
         }
 
         private void DeleteMultipleBackups()
@@ -2139,7 +2153,12 @@ namespace ZomboidBackupManager
             }
             else
             {
+                BackupHistoryCheckBox.Checked = false;
                 BackupHistoryCheckBox.Enabled = false;
+                if (BackupHistoryDataGridView.Visible)
+                {
+                    BackupHistoryDataGridView.Visible = false;
+                }
             }
         }
     }

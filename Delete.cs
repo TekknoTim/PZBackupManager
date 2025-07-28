@@ -60,7 +60,7 @@ namespace ZomboidBackupManager
             statusLabel.Text = "Deleting Files Done!";
             Thread.Sleep(500);
             statusLabel.Text = "Modifying JSON File...";
-            DeleteBackupFromJson(index);
+            FunctionLibrary.DeleteBackupFromJson(index);
             Thread.Sleep(500);
             statusLabel.Text = "Done!";
 
