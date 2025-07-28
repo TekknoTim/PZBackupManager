@@ -41,6 +41,8 @@ namespace ZomboidBackupManager
 
         private string currentLoadedDataGridViewSavegame = string.Empty;
 
+        private Dictionary<string, List<BackupStatistics>> savegameToBackupStatisticsList = new Dictionary<string, List<BackupStatistics>>();
+
         public MainWindow(float fListBoxFontSize = 12f, bool bListBoxFontsBolt = true)
         {
             InitializeComponent();
@@ -503,6 +505,42 @@ namespace ZomboidBackupManager
             SetSavegameLabelValues();
             ResetBackupThumbnailAndData();
             SetBackupButtonsEn(false);
+            if (Configuration.enableBackupHistory)
+            {
+                SetBackupHistoryCheckBox();
+            }
+            else
+            {
+                BackupHistoryCheckBox.Enabled = false;
+            }
+        }
+
+        private void SetBackupHistoryCheckBox()
+        {
+            if (Configuration.currentLoadedSavegame == null || string.IsNullOrWhiteSpace(Configuration.currentLoadedSavegame))
+            {
+                if (BackupHistoryCheckBox.Enabled)
+                {
+                    BackupHistoryCheckBox.Enabled = false;
+                }
+                Configuration.PrintDebug($"[MainWindow.cs] - [SetBackupHistoryCheckBox] - [Disabling CheckBox - no savegame selected/loaded]", 1);
+                return;
+            }
+            if (BackupHistoryUtil.BackupHistoryDataExists(Configuration.currentLoadedSavegame))
+            {
+                if (!BackupHistoryCheckBox.Enabled)
+                {
+                    BackupHistoryCheckBox.Enabled = true;
+                }
+            }
+            else
+            {
+                if (BackupHistoryCheckBox.Enabled)
+                {
+                    BackupHistoryCheckBox.Enabled = false;
+                }
+            }
+            Configuration.PrintDebug($"[MainWindow.cs] - [SetBackupHistoryCheckBox] - [CheckBox got enabled = {BackupHistoryCheckBox.Enabled}]");
         }
 
         private void SelectDatabaseData()
@@ -711,6 +749,7 @@ namespace ZomboidBackupManager
                 SetSavegameLabelValues();
             }
             SetIndexChangeEventsSuspended(this, false);
+            SetBackupHistoryCheckBox();
             PrintDebug($"[SetSavegameRemote] - Savegame [{savegame}] in Gamemode [{gamemode}] successfully loaded!");
         }
 
@@ -811,6 +850,10 @@ namespace ZomboidBackupManager
             else
             {
                 SetBackupButtonsEn(false);
+            }
+            if (BackupHistoryDataGridView.Visible)
+            {
+                SetGridViewSelectionOnListBoxSelectionChanged();
             }
         }
 
@@ -1379,7 +1422,7 @@ namespace ZomboidBackupManager
                 PrintDebug($"[MainWindow.cs] - [Restore_OnStatusChanged] - [Status = {s.ToString()}] ", 2);
 
             }
-            else if (s == Status.DONE)
+            else if (s == Status.DONE || s == Status.CANCELED)
             {
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
@@ -1616,12 +1659,6 @@ namespace ZomboidBackupManager
             }
             SetAutoDeleteInfoLabelEn(autoDeleteEnabled);
         }
-
-
-
-
-
-
 
         private void RefreshBackups(int i)
         {
@@ -1997,10 +2034,97 @@ namespace ZomboidBackupManager
                     PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedDataGridViewSavegame is already loaded]");
                     return;
                 }
-                BackupHistoryUtil.SetupBackupHistoryGridView(currentLoadedSavegame, BackupHistoryDataGridView);
+                List<BackupStatistics> statisticsList = BackupHistoryUtil.ImportAndBuildBackupStatisticsList(currentLoadedSavegame);
+                if (statisticsList == null || statisticsList.Count == 0)
+                {
+                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [No backup history data found for current savegame]", 1);
+                    BackupHistoryDataGridView.Visible = false;
+                    return;
+                }
+                if (savegameToBackupStatisticsList.ContainsKey(currentLoadedSavegame))
+                {
+                    PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Dictionary already contains key = {currentLoadedSavegame}]");
+                    bool result = savegameToBackupStatisticsList.Remove(currentLoadedSavegame);
+                    PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Removing {currentLoadedSavegame} from dictionary was successful = {result}]");
+                    if (!result)
+                    {
+                        return;
+                    }
+                }
+                savegameToBackupStatisticsList.Add(currentLoadedSavegame, statisticsList);
+                BackupHistoryUtil.SetupBackupHistoryGridView(statisticsList, BackupHistoryDataGridView);
                 currentLoadedDataGridViewSavegame = currentLoadedSavegame;
                 BackupHistoryDataGridView.Refresh();
             }
+        }
+
+        //========================================================================================================================================
+        //----------------------------------------------[ Set ListBox When GridView Selection Changes ]-------------------------------------------
+        //========================================================================================================================================
+        private void BackupHistoryDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (BackupHistoryDataGridView.SelectedRows.Count == 0)
+            {
+                PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_SelectionChanged] - [No rows selected]", 1);
+                return;
+            }
+            int selIndex = BackupHistoryDataGridView.SelectedRows[0].Index;
+            if (selIndex < 0)
+            {
+                PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_SelectionChanged] - [Invalid selection index: {selIndex}]", 1);
+                BackupListBox.SelectedItem = null;
+                return;
+            }
+            string id = BackupHistoryUtil.GetIdAtIndex(savegameToBackupStatisticsList[currentLoadedSavegame], selIndex);
+            int idx = GetBackupDataIndexByID(id);
+            if (idx < 0)
+            {
+                PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_SelectionChanged] - [ID not found: {id}]", 1);
+                BackupListBox.SelectedItem = null;
+                return;
+            }
+            BackupListBox.SelectedIndex = idx;
+        }
+
+
+        //========================================================================================================================================
+        //---------------------------------------------[ Set GridView When ListBox Selection Changes ]-------------------------------------------
+        //========================================================================================================================================
+
+        private void SetGridViewSelectionOnListBoxSelectionChanged()
+        {
+            if (!Configuration.enableBackupHistory)
+            {
+                PrintDebug($"[MainWindow.cs] - [SetGridViewSelectionOnListBoxSelectionChanged] - [Aborting - backup statistics disabled]");
+                if (BackupHistoryDataGridView.Visible)
+                {
+                    BackupHistoryDataGridView.Visible = false;
+                }
+                return;
+            }
+            if (BackupListBox.SelectedIndex < 0 || BackupListBox.SelectedIndex >= BackupListBox.Items.Count)
+            {
+                PrintDebug($"[MainWindow.cs] - [SetGridViewSelectionOnListBoxSelectionChanged] - [Invalid selected index: {BackupListBox.SelectedIndex}]", 1);
+                BackupHistoryDataGridView.ClearSelection();
+                return;
+            }
+            string id = GetIDFromBackupData(BackupListBox.SelectedIndex);
+            if (string.IsNullOrEmpty(id))
+            {
+                PrintDebug("[MainWindow.cs] - [SetGridViewSelectionOnListBoxSelectionChanged] - [ID is null or empty]", 1);
+                BackupHistoryDataGridView.ClearSelection();
+                return;
+            }
+            int idx = BackupHistoryUtil.GetGridViewRowIndexByID(savegameToBackupStatisticsList[currentLoadedSavegame], id);
+            if (idx < 0)
+            {
+                PrintDebug($"[MainWindow.cs] - [SetGridViewSelectionOnListBoxSelectionChanged] - [ID not found: {id}]", 1);
+                BackupHistoryDataGridView.ClearSelection();
+                return;
+            }
+            BackupHistoryDataGridView.ClearSelection();
+            BackupHistoryDataGridView.Rows[idx].Selected = true;
+
         }
     }
 }

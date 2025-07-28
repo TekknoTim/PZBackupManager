@@ -587,6 +587,17 @@ namespace ZomboidBackupManager
             return pos;
         }
 
+        public static string GetBackupFolderNameFromJson(int index)
+        {
+            string fullPath = GetBackupFolderPathFromJson(index);
+            if (string.IsNullOrEmpty(fullPath))
+            {
+                return string.Empty;
+            }
+            DirectoryInfo dirInfo = new DirectoryInfo(fullPath);
+            return dirInfo.Name;
+        }
+
         public static string GetBackupFolderPathFromJson(int index)
         {
             BackupData? data = GetBackupDataFromJson(index);
@@ -868,7 +879,113 @@ namespace ZomboidBackupManager
             return outputList;
         }
 
+        public static List<string> GetAllBackupFolderPathsFromJson()
+        {
+            List<string> outputList = new List<string>();
+            List<BackupData>? backupDataList = GetBackupDataListFromJson();
+            if (backupDataList == null || backupDataList.Count <= 0)
+            {
+                return outputList;
+            }
+            foreach (var item in backupDataList)
+            {
+                string? fullPath = item.Path;
+                if (!string.IsNullOrWhiteSpace(fullPath))
+                {
+                    outputList.Add(fullPath);
+                }
+            }
+            return outputList;
+        }
 
+        public static List<string> GetAllBackupFolderNamesFromJson()
+        {
+            List<string> paths = GetAllBackupFolderPathsFromJson();
+            if (paths == null || paths.Count <= 0)
+            {
+                return new List<string>();
+            }
+            return GetFolderNamesFromDirectoryPaths(paths);
+        }
+
+        public static bool BackupDataHasID(int index)
+        {
+            BackupData? data = GetBackupDataFromJson(index);
+            if (data == null)
+            {
+                return false;
+            }
+            return !string.IsNullOrWhiteSpace(data.Id);
+        }
+
+        public static List<BackupData>? GetBackupDataListFromJsonWithDataContainingID()
+        {
+            List<BackupData> outputList = new List<BackupData>();
+            List<BackupData>? backupDataList = GetBackupDataListFromJson();
+            if (backupDataList == null || backupDataList.Count <= 0)
+            {
+                return outputList;
+            }
+            foreach (BackupData item in backupDataList)
+            {
+                if (BackupDataHasID(item.Index))
+                {
+                    outputList.Add(item);
+                }
+            }
+            return outputList;
+        }
+
+        public static BackupData? GetBackupDataByID(string id)
+        {
+            List<BackupData>? dataList = GetBackupDataListFromJson();
+            if (dataList == null || dataList.Count <= 0)
+            {
+                return null;
+            }
+            BackupData? outputData =  dataList.Find(x =>
+            {
+                if (string.IsNullOrEmpty(x.Id)) { x.Id = string.Empty; }
+                return x.Id.Equals(id, StringComparison.OrdinalIgnoreCase);
+            });
+            return outputData;
+        }
+
+        public static string GetIDFromBackupData(int index)
+        {
+            BackupData? data = GetBackupDataFromJson(index);
+            if (data == null)
+            {
+                return string.Empty;
+            }
+            if (string.IsNullOrWhiteSpace(data.Id))
+            {
+                return string.Empty;
+            }
+            return data.Id;
+        }
+
+        public static int GetBackupDataIndexByID(string id)
+        {
+            List<BackupData>? dataList = GetBackupDataListFromJson();
+            if (dataList == null || dataList.Count <= 0)
+            {
+                return -1;
+            }
+            BackupData? data = dataList.Find(x =>
+            {
+                if (string.IsNullOrEmpty(x.Id)) { x.Id = string.Empty; }
+                return x.Id.Equals(id, StringComparison.OrdinalIgnoreCase);
+            });
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+            {
+                return -1;
+            }
+            else
+            {
+                return data.Index;
+            }
+        }
 
         //==========================================================================================================
         //-----------------------------------------[ General Functions ]--------------------------------------------

@@ -39,8 +39,10 @@ namespace ZomboidBackupManager
         public int DatabaseGridViewMode { get; set; }
         public bool EnableDebugLog { get; set; }
         public int LogFileMax { get; set; }
+        public bool EnableBackupHistory { get; set; }
 
-        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg, bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, bool enDebugLog, int logFileMaximum)
+        public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg,
+                       bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, bool enDebugLog, int logFileMaximum, bool enBackupHistory)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -62,6 +64,7 @@ namespace ZomboidBackupManager
             SmartBackupAutoLoadEn = smartBaAutoloadEn;
             EnableDebugLog = enDebugLog;
             LogFileMax = logFileMaximum;
+            EnableBackupHistory = enBackupHistory;
         }
     }
 
@@ -81,7 +84,7 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, enableDebugLog, logFileMax);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, enableDebugLog, logFileMax, enableBackupHistory);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -180,6 +183,7 @@ namespace ZomboidBackupManager
                     logFileMax = cfg.LogFileMax;
                     smartBackupModeEnabled = cfg.SmartBackupModeEn;
                     smartBackupAutoLoadEnabled = cfg.SmartBackupAutoLoadEn;
+                    enableBackupHistory = cfg.EnableBackupHistory;
                 }
             }
         }
@@ -225,7 +229,7 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2507.27f;
+        private static readonly float version = 2507.28f;
         public static readonly string appVersion = "v0.7.0";
         public static bool initRunning;
 
@@ -284,6 +288,9 @@ namespace ZomboidBackupManager
         public static int autoDeleteKeepBackupsCount = 5;
         public static int autoDelBackupCountUserSet = 5;
         public static readonly int autoDeleteKeepBackupsMax = 40;
+
+        public static bool enableBackupHistory = true;
+        public static int maxHistoryValuesPerLine = 7; // How many values are written in one line of the Backup_History.csv file
 
         public static int usedZipArchiver = 0; // 0 = intern (slowest) ; 1 = WinRar (faster) ; 1 = 7Zip (fastest)
         public static string zipArchiverExePath = string.Empty;

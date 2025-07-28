@@ -297,13 +297,14 @@ namespace ZomboidBackupManager
             dataGridViewCellStyle6.Font = new Font("Bahnschrift", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             BackupHistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle6;
             BackupHistoryDataGridView.ScrollBars = ScrollBars.Vertical;
-            BackupHistoryDataGridView.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            BackupHistoryDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             BackupHistoryDataGridView.ShowCellErrors = false;
             BackupHistoryDataGridView.ShowEditingIcon = false;
             BackupHistoryDataGridView.ShowRowErrors = false;
             BackupHistoryDataGridView.Size = new Size(573, 382);
             BackupHistoryDataGridView.TabIndex = 27;
             BackupHistoryDataGridView.Visible = false;
+            BackupHistoryDataGridView.SelectionChanged += BackupHistoryDataGridView_SelectionChanged;
             BackupHistoryDataGridView.VisibleChanged += BackupHistoryDataGridView_VisibleChanged;
             // 
             // NumColumn
