@@ -41,7 +41,7 @@ namespace ZomboidBackupManager
 
         private string currentLoadedDataGridViewSavegame = string.Empty;
 
-        private Dictionary<string, List<BackupStatistics>> savegameToBackupStatisticsList = new Dictionary<string, List<BackupStatistics>>();
+        private Dictionary<string, List<BackupStatistics>> savegameToBackupStatisticsList = [];
 
         public MainWindow(float fListBoxFontSize = 12f, bool bListBoxFontsBolt = true)
         {
