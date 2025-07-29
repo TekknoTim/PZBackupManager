@@ -142,10 +142,22 @@ namespace ZomboidBackupManager
 
             StatusLabel.Text = "Deleting Backup Done!";
             Thread.Sleep(500);
+            string id = string.Empty;
+            if (Configuration.enableBackupHistory)
+            {
+                id = FunctionLibrary.GetIDFromBackupData(index);
+                if (!string.IsNullOrEmpty(id))
+                {
+                    BackupHistoryUtil.RemoveBackupHistoryEntry(Configuration.currentLoadedSavegame, id, !Configuration.removeBackupFromHistoryOnDelete);
+                }
+                else
+                {
+                    PrintDebug($"[DeleteMulti.cs] - [DeleteDirectory] - [GetIDFromBackupData] -> [id is null or empty!]");
+                }
+            }
             StatusLabel.Text = "Modifying JSON File...";
             bool b = DeleteBackupFromJson(iNum, false); // false to disable sorting
-            PrintDebug($"[DeleteDirectory] - [DeleteBackupFromJson] - [index = {index.ToString()}] - [iNum = {iNum.ToString()}]  - [result = {b.ToString()}]");
-
+            PrintDebug($"[DeleteMulti.cs] - [DeleteDirectory] - [DeleteBackupFromJson] - [index = {index.ToString()}] - [iNum = {iNum.ToString()}]  - [result = {b.ToString()}]");
             Thread.Sleep(500);
         }
 

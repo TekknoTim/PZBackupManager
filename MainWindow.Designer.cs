@@ -145,6 +145,9 @@ namespace ZomboidBackupManager
             ShowMsgSettingMenuOption = new ToolStripMenuItem();
             StatisticsMenuOption = new ToolStripMenuItem();
             ToggleBackupHistoryMenuOption = new ToolStripMenuItem();
+            RemoveOnDeleteMenuOption = new ToolStripMenuItem();
+            DebugSettingsMenuOption = new ToolStripMenuItem();
+            EnableLogMenuOption = new ToolStripMenuItem();
             AutoDeleteBackupMenuOption = new ToolStripMenuItem();
             ChangeDirectoryMenuOption = new ToolStripMenuItem();
             DataCleanerMenuOption = new ToolStripMenuItem();
@@ -1550,7 +1553,7 @@ namespace ZomboidBackupManager
             // SettingsDropDownButton
             // 
             SettingsDropDownButton.BackColor = SystemColors.Control;
-            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, StatisticsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, DataCleanerMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
+            SettingsDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { GeneralSettingsMenuOption, StatisticsMenuOption, DebugSettingsMenuOption, AutoDeleteBackupMenuOption, ChangeDirectoryMenuOption, DataCleanerMenuOption, SmartBackupMenuOption, ZipSetupMenuOption, AboutToolStripMenuItem });
             SettingsDropDownButton.Font = new Font("Bahnschrift", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             SettingsDropDownButton.Image = (Image)resources.GetObject("SettingsDropDownButton.Image");
             SettingsDropDownButton.ImageTransparentColor = Color.Magenta;
@@ -1642,7 +1645,7 @@ namespace ZomboidBackupManager
             // StatisticsMenuOption
             // 
             StatisticsMenuOption.BackColor = SystemColors.ControlDarkDark;
-            StatisticsMenuOption.DropDownItems.AddRange(new ToolStripItem[] { ToggleBackupHistoryMenuOption });
+            StatisticsMenuOption.DropDownItems.AddRange(new ToolStripItem[] { ToggleBackupHistoryMenuOption, RemoveOnDeleteMenuOption });
             StatisticsMenuOption.ForeColor = SystemColors.Control;
             StatisticsMenuOption.Name = "StatisticsMenuOption";
             StatisticsMenuOption.Size = new Size(205, 24);
@@ -1661,6 +1664,45 @@ namespace ZomboidBackupManager
             ToggleBackupHistoryMenuOption.Text = "Load Backup History";
             ToggleBackupHistoryMenuOption.TextImageRelation = TextImageRelation.TextBeforeImage;
             ToggleBackupHistoryMenuOption.Click += ToggleBackupHistoryMenuOption_Click;
+            // 
+            // RemoveOnDeleteMenuOption
+            // 
+            RemoveOnDeleteMenuOption.AutoToolTip = true;
+            RemoveOnDeleteMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RemoveOnDeleteMenuOption.Checked = true;
+            RemoveOnDeleteMenuOption.CheckState = CheckState.Checked;
+            RemoveOnDeleteMenuOption.ForeColor = SystemColors.Control;
+            RemoveOnDeleteMenuOption.ImageScaling = ToolStripItemImageScaling.None;
+            RemoveOnDeleteMenuOption.Name = "RemoveOnDeleteMenuOption";
+            RemoveOnDeleteMenuOption.RightToLeft = RightToLeft.Yes;
+            RemoveOnDeleteMenuOption.Size = new Size(227, 24);
+            RemoveOnDeleteMenuOption.Text = "Remove On Delete";
+            RemoveOnDeleteMenuOption.TextImageRelation = TextImageRelation.TextBeforeImage;
+            RemoveOnDeleteMenuOption.ToolTipText = "Enable/Disable removing statistic entry,\r\nwhen deleting the corrosponding backup.";
+            RemoveOnDeleteMenuOption.Click += RemoveOnDeleteMenuOption_Click;
+            // 
+            // DebugSettingsMenuOption
+            // 
+            DebugSettingsMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DebugSettingsMenuOption.DropDownItems.AddRange(new ToolStripItem[] { EnableLogMenuOption });
+            DebugSettingsMenuOption.ForeColor = SystemColors.Control;
+            DebugSettingsMenuOption.Name = "DebugSettingsMenuOption";
+            DebugSettingsMenuOption.Size = new Size(205, 24);
+            DebugSettingsMenuOption.Text = "Debug";
+            // 
+            // EnableLogMenuOption
+            // 
+            EnableLogMenuOption.AutoToolTip = true;
+            EnableLogMenuOption.BackColor = SystemColors.ControlDarkDark;
+            EnableLogMenuOption.ForeColor = SystemColors.Control;
+            EnableLogMenuOption.ImageScaling = ToolStripItemImageScaling.None;
+            EnableLogMenuOption.Name = "EnableLogMenuOption";
+            EnableLogMenuOption.RightToLeft = RightToLeft.Yes;
+            EnableLogMenuOption.Size = new Size(209, 24);
+            EnableLogMenuOption.Text = "Create Debug Log";
+            EnableLogMenuOption.TextImageRelation = TextImageRelation.TextBeforeImage;
+            EnableLogMenuOption.ToolTipText = "When enabled, a file will be created at:\r\n\"<BackupManagerExePath>\\Debug\",\r\nwhich contains some more useful &\r\nsome less useful debug informations.\r\n";
+            EnableLogMenuOption.Click += EnableLogMenuOption_Click;
             // 
             // AutoDeleteBackupMenuOption
             // 
@@ -2118,5 +2160,8 @@ namespace ZomboidBackupManager
         private DataGridViewTextBoxColumn GametimeColumn;
         private DataGridViewTextBoxColumn GamehourColumn;
         private DataGridViewTextBoxColumn DeltaColumn;
+        private ToolStripMenuItem RemoveOnDeleteMenuOption;
+        private ToolStripMenuItem DebugSettingsMenuOption;
+        private ToolStripMenuItem EnableLogMenuOption;
     }
 }

@@ -98,7 +98,7 @@ namespace ZomboidBackupManager
             gridView.Rows.Clear();
             foreach (BackupStatistics stat in statisticsList)
             {
-                gridView.Rows.Add(stat.Index, stat.Folder, stat.Source, stat.Biom, stat.Gametime, stat.Gamehour, stat.Delta);
+                gridView.Rows.Add(stat.Index, stat.Folder, stat.Source, stat.Biom, stat.Gametime, stat.Gamehour + "hours", stat.Delta);
             }
         }
 
@@ -117,20 +117,29 @@ namespace ZomboidBackupManager
             return statsList;
         }
 
-        public static void RemoveBackupHistoryEntry(string savegame, string id)
+        public static void RemoveBackupHistoryEntry(string savegame, string id, bool justMarkDeleted = false)
         {
             BackupHistoryImporter? importer = new BackupHistoryImporter(savegame);
             List<string> fileContent = importer.Import(true);
             List<string> updatedFileContent = new List<string>();
-            List<string> adjustedFileContent = new List<string>();
             foreach (string line in fileContent)
             {
                 if (!line.Contains(id))
                 {
                     updatedFileContent.Add(line);
                 }
+                else if (justMarkDeleted)
+                {
+                    string modifiedLine = line.Replace(id, @"[Deleted]");
+                    updatedFileContent.Add(modifiedLine);
+                    Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Marking Deleted] - [ID = {id}]");
+                }
+                else
+                {
+                    Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Removing entry with ID = {id}]");
+                }
             }
-            adjustedFileContent = AdjustIndexValueInFileForSavegame(savegame, updatedFileContent);
+            List<string> adjustedFileContent = AdjustIndexValueInFileForSavegame(savegame, updatedFileContent);
 
 
             if (importer.Export(adjustedFileContent))

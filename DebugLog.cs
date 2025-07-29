@@ -12,6 +12,8 @@ namespace ZomboidBackupManager
 {
     public class DebugLog
     {
+        public static bool IsLogFileSet { get { return string.IsNullOrWhiteSpace(currentLogFile); } }
+
         public static string[] virtualLogStream = new string[5000];
 
         private static readonly string debugFilePath = Application.StartupPath + @"Debug";
@@ -40,6 +42,10 @@ namespace ZomboidBackupManager
             string timeStampedMsg = $"[{DateTime.Now:dd-MM-yyyy HH:mm:ss}] - [INFO] - [{msg}]";
             try
             {
+                if (string.IsNullOrWhiteSpace(currentLogFile))
+                {
+                    return; // No log file set, do not log
+                }
                 File.AppendAllText(currentLogFile, timeStampedMsg + Environment.NewLine);
             }
             catch (IOException ex)
@@ -53,6 +59,10 @@ namespace ZomboidBackupManager
             string timeStampedMsg = $"[{DateTime.Now:dd-MM-yyyy HH:mm:ss}] - [ERROR] - [{msg}]";
             try
             {
+                if (string.IsNullOrWhiteSpace(currentLogFile))
+                {
+                    return; // No log file set, do not log
+                }
                 File.AppendAllText(currentLogFile, timeStampedMsg + Environment.NewLine);
             }
             catch (IOException ex)

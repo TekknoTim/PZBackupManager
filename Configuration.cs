@@ -40,9 +40,13 @@ namespace ZomboidBackupManager
         public bool EnableDebugLog { get; set; }
         public int LogFileMax { get; set; }
         public bool EnableBackupHistory { get; set; }
+        public bool RemoveFromHistoryOnDelete { get; set; }
 
         public Config(float ver, string? absSgPATH, string? baseBkpPATH, bool showMsg,
-                       bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder, int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver, string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn, bool enDebugLog, int logFileMaximum, bool enBackupHistory)
+                       bool selectLastLoadedOnStart, bool saveAsZip, bool keepBackupFolder,
+                       int autoDelKeepBackupsCount, bool autoDeleteFeatureEnabled, int zipArchiver,
+                       string archiverExe, bool expFeatures, bool smartBaModeEn, bool smartBaAutoloadEn,
+                       bool enDebugLog, int logFileMaximum, bool enBackupHistory, bool removeFromHisOnDel)
         {
             ConfigVersion = ver;
             AbsoluteSavegamePATH = absSgPATH;
@@ -65,6 +69,7 @@ namespace ZomboidBackupManager
             EnableDebugLog = enDebugLog;
             LogFileMax = logFileMaximum;
             EnableBackupHistory = enBackupHistory;
+            RemoveFromHistoryOnDelete = removeFromHisOnDel;
         }
     }
 
@@ -84,7 +89,9 @@ namespace ZomboidBackupManager
         public static async Task WriteCfgToJson()
         {
             await GenerateEmptyConfigFile();
-            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile, keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled, smartBackupAutoLoadEnabled, enableDebugLog, logFileMax, enableBackupHistory);
+            Config cfg = new Config(version, absoluteSavegamePATH, currentBaseBackupFolderPATH, showMsgWhenBackupProcessDone, autoSelectSavegameOnStart, saveBackupsAsZipFile,
+                                    keepBackupFolderAfterZip, autoDeleteKeepBackupsCount, autoDeleteEnabled, usedZipArchiver, zipArchiverExePath, expFeaturesEnabled, smartBackupModeEnabled,
+                                    smartBackupAutoLoadEnabled, enableDebugLog, logFileMax, enableBackupHistory, removeBackupFromHistoryOnDelete);
             string? json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
             File.WriteAllText(appConfig, json);
             PrintDebug("[Config] - [WriteConfigToJson] --> Done!");
@@ -184,6 +191,7 @@ namespace ZomboidBackupManager
                     smartBackupModeEnabled = cfg.SmartBackupModeEn;
                     smartBackupAutoLoadEnabled = cfg.SmartBackupAutoLoadEn;
                     enableBackupHistory = cfg.EnableBackupHistory;
+                    removeBackupFromHistoryOnDelete = cfg.RemoveFromHistoryOnDelete;
                 }
             }
         }
@@ -229,7 +237,7 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2507.28f;
+        private static readonly float version = 2507.29f;
         public static readonly string appVersion = "v0.7.0";
         public static bool initRunning;
 
@@ -290,6 +298,7 @@ namespace ZomboidBackupManager
         public static readonly int autoDeleteKeepBackupsMax = 40;
 
         public static bool enableBackupHistory = true;
+        public static bool removeBackupFromHistoryOnDelete = true; // If true, the backup is removed from the history, when it is deleted. If false, it will be kept in the history, but marked as deleted.
         public static int maxHistoryValuesPerLine = 7; // How many values are written in one line of the Backup_History.csv file
 
         public static int usedZipArchiver = 0; // 0 = intern (slowest) ; 1 = WinRar (faster) ; 1 = 7Zip (fastest)
@@ -314,7 +323,7 @@ namespace ZomboidBackupManager
                 label = debugErrorLabel;
                 if (enableDebugLog)
                 {
-                    LogError(msg);
+                    DebugLog.LogError(msg);
                 }
             }
             else if (lvl == 1)
@@ -326,7 +335,8 @@ namespace ZomboidBackupManager
                 label = debugInfoLabel;
                 if (enableDebugLog)
                 {
-                    LogInfo(msg);
+
+                    DebugLog.LogInfo(msg);
                 }
             }
             string fullMessage = label + msg;            

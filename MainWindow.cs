@@ -1277,14 +1277,14 @@ namespace ZomboidBackupManager
             string id = string.Empty;
             if (Configuration.enableBackupHistory)
             {
-                id = GetIDFromBackupData(idx);
+                id = FunctionLibrary.GetIDFromBackupData(idx);
             }
             Configuration.PrintDebug($"[MainWindow.cs] - [DeleteSingleBackup] - [GetIDFromBackupData] - [id = {id}]");
             Delete delete = new Delete();
             await delete.DoDelete(idx, ProgressbarLabel, ProgressBarA, ProgressbarPanel);
             if (!string.IsNullOrEmpty(id))
             {
-                BackupHistoryUtil.RemoveBackupHistoryEntry(Configuration.currentLoadedSavegame, id);
+                BackupHistoryUtil.RemoveBackupHistoryEntry(Configuration.currentLoadedSavegame, id, !Configuration.removeBackupFromHistoryOnDelete);
             }
             LoadAndDisplayBackups();
             SetSavegameLabelValues();
@@ -1596,6 +1596,8 @@ namespace ZomboidBackupManager
         {
             CompressZipSettingMenuOption.Checked = Configuration.saveBackupsAsZipFile;
             ToggleBackupHistoryMenuOption.Checked = Configuration.enableBackupHistory;
+            EnableLogMenuOption.Checked = Configuration.enableDebugLog;
+            SetRemoveOnDeleteMenuOption();
         }
 
         private void StartMultiSelectToolTipButton_Click(object sender, EventArgs e)
@@ -2161,5 +2163,46 @@ namespace ZomboidBackupManager
                 }
             }
         }
+
+        private void RemoveOnDeleteMenuOption_Click(object sender, EventArgs e)
+        {
+            Configuration.removeBackupFromHistoryOnDelete = !Configuration.removeBackupFromHistoryOnDelete;
+            Configuration.SaveConfig();
+            SetRemoveOnDeleteMenuOption();
+        }
+
+        private void SetRemoveOnDeleteMenuOption()
+        {
+            if (!Configuration.enableBackupHistory)
+            {
+                if (RemoveOnDeleteMenuOption.Enabled)
+                {
+                    RemoveOnDeleteMenuOption.Enabled = false;
+                    return;
+                }
+            }
+            if (!RemoveOnDeleteMenuOption.Enabled)
+            {
+                RemoveOnDeleteMenuOption.Enabled = true;
+            }
+            RemoveOnDeleteMenuOption.Checked = Configuration.removeBackupFromHistoryOnDelete;
+        }
+
+        private void EnableLogMenuOption_Click(object sender, EventArgs e)
+        {
+            bool wasEnabled = Configuration.enableDebugLog;
+            Configuration.enableDebugLog = !Configuration.enableDebugLog;
+            EnableLogMenuOption.Checked = Configuration.enableDebugLog;
+            Configuration.SaveConfig();
+            if (Configuration.enableDebugLog && Configuration.enableDebugLog != wasEnabled)
+            {     
+                DialogResult result = MessageBox.Show("Debug log enabled! \nPlease restart the manager, \nto start logging debug informations. \nDo you want to close the app now?","Please Restart Application!",MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    Application.Exit();
+                }
+            }
+        }
+
     }
 }

@@ -92,6 +92,7 @@
             Controls.Add(StatusLabel);
             Controls.Add(ProgressBar);
             Controls.Add(ProgressBarOverall);
+            DoubleBuffered = true;
             Font = new Font("Bahnschrift", 10F);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
