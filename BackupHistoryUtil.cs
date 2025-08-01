@@ -98,7 +98,15 @@ namespace ZomboidBackupManager
             gridView.Rows.Clear();
             foreach (BackupStatistics stat in statisticsList)
             {
-                gridView.Rows.Add(stat.Index, stat.Folder, stat.Source, stat.Biom, stat.Gametime, stat.Gamehour + "hours", stat.Delta);
+                gridView.Rows.Add(stat.Index, stat.Folder, stat.Source, stat.Biom, stat.Gametime, stat.Gamehour + "h", stat.Delta);
+                string id = stat.Id;
+                if (string.IsNullOrEmpty(id) || id.Equals("[Deleted]"))
+                {
+                    Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [SetupBackupHistoryGridView] - [ID was null, empty or marked as deleted]");
+                    gridView.Rows[gridView.Rows.Count - 1].DefaultCellStyle.BackColor = Color.MistyRose;
+                    gridView.Rows[gridView.Rows.Count - 1].DefaultCellStyle.SelectionBackColor = SystemColors.Highlight;
+                    gridView.Rows[gridView.Rows.Count - 1].DefaultCellStyle.SelectionForeColor = Color.White;
+                }
             }
         }
 
@@ -149,6 +157,48 @@ namespace ZomboidBackupManager
             else
             {
                 Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Failed to remove entry with ID: {id}]", 2);
+            }
+            importer = null; // Clear the importer to free resources
+        }
+
+        public static void DeleteBackupHistoryEntryAtIndex(string savegame, int index)
+        {
+            index++; // Increment index to match the 1-based index in the file
+            BackupHistoryImporter? importer = new BackupHistoryImporter(savegame);
+            List<string> fileContent = importer.Import(true);
+            List<string> updatedFileContent = new List<string>();
+            foreach (string line in fileContent)
+            {
+                if (line.Contains(savegame))
+                {
+                    string lastValue = line.Split(',').Last();
+                    int idx = 0;
+                    if (int.TryParse(lastValue, out idx) && idx == index)
+                    {
+                        Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [DeleteBackupHistoryEntry] - [Removing entry at index: {index}]");
+                        continue; // Skip this line to remove it
+                    }
+                    else
+                    {
+                        updatedFileContent.Add(line);
+                        Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [DeleteBackupHistoryEntry] - [Keeping entry at index: {index}]");
+                    }
+                }
+                else
+                {
+                    updatedFileContent.Add(line);
+                }
+            }
+            List<string> adjustedFileContent = AdjustIndexValueInFileForSavegame(savegame, updatedFileContent);
+
+
+            if (importer.Export(adjustedFileContent))
+            {
+                Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Successfully removed entry with Index: {index}]");
+            }
+            else
+            {
+                Configuration.PrintDebug($"[BackupHistoryUtil.cs] - [RemoveBackupHistoryEntry] - [Failed to remove entry with Index: {index}]", 2);
             }
             importer = null; // Clear the importer to free resources
         }

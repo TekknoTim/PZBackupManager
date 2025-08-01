@@ -507,6 +507,10 @@ namespace ZomboidBackupManager
             SetBackupButtonsEn(false);
             if (Configuration.enableBackupHistory)
             {
+                if (BackupHistoryDataGridView.Visible)
+                {
+                    LoadBackupHistoryGridView(true);
+                }
                 SetBackupHistoryCheckBox();
             }
             else
@@ -519,6 +523,10 @@ namespace ZomboidBackupManager
         {
             if (Configuration.currentLoadedSavegame == null || string.IsNullOrWhiteSpace(Configuration.currentLoadedSavegame))
             {
+                if (BackupHistoryCheckBox.Checked)
+                {
+                    BackupHistoryCheckBox.Checked = false;
+                }
                 if (BackupHistoryCheckBox.Enabled)
                 {
                     BackupHistoryCheckBox.Enabled = false;
@@ -535,6 +543,10 @@ namespace ZomboidBackupManager
             }
             else
             {
+                if (BackupHistoryCheckBox.Checked)
+                {
+                    BackupHistoryCheckBox.Checked = false;
+                }
                 if (BackupHistoryCheckBox.Enabled)
                 {
                     BackupHistoryCheckBox.Enabled = false;
@@ -1291,6 +1303,7 @@ namespace ZomboidBackupManager
             SetBackupLabelValues();
             if (BackupHistoryDataGridView.Visible)
             {
+                LoadBackupHistoryGridView(true);
                 SetGridViewSelectionOnListBoxSelectionChanged();
             }
         }
@@ -1370,6 +1383,11 @@ namespace ZomboidBackupManager
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
                 SetBackupLabelValues();
+                if (BackupHistoryDataGridView.Visible)
+                {
+                    LoadBackupHistoryGridView(true);
+                    SetGridViewSelectionOnListBoxSelectionChanged();
+                }
             }
 
         }
@@ -2040,39 +2058,46 @@ namespace ZomboidBackupManager
         {
             if (BackupHistoryDataGridView.Visible)
             {
-                if (currentLoadedSavegame == null)
-                {
-                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedSavegame is null]", 1);
-                    currentLoadedDataGridViewSavegame = string.Empty;
-                    return;
-                }
-                if (currentLoadedDataGridViewSavegame.Equals(currentLoadedSavegame))
-                {
-                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedDataGridViewSavegame is already loaded]");
-                    return;
-                }
-                List<BackupStatistics> statisticsList = BackupHistoryUtil.ImportAndBuildBackupStatisticsList(currentLoadedSavegame);
-                if (statisticsList == null || statisticsList.Count == 0)
-                {
-                    PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [No backup history data found for current savegame]", 1);
-                    BackupHistoryDataGridView.Visible = false;
-                    return;
-                }
-                if (savegameToBackupStatisticsList.ContainsKey(currentLoadedSavegame))
-                {
-                    PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Dictionary already contains key = {currentLoadedSavegame}]");
-                    bool result = savegameToBackupStatisticsList.Remove(currentLoadedSavegame);
-                    PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Removing {currentLoadedSavegame} from dictionary was successful = {result}]");
-                    if (!result)
-                    {
-                        return;
-                    }
-                }
-                savegameToBackupStatisticsList.Add(currentLoadedSavegame, statisticsList);
-                BackupHistoryUtil.SetupBackupHistoryGridView(statisticsList, BackupHistoryDataGridView);
-                currentLoadedDataGridViewSavegame = currentLoadedSavegame;
-                BackupHistoryDataGridView.Refresh();
+                LoadBackupHistoryGridView(false);
             }
+        }
+
+        private void LoadBackupHistoryGridView(bool forceReload = false)
+        {
+            if (currentLoadedSavegame == null)
+            {
+                PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedSavegame is null]", 1);
+                currentLoadedDataGridViewSavegame = string.Empty;
+                return;
+            }
+            if (currentLoadedDataGridViewSavegame.Equals(currentLoadedSavegame) && !forceReload)
+            {
+                PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [currentLoadedDataGridViewSavegame is already loaded]");
+                return;
+            }
+            List<BackupStatistics> statisticsList = BackupHistoryUtil.ImportAndBuildBackupStatisticsList(currentLoadedSavegame);
+            if (statisticsList == null || statisticsList.Count == 0)
+            {
+                PrintDebug("[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [No backup history data found for current savegame]", 1);
+                BackupHistoryDataGridView.Rows.Clear();
+                BackupHistoryCheckBox.Checked = false;
+                BackupHistoryDataGridView.Visible = false;
+                return;
+            }
+            if (savegameToBackupStatisticsList.ContainsKey(currentLoadedSavegame))
+            {
+                PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Dictionary already contains key = {currentLoadedSavegame}]");
+                bool result = savegameToBackupStatisticsList.Remove(currentLoadedSavegame);
+                PrintDebug($"[MainWindow.cs] - [BackupHistoryDataGridView_VisibleChanged] - [Removing {currentLoadedSavegame} from dictionary was successful = {result}]");
+                if (!result)
+                {
+                    return;
+                }
+            }
+            savegameToBackupStatisticsList.Add(currentLoadedSavegame, statisticsList);
+            BackupHistoryUtil.SetupBackupHistoryGridView(statisticsList, BackupHistoryDataGridView);
+            currentLoadedDataGridViewSavegame = currentLoadedSavegame;
+            BackupHistoryDataGridView.Refresh();
         }
 
         //========================================================================================================================================
@@ -2195,8 +2220,8 @@ namespace ZomboidBackupManager
             EnableLogMenuOption.Checked = Configuration.enableDebugLog;
             Configuration.SaveConfig();
             if (Configuration.enableDebugLog && Configuration.enableDebugLog != wasEnabled)
-            {     
-                DialogResult result = MessageBox.Show("Debug log enabled! \nPlease restart the manager, \nto start logging debug informations. \nDo you want to close the app now?","Please Restart Application!",MessageBoxButtons.YesNo);
+            {
+                DialogResult result = MessageBox.Show("Debug log enabled! \nPlease restart the manager, \nto start logging debug informations. \nDo you want to close the app now?", "Please Restart Application!", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     Application.Exit();
@@ -2204,5 +2229,27 @@ namespace ZomboidBackupManager
             }
         }
 
+        private void DeleteRowMenuOption_Click(object sender, EventArgs e)
+        {
+            if (BackupHistoryDataGridView.SelectedRows.Count == 0)
+            {
+                PrintDebug("[MainWindow.cs] - [DeleteRowMenuOption_Click] - [No rows selected]", 1);
+                return;
+            }
+            int selIndex = BackupHistoryDataGridView.SelectedRows[0].Index;
+            if (selIndex < 0 || selIndex >= BackupHistoryDataGridView.Rows.Count)
+            {
+                PrintDebug($"[MainWindow.cs] - [DeleteRowMenuOption_Click] - [Invalid selection index: {selIndex}]", 1);
+                return;
+            }
+            DialogResult result = MessageBox.Show("Do you really want to delete the selected row?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.No)
+            {
+                PrintDebug("[MainWindow.cs] - [DeleteRowMenuOption_Click] - [User canceled deletion]");
+                return;
+            }
+            BackupHistoryUtil.DeleteBackupHistoryEntryAtIndex(currentLoadedSavegame, selIndex);
+            LoadBackupHistoryGridView(true);
+        }
     }
 }

@@ -51,6 +51,8 @@ namespace ZomboidBackupManager
             GametimeColumn = new DataGridViewTextBoxColumn();
             GamehourColumn = new DataGridViewTextBoxColumn();
             DeltaColumn = new DataGridViewTextBoxColumn();
+            EditStatisticsContextMenuStrip = new ContextMenuStrip(components);
+            DeleteRowMenuOption = new ToolStripMenuItem();
             DatabasePresetTSPanel = new Panel();
             DatabaseToolStrip = new ToolStrip();
             OpenDatabaseSetupTSButton = new ToolStripButton();
@@ -175,6 +177,7 @@ namespace ZomboidBackupManager
             MinimizeButtonToolTip = new ToolTip(components);
             SelectSavegamePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)BackupHistoryDataGridView).BeginInit();
+            EditStatisticsContextMenuStrip.SuspendLayout();
             DatabasePresetTSPanel.SuspendLayout();
             DatabaseToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ThumbnailPictureBox).BeginInit();
@@ -252,7 +255,6 @@ namespace ZomboidBackupManager
             // 
             BackupHistoryDataGridView.AllowUserToAddRows = false;
             BackupHistoryDataGridView.AllowUserToDeleteRows = false;
-            BackupHistoryDataGridView.AllowUserToOrderColumns = true;
             BackupHistoryDataGridView.AllowUserToResizeColumns = false;
             BackupHistoryDataGridView.AllowUserToResizeRows = false;
             BackupHistoryDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -272,6 +274,7 @@ namespace ZomboidBackupManager
             BackupHistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             BackupHistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             BackupHistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { NumColumn, FolderColumn, SourceColumn, BiomColumn, GametimeColumn, GamehourColumn, DeltaColumn });
+            BackupHistoryDataGridView.ContextMenuStrip = EditStatisticsContextMenuStrip;
             dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = SystemColors.Window;
             dataGridViewCellStyle4.Font = new Font("Bahnschrift", 9F);
@@ -280,11 +283,11 @@ namespace ZomboidBackupManager
             dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
             BackupHistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
-            BackupHistoryDataGridView.Dock = DockStyle.Bottom;
+            BackupHistoryDataGridView.Dock = DockStyle.Top;
             BackupHistoryDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
-            BackupHistoryDataGridView.Location = new Point(0, 416);
-            BackupHistoryDataGridView.MaximumSize = new Size(573, 382);
-            BackupHistoryDataGridView.MinimumSize = new Size(573, 382);
+            BackupHistoryDataGridView.Location = new Point(0, 0);
+            BackupHistoryDataGridView.MaximumSize = new Size(573, 413);
+            BackupHistoryDataGridView.MinimumSize = new Size(573, 413);
             BackupHistoryDataGridView.MultiSelect = false;
             BackupHistoryDataGridView.Name = "BackupHistoryDataGridView";
             BackupHistoryDataGridView.ReadOnly = true;
@@ -306,7 +309,7 @@ namespace ZomboidBackupManager
             BackupHistoryDataGridView.ShowCellErrors = false;
             BackupHistoryDataGridView.ShowEditingIcon = false;
             BackupHistoryDataGridView.ShowRowErrors = false;
-            BackupHistoryDataGridView.Size = new Size(573, 382);
+            BackupHistoryDataGridView.Size = new Size(573, 413);
             BackupHistoryDataGridView.TabIndex = 27;
             BackupHistoryDataGridView.Visible = false;
             BackupHistoryDataGridView.SelectionChanged += BackupHistoryDataGridView_SelectionChanged;
@@ -321,7 +324,7 @@ namespace ZomboidBackupManager
             NumColumn.MaxInputLength = 3;
             NumColumn.Name = "NumColumn";
             NumColumn.ReadOnly = true;
-            NumColumn.Resizable = DataGridViewTriState.False;
+            NumColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             NumColumn.Width = 40;
             // 
             // FolderColumn
@@ -330,7 +333,6 @@ namespace ZomboidBackupManager
             FolderColumn.HeaderText = "Folder";
             FolderColumn.Name = "FolderColumn";
             FolderColumn.ReadOnly = true;
-            FolderColumn.Resizable = DataGridViewTriState.False;
             FolderColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             FolderColumn.Width = 47;
             // 
@@ -343,9 +345,9 @@ namespace ZomboidBackupManager
             SourceColumn.MaxInputLength = 16;
             SourceColumn.Name = "SourceColumn";
             SourceColumn.ReadOnly = true;
-            SourceColumn.Resizable = DataGridViewTriState.False;
+            SourceColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             SourceColumn.ToolTipText = "What caused this backup to be created?";
-            SourceColumn.Width = 70;
+            SourceColumn.Width = 51;
             // 
             // BiomColumn
             // 
@@ -354,7 +356,6 @@ namespace ZomboidBackupManager
             BiomColumn.MinimumWidth = 12;
             BiomColumn.Name = "BiomColumn";
             BiomColumn.ReadOnly = true;
-            BiomColumn.Resizable = DataGridViewTriState.False;
             BiomColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             BiomColumn.Width = 41;
             // 
@@ -364,7 +365,6 @@ namespace ZomboidBackupManager
             GametimeColumn.HeaderText = "Gametime";
             GametimeColumn.Name = "GametimeColumn";
             GametimeColumn.ReadOnly = true;
-            GametimeColumn.Resizable = DataGridViewTriState.False;
             GametimeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // GamehourColumn
@@ -373,7 +373,6 @@ namespace ZomboidBackupManager
             GamehourColumn.HeaderText = "Gamehour";
             GamehourColumn.Name = "GamehourColumn";
             GamehourColumn.ReadOnly = true;
-            GamehourColumn.Resizable = DataGridViewTriState.False;
             GamehourColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             GamehourColumn.Width = 69;
             // 
@@ -383,10 +382,25 @@ namespace ZomboidBackupManager
             DeltaColumn.HeaderText = "Delta";
             DeltaColumn.Name = "DeltaColumn";
             DeltaColumn.ReadOnly = true;
-            DeltaColumn.Resizable = DataGridViewTriState.False;
             DeltaColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             DeltaColumn.ToolTipText = "Shows the time difference to the backup made before this one.";
             DeltaColumn.Width = 40;
+            // 
+            // EditStatisticsContextMenuStrip
+            // 
+            EditStatisticsContextMenuStrip.Items.AddRange(new ToolStripItem[] { DeleteRowMenuOption });
+            EditStatisticsContextMenuStrip.Name = "EditStatisticsContextMenuStrip";
+            EditStatisticsContextMenuStrip.ShowImageMargin = false;
+            EditStatisticsContextMenuStrip.Size = new Size(83, 26);
+            // 
+            // DeleteRowMenuOption
+            // 
+            DeleteRowMenuOption.BackColor = SystemColors.ControlDarkDark;
+            DeleteRowMenuOption.ForeColor = Color.White;
+            DeleteRowMenuOption.Name = "DeleteRowMenuOption";
+            DeleteRowMenuOption.Size = new Size(82, 22);
+            DeleteRowMenuOption.Text = "Delete";
+            DeleteRowMenuOption.Click += DeleteRowMenuOption_Click;
             // 
             // DatabasePresetTSPanel
             // 
@@ -1078,10 +1092,10 @@ namespace ZomboidBackupManager
             // BackupHistoryCheckBox
             // 
             BackupHistoryCheckBox.AutoSize = true;
-            BackupHistoryCheckBox.Font = new Font("Bahnschrift", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            BackupHistoryCheckBox.Location = new Point(434, 128);
+            BackupHistoryCheckBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            BackupHistoryCheckBox.Location = new Point(430, 127);
             BackupHistoryCheckBox.Name = "BackupHistoryCheckBox";
-            BackupHistoryCheckBox.Size = new Size(108, 18);
+            BackupHistoryCheckBox.Size = new Size(113, 20);
             BackupHistoryCheckBox.TabIndex = 24;
             BackupHistoryCheckBox.Text = "Backup History";
             BackupHistoryCheckBox.TextAlign = ContentAlignment.MiddleCenter;
@@ -1993,6 +2007,7 @@ namespace ZomboidBackupManager
             SelectSavegamePanel.ResumeLayout(false);
             SelectSavegamePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)BackupHistoryDataGridView).EndInit();
+            EditStatisticsContextMenuStrip.ResumeLayout(false);
             DatabasePresetTSPanel.ResumeLayout(false);
             DatabaseToolStrip.ResumeLayout(false);
             DatabaseToolStrip.PerformLayout();
@@ -2153,6 +2168,11 @@ namespace ZomboidBackupManager
         private CheckBox BackupHistoryCheckBox;
         private ToolStripMenuItem StatisticsMenuOption;
         private ToolStripMenuItem ToggleBackupHistoryMenuOption;
+        private ToolStripMenuItem RemoveOnDeleteMenuOption;
+        private ToolStripMenuItem DebugSettingsMenuOption;
+        private ToolStripMenuItem EnableLogMenuOption;
+        private ContextMenuStrip EditStatisticsContextMenuStrip;
+        private ToolStripMenuItem DeleteRowMenuOption;
         private DataGridViewTextBoxColumn NumColumn;
         private DataGridViewTextBoxColumn FolderColumn;
         private DataGridViewTextBoxColumn SourceColumn;
@@ -2160,8 +2180,5 @@ namespace ZomboidBackupManager
         private DataGridViewTextBoxColumn GametimeColumn;
         private DataGridViewTextBoxColumn GamehourColumn;
         private DataGridViewTextBoxColumn DeltaColumn;
-        private ToolStripMenuItem RemoveOnDeleteMenuOption;
-        private ToolStripMenuItem DebugSettingsMenuOption;
-        private ToolStripMenuItem EnableLogMenuOption;
     }
 }

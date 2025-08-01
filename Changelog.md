@@ -1,11 +1,14 @@
 PZ Backup Manager Changelog:
 
-[v0.7.0] - [XX.XX.2025] - [Backup Statistics]
+[v0.7.0] - [01.08.2025] - [Backup Statistics]
 1. - Added: Import values from Backup_Statistics.csv
 2. - Added: Statistics linking via guid - Every backup created via the mod will now get a guid assigned, which will be used to link the backup data with the statistics data.
 3. - Added: Backup History Statistics Grid View: Shows all statistic values in table, which can be displayed via a checkbox on the main window.
-4. - Added: Cross-Auto-Select: If the user selects a backup in the Backup History Statistics Grid View, it will also be selected in the Backup History List View and vice versa.
-5. - Fixed: Interactables (buttons, checkboxes, etc.) didn't unlock, when canceling a restore request.
+4. - Added: Cross-Auto-Select: If you selects a backup in the Backup History Statistics Grid View, it will also be selected in the Backup History List View and vice versa.
+5. - Added: Backup History Statistics Deletion: You can now delete statistic entries from the Backup History Statistics Grid View.
+6. - Added: Backup History Statistics Auto-Deletion: If enabled, the corrosponding statistic entries will be deleted, when a backup is deleted.
+7. - Added: Debug Log Toggle Menu Option: You can now toggle the debug log via the main menu (Setting > Debug > Create Debug Log).
+8. - Fixed: Interactables (buttons, checkboxes, etc.) didn't unlock, when canceling a restore request.
 
 [v0.6.1] - [20.07.2025] - [Last update fixes]
  1. - Fixed: The Backupfolder wasn't correctly displayed in the backup data info panel. (eg. before = "saveNo1/Backup_14" ; after = "Backup_14")
