@@ -2041,7 +2041,7 @@ namespace ZomboidBackupManager
             SmartBackupMenuOption_Click(sender, e);
         }
 
-        private void BackupHistoryCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void BackupHistoryCheckBox_Click(object sender, EventArgs e)
         {
             if (!File.Exists(Configuration.absoluteBackupHistoryFilePATH))
             {
@@ -2051,7 +2051,37 @@ namespace ZomboidBackupManager
                 MessageBox.Show($"Backup history file not found! \nMake sure, following file is existing! \n{Configuration.absoluteBackupHistoryFilePATH}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            BackupHistoryDataGridView.Visible = BackupHistoryCheckBox.Checked;
+            if (Configuration.enableBackupHistory)
+            {
+                if (BackupHistoryCheckBox.Checked)
+                {
+                    PrintDebug("[MainWindow.cs] - [BackupHistoryCheckBox_CheckedChanged] - [Checkbox checked]");
+                    BackupHistoryDataGridView.Visible = true;
+                    LoadBackupHistoryGridView(true);
+                }
+                else
+                {
+                    PrintDebug("[MainWindow.cs] - [BackupHistoryCheckBox_CheckedChanged] - [Checkbox unchecked]");
+                    BackupHistoryDataGridView.Visible = false;
+                }
+            }
+            else
+            {
+                PrintDebug("[MainWindow.cs] - [BackupHistoryCheckBox_CheckedChanged] - [Backup history disabled in config]");
+                if (BackupHistoryCheckBox.Checked)
+                {
+                    BackupHistoryCheckBox.Checked = false;
+                }
+                if (BackupHistoryCheckBox.Enabled)
+                {
+                    BackupHistoryCheckBox.Enabled = false;
+                }
+                if (BackupHistoryDataGridView.Visible)
+                {
+                    BackupHistoryDataGridView.Visible = false;
+                }
+                MessageBox.Show("Statistics are currently disabled. \nYou can enable this feature via the settings drop down menu. \n(Settings -> Statistics -> Load Backup History)", "Feature Disabled", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void BackupHistoryDataGridView_VisibleChanged(object sender, EventArgs e)
@@ -2250,6 +2280,11 @@ namespace ZomboidBackupManager
             }
             BackupHistoryUtil.DeleteBackupHistoryEntryAtIndex(currentLoadedSavegame, selIndex);
             LoadBackupHistoryGridView(true);
+        }
+
+        private void BackupHistoryCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

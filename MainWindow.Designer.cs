@@ -93,10 +93,10 @@ namespace ZomboidBackupManager
             RenameEnterTextOption = new ToolStripTextBox();
             ToolStripSeparatorB = new ToolStripSeparator();
             ConfrimRenameOption = new ToolStripMenuItem();
-            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             StopMultiSelectMenuItem = new ToolStripMenuItem();
             ToolStripSeparator3 = new ToolStripSeparator();
             CreateZipEditBackupMenuOption = new ToolStripMenuItem();
+            RenameBackupsToolbarMenuOption = new ToolStripMenuItem();
             ProgressbarPanel = new Panel();
             ProgressBarA = new ProgressBar();
             ProgressbarLabel = new Label();
@@ -856,7 +856,7 @@ namespace ZomboidBackupManager
             RenameContextMenu.Font = new Font("Bahnschrift", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             RenameContextMenu.Items.AddRange(new ToolStripItem[] { RenameLabelTextItem, ToolStripSeparatorA, RenameEnterTextOption, ToolStripSeparatorB, ConfrimRenameOption });
             RenameContextMenu.Name = "RenameContextMenu";
-            RenameContextMenu.OwnerItem = RenameContextMenuItem;
+            RenameContextMenu.OwnerItem = RenameBackupsToolbarMenuOption;
             RenameContextMenu.ShowImageMargin = false;
             RenameContextMenu.Size = new Size(280, 130);
             // 
@@ -909,19 +909,6 @@ namespace ZomboidBackupManager
             ConfrimRenameOption.Text = "  Rename";
             ConfrimRenameOption.Click += ConfrimRenameOption_Click;
             // 
-            // RenameBackupsToolbarMenuOption
-            // 
-            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
-            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
-            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
-            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
-            RenameBackupsToolbarMenuOption.MergeIndex = 0;
-            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
-            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
-            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
-            RenameBackupsToolbarMenuOption.Text = "Rename";
-            // 
             // StopMultiSelectMenuItem
             // 
             StopMultiSelectMenuItem.BackColor = SystemColors.ControlDarkDark;
@@ -950,6 +937,19 @@ namespace ZomboidBackupManager
             CreateZipEditBackupMenuOption.Name = "CreateZipEditBackupMenuOption";
             CreateZipEditBackupMenuOption.Size = new Size(175, 24);
             CreateZipEditBackupMenuOption.Text = "Create Zip";
+            // 
+            // RenameBackupsToolbarMenuOption
+            // 
+            RenameBackupsToolbarMenuOption.BackColor = SystemColors.ControlDarkDark;
+            RenameBackupsToolbarMenuOption.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RenameBackupsToolbarMenuOption.DropDown = RenameContextMenu;
+            RenameBackupsToolbarMenuOption.ForeColor = Color.White;
+            RenameBackupsToolbarMenuOption.MergeAction = MergeAction.Remove;
+            RenameBackupsToolbarMenuOption.MergeIndex = 0;
+            RenameBackupsToolbarMenuOption.Name = "RenameBackupsToolbarMenuOption";
+            RenameBackupsToolbarMenuOption.Overflow = ToolStripItemOverflow.AsNeeded;
+            RenameBackupsToolbarMenuOption.Size = new Size(175, 24);
+            RenameBackupsToolbarMenuOption.Text = "Rename";
             // 
             // ProgressbarPanel
             // 
@@ -1092,6 +1092,7 @@ namespace ZomboidBackupManager
             // BackupHistoryCheckBox
             // 
             BackupHistoryCheckBox.AutoSize = true;
+            BackupHistoryCheckBox.Enabled = false;
             BackupHistoryCheckBox.Font = new Font("Bahnschrift", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             BackupHistoryCheckBox.Location = new Point(430, 127);
             BackupHistoryCheckBox.Name = "BackupHistoryCheckBox";
@@ -1099,8 +1100,10 @@ namespace ZomboidBackupManager
             BackupHistoryCheckBox.TabIndex = 24;
             BackupHistoryCheckBox.Text = "Backup History";
             BackupHistoryCheckBox.TextAlign = ContentAlignment.MiddleCenter;
+            MinimizeButtonToolTip.SetToolTip(BackupHistoryCheckBox, "Shows additional statistic data about backups,\r\nthat were created via the workshop mod,\r\nif the 'Log Statistics' option was enabled in\r\nthe mods option menu, when they got\r\ncreated.");
             BackupHistoryCheckBox.UseVisualStyleBackColor = true;
             BackupHistoryCheckBox.CheckedChanged += BackupHistoryCheckBox_CheckedChanged;
+            BackupHistoryCheckBox.Click += BackupHistoryCheckBox_Click;
             // 
             // HalfWindowModeRadioButton
             // 
