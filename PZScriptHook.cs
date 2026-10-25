@@ -343,7 +343,8 @@ namespace ZomboidBackupManager
             else
             {
                 PrintStatusLog($"Unknown cmd detected! --> [{command}]");
-
+                // Keep listening, otherwise tracking would stay suspended forever after a single unknown command
+                ResetHookCommandFile();
 
             }
         }
