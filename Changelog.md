@@ -1,5 +1,14 @@
 PZ Backup Manager Changelog:
 
+[v0.8.0] - [29.10.2026] - [UI Scaling & Restore Safety]
+1. - Fixed: The UI is now correctly scaled, when Windows display scaling is used (125%, 175%, ...). This includes the main window and the about window.
+2. - Fixed: The window shrank while a backup was running and didn't recover its size afterwards.
+3. - Changed: The unused "Database Loaded" and "Base Backup Exists" labels are now hidden in the default backup mode and the info segments are laid out evenly.
+4. - Fixed: Restoring a backup could delete the savegame, if the restore failed halfway. The backup is now copied into a temporary folder first and the savegame is only replaced after the copy succeeded. (Thanks to Elvon)
+5. - Added: Restoring a backup is blocked while Project Zomboid is running and a warning is shown, when creating a backup while the game is running. (Thanks to Elvon)
+6. - Fixed: The ScriptHook could crash the app on empty or invalid hook files and stopped tracking after an unknown command. (Thanks to Elvon)
+7. - Changed: The "Backup History" checkbox behavior and a warning message, if the statistics are disabled.
+
 [v0.7.0] - [01.08.2025] - [Backup Statistics]
 1. - Added: Import values from Backup_Statistics.csv
 2. - Added: Statistics linking via guid - Every backup created via the mod will now get a guid assigned, which will be used to link the backup data with the statistics data.
