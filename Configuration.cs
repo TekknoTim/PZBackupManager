@@ -237,7 +237,7 @@ namespace ZomboidBackupManager
         }
 
         //General Properties:
-        private static readonly float version = 2508.01f;
+        private static readonly float version = 2610.29f;
         public static readonly string appVersion = "v0.8.0";
         public static bool initRunning;
 
