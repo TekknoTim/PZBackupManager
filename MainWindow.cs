@@ -51,6 +51,32 @@ namespace ZomboidBackupManager
             SelectSavegameLabel.Font = FontLoader.GetStyleFont(40f);
             SavegameListBox.Font = FontLoader.GetMonoFont(ListBoxFontSize, ListBoxFontsBolt);
             BackupListBox.Font = FontLoader.GetMonoFont(ListBoxFontSize, ListBoxFontsBolt);
+            ScaleToolStripItems(DatabaseToolStrip, BackupRestoreToolStrip, Toolstrip1);
+        }
+
+        // ToolStrip items with a fixed size and images are not scaled by AutoScaleMode.Dpi
+        private void ScaleToolStripItems(params ToolStrip[] toolStrips)
+        {
+            float scale = DeviceDpi / 96f;
+            if (scale <= 1f)
+            {
+                return;
+            }
+            foreach (ToolStrip toolStrip in toolStrips)
+            {
+                toolStrip.ImageScalingSize = new Size((int)(toolStrip.ImageScalingSize.Width * scale), (int)(toolStrip.ImageScalingSize.Height * scale));
+                foreach (ToolStripItem item in toolStrip.Items)
+                {
+                    if (!item.AutoSize)
+                    {
+                        item.Size = new Size((int)(item.Width * scale), (int)(item.Height * scale));
+                    }
+                    if (item.Image != null)
+                    {
+                        item.ImageScaling = ToolStripItemImageScaling.SizeToFit;
+                    }
+                }
+            }
         }
 
         private void SelectSavegameLabel_Click(object sender, EventArgs e)
@@ -253,6 +279,10 @@ namespace ZomboidBackupManager
             HalfWindowModeRadioButton.Enabled = bSet;
             NormalWindowModeRadioButton.Enabled = bSet;
             ChangeBackupFolderTextbox.Enabled = bSet;
+            if (bSet)
+            {
+                RestoreWindowSize();
+            }
         }
 
         private void ShowUpdateInfoWindow()
@@ -1758,7 +1788,7 @@ namespace ZomboidBackupManager
         {
             NormalWindowModeRadioButton.Checked = true;
             HalfWindowModeRadioButton.Checked = false;
-            this.Size = new Size(1200, 875);
+            this.Size = normalWindowSize;
             SelectSavegamePanel.Visible = true;
         }
 
@@ -1767,8 +1797,28 @@ namespace ZomboidBackupManager
             NormalWindowModeRadioButton.Checked = false;
             HalfWindowModeRadioButton.Checked = true;
             SelectSavegamePanel.Visible = false;
-            this.Size = new Size(600, 875);
+            this.Size = new Size(normalWindowSize.Width / 2, normalWindowSize.Height);
 
+        }
+
+        // The window size after DPI scaling was applied, used by the window modes and to undo unwanted shrinking
+        private Size normalWindowSize = new Size(1200, 875);
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            normalWindowSize = this.Size;
+        }
+
+        private void RestoreWindowSize()
+        {
+            Size target = HalfWindowModeRadioButton.Checked
+                ? new Size(normalWindowSize.Width / 2, normalWindowSize.Height)
+                : normalWindowSize;
+            if (WindowState == FormWindowState.Normal && this.Size != target)
+            {
+                this.Size = target;
+            }
         }
 
         private void DataCleanerMenuOption_Click(object sender, EventArgs e)

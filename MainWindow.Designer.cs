@@ -541,6 +541,7 @@ namespace ZomboidBackupManager
             ThumbnailPictureBox.Margin = new Padding(18, 3, 3, 3);
             ThumbnailPictureBox.Name = "ThumbnailPictureBox";
             ThumbnailPictureBox.Size = new Size(256, 256);
+            ThumbnailPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             ThumbnailPictureBox.TabIndex = 8;
             ThumbnailPictureBox.TabStop = false;
             // 
@@ -1509,6 +1510,7 @@ namespace ZomboidBackupManager
             BackupsPictureBox.Margin = new Padding(129, 3, 3, 3);
             BackupsPictureBox.Name = "BackupsPictureBox";
             BackupsPictureBox.Size = new Size(256, 256);
+            BackupsPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             BackupsPictureBox.TabIndex = 3;
             BackupsPictureBox.TabStop = false;
             BackupsPictureBox.Click += BackupsPictureBox_Click;
@@ -1992,7 +1994,8 @@ namespace ZomboidBackupManager
             // 
             // MainWindow
             // 
-            AutoScaleMode = AutoScaleMode.None;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
             ClientSize = new Size(1180, 832);

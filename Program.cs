@@ -7,6 +7,8 @@ namespace ZomboidBackupManager
         [STAThread]
         static void Main()
         {
+            // Must run before any font/UI object is created, otherwise DPI awareness is not applied to them
+            ApplicationConfiguration.Initialize();
             /*
             Application.ThreadException += (sender, args) =>
             {
@@ -32,7 +34,6 @@ namespace ZomboidBackupManager
             }
             FontLoader.LoadDefaultCustomFonts();
             Configuration.Init();
-            ApplicationConfiguration.Initialize();
             Application.Run(new MainWindow());
             
         }
