@@ -223,6 +223,7 @@ namespace ZomboidBackupManager
 
         }
 
+        // Runs on a thread pool thread! An unhandled exception here would terminate the whole app, so everything is caught.
         private void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             System.Threading.Thread.Sleep(100); // Warten, damit die Datei komplett geschrieben wird
@@ -230,17 +231,39 @@ namespace ZomboidBackupManager
             try
             {
                 string[] newContent = File.ReadAllLines(Configuration.absoluteHookFilePATH);
-                if (newContent[0] != lastContent[0] && newContent[0] != emptyCommand && newContent[0] != emptyCommand + hookCommand_Done && newContent[0] != emptyCommand + 50.ToString())
+                if (newContent.Length < 1 || string.IsNullOrWhiteSpace(newContent[0]))
                 {
+                    // File is empty or currently being rewritten by the game -> wait for the next change event
+                    return;
+                }
+                string lastCommand = lastContent.Length > 0 ? lastContent[0] : string.Empty;
+                if (newContent[0] != lastCommand && newContent[0] != emptyCommand && newContent[0] != emptyCommand + hookCommand_Done && newContent[0] != emptyCommand + 50.ToString())
+                {
+                    if (IsDisposed || !IsHandleCreated)
+                    {
+                        return;
+                    }
                     Invoke(new Action(() =>
                     {
-                        fileWatcher.EnableRaisingEvents = false;
-                        PrintStatusLog($"----------------------------------------");
-                        PrintStatusLog("[Change Recognized]! - Tracking Suspended!");
-                        PrintStatusLog($"File - [last = <{lastContent[0]}>]");
-                        PrintStatusLog($"File - [new = <{newContent[0]}>]");
-                        PrintStatusLog($"----------------------------------------");
-                        ExecuteHookCommand(newContent[0]);
+                        try
+                        {
+                            if (!fileWatcher.EnableRaisingEvents)
+                            {
+                                // Another change event already started processing a command (FileSystemWatcher often fires twice per write)
+                                return;
+                            }
+                            fileWatcher.EnableRaisingEvents = false;
+                            PrintStatusLog($"----------------------------------------");
+                            PrintStatusLog("[Change Recognized]! - Tracking Suspended!");
+                            PrintStatusLog($"File - [last = <{lastCommand}>]");
+                            PrintStatusLog($"File - [new = <{newContent[0]}>]");
+                            PrintStatusLog($"----------------------------------------");
+                            ExecuteHookCommand(newContent[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            OnHookCommandFailed(ex);
+                        }
                     }));
                 }
             }
@@ -248,11 +271,41 @@ namespace ZomboidBackupManager
             {
                 // Falls die Datei gerade von einem anderen Prozess verwendet wird
             }
+            catch (Exception ex)
+            {
+                PrintDebug($"[PZScriptHook.cs] - [OnFileChanged] - [Unexpected error] - [{ex.Message}]", 2);
+            }
+        }
+
+        // Logs the error and keeps the tracking alive, so the app doesn't stop listening to the game after a single bad command.
+        private void OnHookCommandFailed(Exception ex)
+        {
+            PrintDebug($"[PZScriptHook.cs] - [HookCommand failed] - [{ex}]", 2);
+            try
+            {
+                PrintStatusLog($"[ERROR] --> {ex.Message}");
+                SendAbortCommand();
+            }
+            catch (Exception inner)
+            {
+                PrintDebug($"[PZScriptHook.cs] - [OnHookCommandFailed] - [Could not send abort command] - [{inner.Message}]", 2);
+                fileWatcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private static string GetValueFromLine(string line)
+        {
+            int idx = line.IndexOf('=');
+            if (idx < 0)
+            {
+                return string.Empty;
+            }
+            return line.Substring(idx + 1);
         }
 
         private void ExecuteHookCommand(string str)
         {
-            string command = str.Split('=')[1];
+            string command = GetValueFromLine(str);
             PrintStatusLog($"Recieved cmd --> [{command}]");
 
             if (command == Configuration.hookCommand_Backup)
@@ -290,7 +343,8 @@ namespace ZomboidBackupManager
             else
             {
                 PrintStatusLog($"Unknown cmd detected! --> [{command}]");
-
+                // Keep listening, otherwise tracking would stay suspended forever after a single unknown command
+                ResetHookCommandFile();
 
             }
         }
@@ -326,26 +380,35 @@ namespace ZomboidBackupManager
         private void SendAbortCommand()
         {
             PrintStatusLog("Sending [Abort] command...");
+            if (lastContent.Length < 1) { lastContent = new string[1]; }
             lastContent[0] = emptyCommand + @"a";
             File.WriteAllLines(Configuration.absoluteHookFilePATH, lastContent);
             fileWatcher.EnableRaisingEvents = true;
         }
 
+        // async void: every exception has to be caught here, otherwise it ends up as unhandled exception on the UI thread.
         private async void ExecuteBackupCommand()
         {
-            SendConfirmCommand();
-            System.Threading.Thread.Sleep(5000);
-            Backup backup = new Backup();
-            await backup.DoBackupFromRemote(txtLog, this);
-            if (autoDeleteEnabled)
+            try
             {
-                if (GetBackupCountFromJson() > autoDeleteKeepBackupsCount)
+                SendConfirmCommand();
+                await Task.Delay(5000);
+                Backup backup = new Backup();
+                await backup.DoBackupFromRemote(txtLog, this);
+                if (autoDeleteEnabled)
                 {
-                    Delete delete = new Delete();
-                    await delete.DoDeleteFromRemote(txtLog, 0);
+                    if (GetBackupCountFromJson() > autoDeleteKeepBackupsCount)
+                    {
+                        Delete delete = new Delete();
+                        await delete.DoDeleteFromRemote(txtLog, 0);
+                    }
                 }
+                SendDoneCommand();
             }
-            SendDoneCommand();
+            catch (Exception ex)
+            {
+                OnHookCommandFailed(ex);
+            }
         }
 
         private void ExecuteOpenCommand()
@@ -385,7 +448,12 @@ namespace ZomboidBackupManager
         private string GetSavegameNameFromFile()
         {
             string[] lines = File.ReadAllLines(Configuration.absoluteHookFilePATH);
-            return lines[1].Split('=')[1];
+            if (lines.Length < 2)
+            {
+                PrintStatusLog("[Hook file has no savegame line]");
+                return string.Empty;
+            }
+            return GetValueFromLine(lines[1]);
         }
 
         public void SendDoneCommand()
@@ -710,7 +778,7 @@ namespace ZomboidBackupManager
 
         private void CheckTimer_Tick(object? sender, EventArgs e)
         {
-            var isRunning = Process.GetProcessesByName("ProjectZomboid64").Length > 0;
+            var isRunning = IsProjectZomboidRunning();
 
             if (wasRunning && !isRunning)
             {
@@ -725,7 +793,7 @@ namespace ZomboidBackupManager
 
         private void BeginPolling()
         {
-            wasRunning = Process.GetProcessesByName("ProjectZomboid64").Length > 0;
+            wasRunning = IsProjectZomboidRunning();
             checkTimer.Start();
         }
 

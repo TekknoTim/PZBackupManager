@@ -1176,5 +1176,18 @@ namespace ZomboidBackupManager
             //return @"Backup_9";
             return @"Backup_" + (index).ToString();
         }
+
+        public static readonly string pzProcessName = @"ProjectZomboid64";
+
+        public static bool IsProjectZomboidRunning()
+        {
+            Process[] processes = Process.GetProcessesByName(pzProcessName);
+            bool isRunning = processes.Length > 0;
+            foreach (Process p in processes)
+            {
+                p.Dispose();
+            }
+            return isRunning;
+        }
     }
 }

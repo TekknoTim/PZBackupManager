@@ -996,6 +996,12 @@ namespace ZomboidBackupManager
                 MessageBox.Show("Can't restore! Please select a valid backup first!");
                 return;
             }
+            if (IsProjectZomboidRunning())
+            {
+                MessageBox.Show("Project Zomboid is still running!\n\nPlease quit the game completely (back to desktop), before restoring a backup.",
+                                "Restore aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (Configuration.smartBackupModeEnabled)
             {
                 if (databaseDataList != null && databaseDataList.Count > 0)
@@ -1054,6 +1060,16 @@ namespace ZomboidBackupManager
             {
                 MessageBox.Show("Can't backup! Please load a valid savegame first!");
                 return;
+            }
+            if (IsProjectZomboidRunning())
+            {
+                DialogResult answer = MessageBox.Show("Project Zomboid is still running!\n\nThe game keeps writing to the savegame files (e.g. players.db, vehicles.db), " +
+                                                      "so a backup made now may be incomplete or broken.\n\nQuit the game first for a safe backup.\n\nCreate the backup anyway?",
+                                                      "Game is running", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (answer != DialogResult.Yes)
+                {
+                    return;
+                }
             }
             if (Configuration.smartBackupModeEnabled)
             {
@@ -1482,9 +1498,8 @@ namespace ZomboidBackupManager
             if (s == Status.FAILED)
             {
                 PrintDebug($"[MainWindow.cs] - [Restore_OnStatusChanged] - [Status = {s.ToString()}] ", 2);
-
             }
-            else if (s == Status.DONE || s == Status.CANCELED)
+            if (s == Status.DONE || s == Status.CANCELED || s == Status.FAILED)
             {
                 LoadAndDisplayBackups();
                 SetSavegameLabelValues();
