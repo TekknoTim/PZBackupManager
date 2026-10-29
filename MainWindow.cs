@@ -144,9 +144,55 @@ namespace ZomboidBackupManager
 
         }
 
+        private readonly Dictionary<Control, int> labelPairDesignTops = [];
+        private int? backupCountSegmentDesignHeight;
+        private int? backupModeSegmentDesignTop;
+        private int? backupModeSegmentDesignHeight;
+
+        // Centers a label pair vertically in its panel, or puts it back to the designed position
+        private void PlaceLabelPair(Control panel, Control first, Control second, bool bCenter)
+        {
+            labelPairDesignTops.TryAdd(first, first.Top);
+            int gap = second.Top - first.Top;
+            int top = labelPairDesignTops[first];
+            if (bCenter)
+            {
+                top = (panel.ClientSize.Height - (gap + second.Height)) / 2;
+            }
+            first.Top = top;
+            second.Top = top + gap;
+        }
+
+        // In default mode the "Backups" and "Backup Mode" segments get the same height, with centered labels.
+        // In smart mode the designed layout is used, because the database labels need the space.
+        private void SetInfoSegmentsLayout(bool bEqualHeight)
+        {
+            backupCountSegmentDesignHeight ??= BackupCountSubPanel.Height;
+            backupModeSegmentDesignTop ??= BackupModeInfoPanel.Top;
+            backupModeSegmentDesignHeight ??= BackupModeInfoPanel.Height;
+
+            int gap = backupModeSegmentDesignTop.Value - (BackupCountSubPanel.Top + backupCountSegmentDesignHeight.Value);
+            int bottom = backupModeSegmentDesignTop.Value + backupModeSegmentDesignHeight.Value;
+            if (bEqualHeight)
+            {
+                BackupCountSubPanel.Height = (bottom - BackupCountSubPanel.Top - gap) / 2;
+                BackupModeInfoPanel.Top = BackupCountSubPanel.Bottom + gap;
+                BackupModeInfoPanel.Height = bottom - BackupModeInfoPanel.Top;
+            }
+            else
+            {
+                BackupCountSubPanel.Height = backupCountSegmentDesignHeight.Value;
+                BackupModeInfoPanel.Top = backupModeSegmentDesignTop.Value;
+                BackupModeInfoPanel.Height = backupModeSegmentDesignHeight.Value;
+            }
+            PlaceLabelPair(BackupCountSubPanel, BackupCountTextLabel, BackupCountValueLabel, bEqualHeight);
+            PlaceLabelPair(BackupModeInfoPanel, ActiveBackupModeTextLabel, ActiveBackupModeValueLabel, bEqualHeight);
+        }
+
         private void SetupBackupModeInfoPanel()
         {
             SetDatabaseInfoLabelsEnabled(Configuration.smartBackupModeEnabled);
+            SetInfoSegmentsLayout(!Configuration.smartBackupModeEnabled);
             if (Configuration.smartBackupModeEnabled)
             {
                 ActiveBackupModeValueLabel.Text = "Smart";
@@ -189,6 +235,11 @@ namespace ZomboidBackupManager
             IsDatabaseLoadedValuePictureBox.Enabled = bEnabled;
             HasBaseBackupTextLabel.Enabled = bEnabled;
             HasBaseBackupValuePictureBox.Enabled = bEnabled;
+            // Only needed in smart backup mode, so hide them in default mode
+            IsDatabaseLoadedTextLabel.Visible = bEnabled;
+            IsDatabaseLoadedValuePictureBox.Visible = bEnabled;
+            HasBaseBackupTextLabel.Visible = bEnabled;
+            HasBaseBackupValuePictureBox.Visible = bEnabled;
         }
 
         private void SetupSavegameLabelsAndBoxes()
