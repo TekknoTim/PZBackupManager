@@ -24,6 +24,7 @@ namespace ZomboidBackupManager
             SteamLogoPictureBox.DoubleBuffered(true);
             GithubLogoPictureBox.DoubleBuffered(true);
             SetFormBackgroundImage(Configuration.expFeaturesEnabled);
+            this.ScaleToolStripItemsToDpi(AboutWindowButtonTS);
         }
 
         private void SetFormBackgroundImage(bool bDefault = true)

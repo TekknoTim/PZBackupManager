@@ -222,7 +222,7 @@
             PZBackupManagerLogoPictureBox.Margin = new Padding(0);
             PZBackupManagerLogoPictureBox.Name = "PZBackupManagerLogoPictureBox";
             PZBackupManagerLogoPictureBox.Size = new Size(123, 125);
-            PZBackupManagerLogoPictureBox.SizeMode = PictureBoxSizeMode.CenterImage;
+            PZBackupManagerLogoPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             PZBackupManagerLogoPictureBox.TabIndex = 0;
             PZBackupManagerLogoPictureBox.TabStop = false;
             PZBackupManagerLogoPictureBox.Click += PZBackupManagerLogoPictureBox_Click;
@@ -632,8 +632,8 @@
             // 
             // AboutInfoWindow
             // 
-            AutoScaleDimensions = new SizeF(6F, 13F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.Red;
